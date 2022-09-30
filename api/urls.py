@@ -1,6 +1,9 @@
-from django.urls import path
-from . import views
+from django.urls import include, path
+from api import views
 
-urlpatterns = [
-    path('', views.index, name='index'),
-]
+from api.views import HomePageView
+
+# urlpatterns = [
+#     # url(r'^$', views.HomePageView.as_view()),
+#     path('', HomePageView.as_view()),
+# ]

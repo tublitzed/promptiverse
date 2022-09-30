@@ -8,4 +8,4 @@ migrate:
 	  source venv/bin/activate && python manage.py migrate
 
 create_migration:
-		python manage.py makemigrations promptiverse
+		source venv/bin/activate && python manage.py makemigrations api
