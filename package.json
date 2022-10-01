@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "npx tailwindcss --postcss -i ./src/css/main.css -o ./static/css/main.bundle.css",
+    "build:css": "npx tailwindcss --postcss -i ./src/css/base.css -o ./static/css/base.bundle.css",
     "build:dev": "NODE_ENV=development webpack --config ./config/webpack/webpack.config.js",
     "build": "NODE_ENV=production webpack --config ./config/webpack/webpack.config.js && npm run build:css",
     "dev": "concurrently --restart-tries=5 --restart-after=100 --prefix={pid} --prefix-colors=blue,yellow,green,magenta 'npm run build:css -- --watch' 'npm run build:dev'"
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.7.23",
+    "autoprefixer": "^10.4.12",
     "concurrently": "^7.4.0",
     "ts-loader": "^9.4.1",
     "typescript": "^4.8.4",
