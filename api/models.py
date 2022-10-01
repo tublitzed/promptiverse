@@ -1,15 +1,5 @@
 from django.db import models
 
-# Not quite working. Does not create tables.
-class Users(models.Model):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    email = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
-    username = models.CharField(max_length=50)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
 class Prompts(models.Model):
     ENGINE = (
         ('SD', 'Stable Diffusion'),
