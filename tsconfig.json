@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "outDir": "./static/",
+    "sourceMap": true,
+    "target": "es6",
+    "module": "commonjs",
+    "lib": ["es6", "dom"],
+    "noImplicitThis": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "moduleResolution": "node",
+    "paths": {
+      "@api/*": ["src/api/*"],
+      "@api": ["src/api/index"],
+      "@components/*": ["src/components/*"],
+      "@components": ["src/components/index"],
+      "@tests/*": ["src/tests/*"],
+      "@tests": ["src/tests/index"],
+      "@types/*": ["src/types/*"],
+      "@types": ["src/types/index"],
+      "@utils/*": ["src/utils/*"],
+      "@utils": ["src/utils/index"]
+    }
+  }
+}
