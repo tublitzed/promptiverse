@@ -1,0 +1,9 @@
+<script>
+  window.wiremesh = window.wiremesh || {};
+  window.wiremesh.vars = {
+    APP_TOKEN: "{{ csrf_token() }}",
+    DEFAULT_HIGH_THRESHOLD: parseInt("{{ app_vars.default_high_threshold }}", 10),
+    DEFAULT_LOW_THRESHOLD: parseInt("{{ app_vars.default_low_threshold }}", 10),
+    IS_DEV: "{{ app_vars.is_dev}}" === 'True'
+  };
+</script>
