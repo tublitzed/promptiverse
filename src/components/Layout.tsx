@@ -4,32 +4,34 @@ import AppContext, { defaultContext } from '@src/appContext'
 import { useAuth0, Auth0Provider, AppState } from '@auth0/auth0-react'
 import { Prompt, User } from '@types'
 import { LoginButton } from "@components/buttons/login-button";
+import ApiService from '@services/api-service'
+const API_SERVER_URL = ApiService.getVar('API_SERVER_URL')
+
 export interface Props {
   children: React.ReactNode
 }
 
-const App = ({ children }:Props): JSX.Element => {
+const Layout = ({ children }:Props): JSX.Element => {
   const { user:userViaAuth0 } = useAuth0()
   const [user, setUser] = React.useState<any | undefined>(userViaAuth0)
   const [isLoading, setIsLoading] = React.useState<boolean>(defaultContext.isLoading)
   const [prompt, setPrompt] = React.useState<Prompt | undefined>(defaultContext.prompt)
 
-  // const { getAccessTokenSilently } = useAuth0()
-  // const foo = async () => {
-  //   if (typeof window !== 'undefined') {
-  //     const accessToken = await getAccessTokenSilently()
-  //     console.log(accessToken)
-  //   }
-  //   // const testUrl = `${process.env.NEXT_PUBLIC_API_URL}api/private`
-  //   // const authResp = await fetcher(testUrl, {
-  //   //   method: 'POST',
-  //   //   headers: {
-  //   //     'Authorization': `Bearer ${accessToken}`,
-  //   //   },
-  //   // })
-  //   // console.log(authResp)
-  // }
-  // foo()
+  const { getAccessTokenSilently } = useAuth0()
+  const verifyApiAuthIsWorking = async () => {
+    const accessToken = await getAccessTokenSilently()
+    console.log(accessToken)
+    // const testUrl = `${process.env.NEXT_PUBLIC_API_URL}api/private`
+    // const authResp = await fetcher(testUrl, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Authorization': `Bearer ${accessToken}`,
+    //   },
+    // })
+    // console.log(authResp)
+  }
+  verifyApiAuthIsWorking()
+
     const defaultCtx = {
     user,
     isLoading,
@@ -65,4 +67,4 @@ const App = ({ children }:Props): JSX.Element => {
   )
 }
 
-export default App
+export default Layout

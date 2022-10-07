@@ -1,6 +1,7 @@
 import React from 'react'
 import clsx from 'clsx'
 import { Fragment } from 'react'
+import { useLocation } from "react-router-dom";
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Avatar from '@components/base/Avatar'
@@ -18,8 +19,8 @@ const Header = () => {
   const { user } = React.useContext(AppContext)
   const activeNavLinkClassname = 'bg-gray-900 text-white'
   const navLinkClassname = 'text-gray-300 hover:bg-gray-700 hover:text-white'
+  const location = useLocation()
 
-  console.log(user)
   if (!user) {
     return null
   }
@@ -40,13 +41,13 @@ const Header = () => {
                       {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
                       <a href="/" className={clsx(
                         'rounded-md px-3 py-2 text-sm font-medium',
-                        // router.pathname === '/' ? activeNavLinkClassname : navLinkClassname,
+                        location.pathname === '/' ? activeNavLinkClassname : navLinkClassname,
                       )}>
                       Dashboard
                       </a>
                       <a href="/about" className={clsx(
                         'rounded-md px-3 py-2 text-sm font-medium',
-                        // router.pathname === '/about' ? activeNavLinkClassname : navLinkClassname,
+                        location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname,
                       )}>
                       About
                       </a>
@@ -128,7 +129,7 @@ const Header = () => {
                   href="/"
                   className={clsx(
                     'block rounded-md px-3 py-2 text-base font-medium',
-                    // router.pathname === '/' ? activeNavLinkClassname : navLinkClassname,
+                    location.pathname === '/' ? activeNavLinkClassname : navLinkClassname,
                   )}
                 >
                 Dashboard
@@ -138,7 +139,7 @@ const Header = () => {
                   href="/about"
                   className={clsx(
                     'block rounded-md px-3 py-2 text-base font-medium',
-                    // router.pathname === '/about' ? activeNavLinkClassname : navLinkClassname,
+                    location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname,
                   )}
                 >
                 About

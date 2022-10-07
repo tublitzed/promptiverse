@@ -1,7 +1,7 @@
 import React from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import ApiService from '@services/api-service'
-import App from '@components/App'
+import Layout from '@components/Layout'
 import Button from '@components/base/Button'
 import AppContext from '@src/appContext'
 import Input from '@components/base/Input'
@@ -26,6 +26,7 @@ const Index = () => {
   React.useEffect(() => {
     async function fetchData(promptValue:string) {
       const response = await ApiService.getImage(promptValue)
+      console.log(response)
       if (response?.error) {
         console.error(`Unable to generated for prompt! ${response.error}`)
         return
@@ -52,7 +53,7 @@ const Index = () => {
     setPrompt,
   ])
   return (
-    <App>
+    <Layout>
       <div className="flex flex-row gap-x-2">
         <Input
           value={prompt?.value}
@@ -65,7 +66,7 @@ const Index = () => {
       <div>
         <Image />
       </div>
-    </App>
+    </Layout>
   )
 }
 

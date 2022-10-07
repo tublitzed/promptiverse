@@ -16,7 +16,6 @@ export const Auth0ProviderWithHistory = ({
   const clientId = ApiService.getVar('CLIENT_APP_AUTH0_CLIENT_ID');
   const audience = ApiService.getVar('CLIENT_APP_AUTH0_AUDIENCE');
   const redirectUri = ApiService.getVar('CLIENT_APP_AUTH0_CALLBACK_URL');
-  console.log('redirectUri', redirectUri)
 
   const onRedirectCallback = (appState?: AppState) => {
     history.push(appState?.returnTo || window.location.pathname);

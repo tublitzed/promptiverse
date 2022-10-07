@@ -3,6 +3,7 @@ import React from "react";
 import { NavBar } from "../components/navigation/desktop/nav-bar";
 import { MobileNavBar } from "../components/navigation/mobile/mobile-nav-bar";
 import { PageLayout } from "../components/page-layout";
+import Layout from '@components/Layout'
 
 export const CallbackPage: React.FC = () => {
   const { error } = useAuth0();

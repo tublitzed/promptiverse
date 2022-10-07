@@ -96,7 +96,6 @@ const Auth0ProviderWithHistory = ({ children, }) => {
     const clientId = api_service_1.default.getVar('CLIENT_APP_AUTH0_CLIENT_ID');
     const audience = api_service_1.default.getVar('CLIENT_APP_AUTH0_AUDIENCE');
     const redirectUri = api_service_1.default.getVar('CLIENT_APP_AUTH0_CALLBACK_URL');
-    console.log('redirectUri', redirectUri);
     const onRedirectCallback = (appState) => {
         history.push((appState === null || appState === void 0 ? void 0 : appState.returnTo) || window.location.pathname);
     };
@@ -110,10 +109,10 @@ exports.Auth0ProviderWithHistory = Auth0ProviderWithHistory;
 
 /***/ }),
 
-/***/ "./src/components/App.tsx":
-/*!********************************!*\
-  !*** ./src/components/App.tsx ***!
-  \********************************/
+/***/ "./src/components/Layout.tsx":
+/*!***********************************!*\
+  !*** ./src/components/Layout.tsx ***!
+  \***********************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -140,6 +139,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -149,27 +157,27 @@ const Header_1 = __importDefault(__webpack_require__(/*! @components/base/Header
 const appContext_1 = __importStar(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
 const login_button_1 = __webpack_require__(/*! @components/buttons/login-button */ "./src/components/buttons/login-button.tsx");
-const App = ({ children }) => {
+const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
+const API_SERVER_URL = api_service_1.default.getVar('API_SERVER_URL');
+const Layout = ({ children }) => {
     const { user: userViaAuth0 } = (0, auth0_react_1.useAuth0)();
     const [user, setUser] = react_1.default.useState(userViaAuth0);
     const [isLoading, setIsLoading] = react_1.default.useState(appContext_1.defaultContext.isLoading);
     const [prompt, setPrompt] = react_1.default.useState(appContext_1.defaultContext.prompt);
-    // const { getAccessTokenSilently } = useAuth0()
-    // const foo = async () => {
-    //   if (typeof window !== 'undefined') {
-    //     const accessToken = await getAccessTokenSilently()
-    //     console.log(accessToken)
-    //   }
-    //   // const testUrl = `${process.env.NEXT_PUBLIC_API_URL}api/private`
-    //   // const authResp = await fetcher(testUrl, {
-    //   //   method: 'POST',
-    //   //   headers: {
-    //   //     'Authorization': `Bearer ${accessToken}`,
-    //   //   },
-    //   // })
-    //   // console.log(authResp)
-    // }
-    // foo()
+    const { getAccessTokenSilently } = (0, auth0_react_1.useAuth0)();
+    const verifyApiAuthIsWorking = () => __awaiter(void 0, void 0, void 0, function* () {
+        const accessToken = yield getAccessTokenSilently();
+        console.log(accessToken);
+        // const testUrl = `${process.env.NEXT_PUBLIC_API_URL}api/private`
+        // const authResp = await fetcher(testUrl, {
+        //   method: 'POST',
+        //   headers: {
+        //     'Authorization': `Bearer ${accessToken}`,
+        //   },
+        // })
+        // console.log(authResp)
+    });
+    verifyApiAuthIsWorking();
     const defaultCtx = {
         user,
         isLoading,
@@ -190,7 +198,7 @@ const App = ({ children }) => {
             react_1.default.createElement("div", { className: "container mx-auto h-full" },
                 react_1.default.createElement("div", { className: "py-6 px-8" }, children)))));
 };
-exports["default"] = App;
+exports["default"] = Layout;
 
 
 /***/ }),
@@ -261,6 +269,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
 const react_2 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 const react_3 = __webpack_require__(/*! @headlessui/react */ "./node_modules/@headlessui/react/dist/index.cjs");
 const outline_1 = __webpack_require__(/*! @heroicons/react/24/outline */ "./node_modules/@heroicons/react/24/outline/esm/index.js");
 const Avatar_1 = __importDefault(__webpack_require__(/*! @components/base/Avatar */ "./src/components/base/Avatar.tsx"));
@@ -273,7 +282,7 @@ const Header = () => {
     const { user } = react_1.default.useContext(appContext_1.default);
     const activeNavLinkClassname = 'bg-gray-900 text-white';
     const navLinkClassname = 'text-gray-300 hover:bg-gray-700 hover:text-white';
-    console.log(user);
+    const location = (0, react_router_dom_1.useLocation)();
     if (!user) {
         return null;
     }
@@ -286,8 +295,8 @@ const Header = () => {
                             react_1.default.createElement(Logo_1.default, null)),
                         react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
                             react_1.default.createElement("div", { className: "flex space-x-4" },
-                                react_1.default.createElement("a", { href: "/", className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium') }, "Dashboard"),
-                                react_1.default.createElement("a", { href: "/about", className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium') }, "About")))),
+                                react_1.default.createElement("a", { href: "/", className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
+                                react_1.default.createElement("a", { href: "/about", className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")))),
                     react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
                         react_1.default.createElement("div", { className: "flex items-center" },
                             react_1.default.createElement(react_3.Menu, { as: "div", className: "relative ml-3" },
@@ -307,8 +316,8 @@ const Header = () => {
                                 : (react_1.default.createElement(outline_1.Bars3Icon, { className: "block h-6 w-6", "aria-hidden": "true" })))))),
             react_1.default.createElement(react_3.Disclosure.Panel, { className: "sm:hidden" },
                 react_1.default.createElement("div", { className: "space-y-1 px-2 pt-2 pb-3" },
-                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", href: "/", className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium') }, "Dashboard"),
-                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", href: "/about", className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium') }, "About")),
+                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", href: "/", className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
+                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", href: "/about", className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")),
                 react_1.default.createElement("div", { className: "border-t border-gray-700 pt-4 pb-3" },
                     react_1.default.createElement("div", { className: "flex items-center px-5" },
                         react_1.default.createElement("div", { className: "flex-shrink-0" },
@@ -1219,7 +1228,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const uuid_1 = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/commonjs-browser/index.js");
 const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
-const App_1 = __importDefault(__webpack_require__(/*! @components/App */ "./src/components/App.tsx"));
+const Layout_1 = __importDefault(__webpack_require__(/*! @components/Layout */ "./src/components/Layout.tsx"));
 const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const Input_1 = __importDefault(__webpack_require__(/*! @components/base/Input */ "./src/components/base/Input.tsx"));
@@ -1237,6 +1246,7 @@ const Index = () => {
         function fetchData(promptValue) {
             return __awaiter(this, void 0, void 0, function* () {
                 const response = yield api_service_1.default.getImage(promptValue);
+                console.log(response);
                 if (response === null || response === void 0 ? void 0 : response.error) {
                     console.error(`Unable to generated for prompt! ${response.error}`);
                     return;
@@ -1259,7 +1269,7 @@ const Index = () => {
         prompt,
         setPrompt,
     ]);
-    return (react_1.default.createElement(App_1.default, null,
+    return (react_1.default.createElement(Layout_1.default, null,
         react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
             react_1.default.createElement(Input_1.default, { value: prompt === null || prompt === void 0 ? void 0 : prompt.value, onChange: setPromptString, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", autoFocus: true }),
             react_1.default.createElement(Button_1.default, { onClick: submit }, "Go!")),
@@ -1310,13 +1320,18 @@ exports.ProfilePage = void 0;
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const code_snippet_1 = __webpack_require__(/*! ../components/code-snippet */ "./src/components/code-snippet.tsx");
-const page_layout_1 = __webpack_require__(/*! ../components/page-layout */ "./src/components/page-layout.tsx");
+const Layout_1 = __importDefault(__webpack_require__(/*! @components/Layout */ "./src/components/Layout.tsx"));
+const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const ProfilePage = () => {
+    const { setPrompt, prompt } = react_1.default.useContext(appContext_1.default);
+    console.log('here at all?', prompt);
     const { user } = (0, auth0_react_1.useAuth0)();
-    if (!user) {
-        return null;
-    }
-    return (react_1.default.createElement(page_layout_1.PageLayout, null,
+    console.log(user);
+    // const { user } = useAuth0();
+    // if (!user) {
+    //   return null;
+    // }
+    return (react_1.default.createElement(Layout_1.default, null,
         react_1.default.createElement("div", { className: "content-layout" },
             react_1.default.createElement("h1", { id: "page-title", className: "content__title" }, "Profile Page"),
             react_1.default.createElement("div", { className: "content__body" },
@@ -1470,8 +1485,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PublicPage = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const code_snippet_1 = __webpack_require__(/*! ../components/code-snippet */ "./src/components/code-snippet.tsx");
-const page_layout_1 = __webpack_require__(/*! ../components/page-layout */ "./src/components/page-layout.tsx");
 const message_service_1 = __webpack_require__(/*! ../services/message.service */ "./src/services/message.service.ts");
 const PublicPage = () => {
     const [message, setMessage] = (0, react_1.useState)("");
@@ -1494,18 +1507,7 @@ const PublicPage = () => {
             isMounted = false;
         };
     }, []);
-    return (react_1.default.createElement(page_layout_1.PageLayout, null,
-        react_1.default.createElement("div", { className: "content-layout" },
-            react_1.default.createElement("h1", { id: "page-title", className: "content__title" }, "Public Page"),
-            react_1.default.createElement("div", { className: "content__body" },
-                react_1.default.createElement("p", { id: "page-description" },
-                    react_1.default.createElement("span", null,
-                        "This page retrieves a ",
-                        react_1.default.createElement("strong", null, "public message"),
-                        " from an external API."),
-                    react_1.default.createElement("span", null,
-                        react_1.default.createElement("strong", null, "Any visitor can access this page."))),
-                react_1.default.createElement(code_snippet_1.CodeSnippet, { title: "Public Message", code: message })))));
+    return (react_1.default.createElement("div", null, "Public Page"));
 };
 exports.PublicPage = PublicPage;
 

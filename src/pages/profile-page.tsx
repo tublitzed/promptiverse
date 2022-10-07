@@ -2,16 +2,21 @@ import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
 import { CodeSnippet } from "../components/code-snippet";
 import { PageLayout } from "../components/page-layout";
-
+import Layout from '@components/Layout'
+import AppContext from '@src/appContext'
 export const ProfilePage: React.FC = () => {
-  const { user } = useAuth0();
+  const { setPrompt, prompt } = React.useContext(AppContext)
+  console.log('here at all?', prompt)
+  const { user } = useAuth0()
+  console.log(user)
+  // const { user } = useAuth0();
 
-  if (!user) {
-    return null;
-  }
+  // if (!user) {
+  //   return null;
+  // }
 
   return (
-    <PageLayout>
+    <Layout>
       <div className="content-layout">
         <h1 id="page-title" className="content__title">
           Profile Page
@@ -47,6 +52,6 @@ export const ProfilePage: React.FC = () => {
           </div>
         </div>
       </div>
-    </PageLayout>
+    </Layout>
   );
 };
