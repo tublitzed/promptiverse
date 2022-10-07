@@ -28,10 +28,13 @@ const sharedConfig = {
   },
   resolve: {
     alias: {
-      '@api': path.resolve(__dirname, `${assetsPath}/api`),
       '@components': path.resolve(__dirname, `${assetsPath}/components`),
-      '@types': path.resolve(__dirname, `${assetsPath}/types`),
+      '@models': path.resolve(__dirname, `${assetsPath}/models`),
+      '@pages': path.resolve(__dirname, `${assetsPath}/pages`),
       '@services': path.resolve(__dirname, `${assetsPath}/services`),
+      '@types': path.resolve(__dirname, `${assetsPath}/types`),
+      '@src': path.resolve(__dirname, `${assetsPath}/`),
+      '@utils': path.resolve(__dirname, `${assetsPath}/utils`),
     },
     extensions: ['.js', '.json', '.ts', '.tsx'],
   },

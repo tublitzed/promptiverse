@@ -5,7 +5,7 @@ import { PageLoader } from "./components/page-loader";
 import { ProtectedRoute } from "./components/protected-route";
 import { AdminPage } from "./pages/admin-page";
 import { CallbackPage } from "./pages/callback-page";
-import { HomePage } from "./pages/home-page";
+import HomePage from "./pages/home-page";
 import { NotFoundPage } from "./pages/not-found-page";
 import { ProfilePage } from "./pages/profile-page";
 import { ProtectedPage } from "./pages/protected-page";

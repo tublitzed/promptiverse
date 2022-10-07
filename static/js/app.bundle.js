@@ -2,9 +2,9 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/app.tsx":
+/***/ "./src/App.tsx":
 /*!*********************!*\
-  !*** ./src/app.tsx ***!
+  !*** ./src/App.tsx ***!
   \*********************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -21,7 +21,7 @@ const page_loader_1 = __webpack_require__(/*! ./components/page-loader */ "./src
 const protected_route_1 = __webpack_require__(/*! ./components/protected-route */ "./src/components/protected-route.tsx");
 const admin_page_1 = __webpack_require__(/*! ./pages/admin-page */ "./src/pages/admin-page.tsx");
 const callback_page_1 = __webpack_require__(/*! ./pages/callback-page */ "./src/pages/callback-page.tsx");
-const home_page_1 = __webpack_require__(/*! ./pages/home-page */ "./src/pages/home-page.tsx");
+const home_page_1 = __importDefault(__webpack_require__(/*! ./pages/home-page */ "./src/pages/home-page.tsx"));
 const not_found_page_1 = __webpack_require__(/*! ./pages/not-found-page */ "./src/pages/not-found-page.tsx");
 const profile_page_1 = __webpack_require__(/*! ./pages/profile-page */ "./src/pages/profile-page.tsx");
 const protected_page_1 = __webpack_require__(/*! ./pages/protected-page */ "./src/pages/protected-page.tsx");
@@ -33,7 +33,7 @@ const App = () => {
             react_1.default.createElement(page_loader_1.PageLoader, null)));
     }
     return (react_1.default.createElement(react_router_dom_1.Switch, null,
-        react_1.default.createElement(react_router_dom_1.Route, { path: "/", exact: true, component: home_page_1.HomePage }),
+        react_1.default.createElement(react_router_dom_1.Route, { path: "/", exact: true, component: home_page_1.default }),
         react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/profile", component: profile_page_1.ProfilePage }),
         react_1.default.createElement(react_router_dom_1.Route, { path: "/public", component: public_page_1.PublicPage }),
         react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/protected", component: protected_page_1.ProtectedPage }),
@@ -42,6 +42,34 @@ const App = () => {
         react_1.default.createElement(react_router_dom_1.Route, { path: "*", component: not_found_page_1.NotFoundPage })));
 };
 exports.App = App;
+
+
+/***/ }),
+
+/***/ "./src/appContext.ts":
+/*!***************************!*\
+  !*** ./src/appContext.ts ***!
+  \***************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.defaultContext = void 0;
+const react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const localStorage_1 = __importDefault(__webpack_require__(/*! ./utils/localStorage */ "./src/utils/localStorage.ts"));
+exports.defaultContext = {
+    isLoading: true,
+    prompt: localStorage_1.default.getPrompt() || { loading: false },
+    setIsLoading: () => { },
+    setPrompt: (prompt) => { },
+    setUser: (user) => { },
+    user: undefined,
+};
+const AppContext = (0, react_1.createContext)(exports.defaultContext);
+exports["default"] = AppContext;
 
 
 /***/ }),
@@ -82,33 +110,95 @@ exports.Auth0ProviderWithHistory = Auth0ProviderWithHistory;
 
 /***/ }),
 
-/***/ "./src/components/auth0-feature.tsx":
-/*!******************************************!*\
-  !*** ./src/components/auth0-feature.tsx ***!
-  \******************************************/
+/***/ "./src/components/App.tsx":
+/*!********************************!*\
+  !*** ./src/components/App.tsx ***!
+  \********************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Auth0Feature = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const Auth0Feature = ({ title, description, resourceUrl, icon, }) => (react_1.default.createElement("a", { href: resourceUrl, className: "auth0-feature", target: "_blank", rel: "noopener noreferrer" },
-    react_1.default.createElement("h3", { className: "auth0-feature__headline" },
-        react_1.default.createElement("img", { className: "auth0-feature__icon", src: icon, alt: "external link icon" }),
-        title),
-    react_1.default.createElement("p", { className: "auth0-feature__description" }, description)));
-exports.Auth0Feature = Auth0Feature;
+const Header_1 = __importDefault(__webpack_require__(/*! @components/base/Header */ "./src/components/base/Header.tsx"));
+const appContext_1 = __importStar(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const login_button_1 = __webpack_require__(/*! @components/buttons/login-button */ "./src/components/buttons/login-button.tsx");
+const App = ({ children }) => {
+    const { user: userViaAuth0 } = (0, auth0_react_1.useAuth0)();
+    const [user, setUser] = react_1.default.useState(userViaAuth0);
+    const [isLoading, setIsLoading] = react_1.default.useState(appContext_1.defaultContext.isLoading);
+    const [prompt, setPrompt] = react_1.default.useState(appContext_1.defaultContext.prompt);
+    // const { getAccessTokenSilently } = useAuth0()
+    // const foo = async () => {
+    //   if (typeof window !== 'undefined') {
+    //     const accessToken = await getAccessTokenSilently()
+    //     console.log(accessToken)
+    //   }
+    //   // const testUrl = `${process.env.NEXT_PUBLIC_API_URL}api/private`
+    //   // const authResp = await fetcher(testUrl, {
+    //   //   method: 'POST',
+    //   //   headers: {
+    //   //     'Authorization': `Bearer ${accessToken}`,
+    //   //   },
+    //   // })
+    //   // console.log(authResp)
+    // }
+    // foo()
+    const defaultCtx = {
+        user,
+        isLoading,
+        setUser,
+        setIsLoading,
+        prompt,
+        setPrompt,
+    };
+    if (!user) {
+        return (react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
+            react_1.default.createElement("div", { className: "container mx-auto h-full" },
+                react_1.default.createElement("div", { className: "mx-auto text-center p-12 text-white" },
+                    react_1.default.createElement(login_button_1.LoginButton, null)))));
+    }
+    return (react_1.default.createElement(appContext_1.default.Provider, { value: defaultCtx },
+        react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
+            react_1.default.createElement(Header_1.default, null),
+            react_1.default.createElement("div", { className: "container mx-auto h-full" },
+                react_1.default.createElement("div", { className: "py-6 px-8" }, children)))));
+};
+exports["default"] = App;
 
 
 /***/ }),
 
-/***/ "./src/components/auth0-features.tsx":
-/*!*******************************************!*\
-  !*** ./src/components/auth0-features.tsx ***!
-  \*******************************************/
+/***/ "./src/components/base/Avatar.tsx":
+/*!****************************************!*\
+  !*** ./src/components/base/Avatar.tsx ***!
+  \****************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -116,41 +206,213 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Auth0Features = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const auth0_feature_1 = __webpack_require__(/*! ./auth0-feature */ "./src/components/auth0-feature.tsx");
-const Auth0Features = () => {
-    const featuresList = [
-        {
-            title: "Identity Providers",
-            description: "Auth0 supports social providers such as Google, Facebook, and Twitter, along with Enterprise providers such as Microsoft Office 365, Google Apps, and Azure. You can also use any OAuth 2.0 Authorization Server.",
-            resourceUrl: "https://auth0.com/docs/connections",
-            icon: "https://cdn.auth0.com/blog/hello-auth0/identity-providers-logo.svg",
-        },
-        {
-            title: "Multi-Factor Authentication",
-            description: "You can require your users to provide more than one piece of identifying information when logging in. MFA delivers one-time codes to your users via SMS, voice, email, WebAuthn, and push notifications.",
-            resourceUrl: "https://auth0.com/docs/multifactor-authentication",
-            icon: "https://cdn.auth0.com/blog/hello-auth0/mfa-logo.svg",
-        },
-        {
-            title: "Attack Protection",
-            description: "Auth0 can detect attacks and stop malicious attempts to access your application such as blocking traffic from certain IPs and displaying CAPTCHA. Auth0 supports the principle of layered protection in security that uses a variety of signals to detect and mitigate attacks.",
-            resourceUrl: "https://auth0.com/docs/attack-protection",
-            icon: "https://cdn.auth0.com/blog/hello-auth0/advanced-protection-logo.svg",
-        },
-        {
-            title: "Serverless Extensibility",
-            description: "Actions are functions that allow you to customize the behavior of Auth0. Each action is bound to a specific triggering event on the Auth0 platform. Auth0 invokes the custom code of these Actions when the corresponding triggering event is produced at runtime.",
-            resourceUrl: "https://auth0.com/docs/actions",
-            icon: "https://cdn.auth0.com/blog/hello-auth0/private-cloud-logo.svg",
-        },
-    ];
-    return (react_1.default.createElement("div", { className: "auth0-features" },
-        react_1.default.createElement("h2", { className: "auth0-features__title" }, "Explore Auth0 Features"),
-        react_1.default.createElement("div", { className: "auth0-features__grid" }, featuresList.map((feature) => (react_1.default.createElement(auth0_feature_1.Auth0Feature, { key: feature.resourceUrl, title: feature.title, description: feature.description, resourceUrl: feature.resourceUrl, icon: feature.icon }))))));
+const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const Avatar = () => {
+    const { user } = react_1.default.useContext(appContext_1.default);
+    if (!user) {
+        return null;
+    }
+    return (react_1.default.createElement("img", { src: user.picture, alt: user.username, width: 150, height: 150, className: "h-8 w-8 rounded-full" }));
 };
-exports.Auth0Features = Auth0Features;
+exports["default"] = Avatar;
+
+
+/***/ }),
+
+/***/ "./src/components/base/Button.tsx":
+/*!****************************************!*\
+  !*** ./src/components/base/Button.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
+const Button = ({ children, download, href, onClick, disabled, className }) => {
+    const cssClasses = (0, clsx_1.default)(className, 'py-2 px-6 border no-underline border-transparent text-sm font-medium rounded-md text-white', disabled
+        ? 'bg-gray-300'
+        : 'bg-slate-700 hover:bg-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500');
+    if (href) {
+        return (react_1.default.createElement("a", { onClick: onClick, className: `${cssClasses} inline-block`, href: href, download: download }, children));
+    }
+    return (react_1.default.createElement("button", { onClick: onClick, className: cssClasses, disabled: disabled }, children));
+};
+exports["default"] = Button;
+
+
+/***/ }),
+
+/***/ "./src/components/base/Header.tsx":
+/*!****************************************!*\
+  !*** ./src/components/base/Header.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
+const react_2 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const react_3 = __webpack_require__(/*! @headlessui/react */ "./node_modules/@headlessui/react/dist/index.cjs");
+const outline_1 = __webpack_require__(/*! @heroicons/react/24/outline */ "./node_modules/@heroicons/react/24/outline/esm/index.js");
+const Avatar_1 = __importDefault(__webpack_require__(/*! @components/base/Avatar */ "./src/components/base/Avatar.tsx"));
+const Logo_1 = __importDefault(__webpack_require__(/*! @components/base/Logo */ "./src/components/base/Logo.tsx"));
+const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+function classNames(...classes) {
+    return classes.filter(Boolean).join(' ');
+}
+const Header = () => {
+    const { user } = react_1.default.useContext(appContext_1.default);
+    const activeNavLinkClassname = 'bg-gray-900 text-white';
+    const navLinkClassname = 'text-gray-300 hover:bg-gray-700 hover:text-white';
+    console.log(user);
+    if (!user) {
+        return null;
+    }
+    return (react_1.default.createElement("header", null,
+        react_1.default.createElement(react_3.Disclosure, { as: "nav", className: "bg-gray-800" }, ({ open }) => (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", { className: "container mx-auto px-8" },
+                react_1.default.createElement("div", { className: "flex h-16 items-center justify-between" },
+                    react_1.default.createElement("div", { className: "flex items-center" },
+                        react_1.default.createElement("div", { className: "flex-shrink-0" },
+                            react_1.default.createElement(Logo_1.default, null)),
+                        react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
+                            react_1.default.createElement("div", { className: "flex space-x-4" },
+                                react_1.default.createElement("a", { href: "/", className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium') }, "Dashboard"),
+                                react_1.default.createElement("a", { href: "/about", className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium') }, "About")))),
+                    react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
+                        react_1.default.createElement("div", { className: "flex items-center" },
+                            react_1.default.createElement(react_3.Menu, { as: "div", className: "relative ml-3" },
+                                react_1.default.createElement("div", null,
+                                    react_1.default.createElement(react_3.Menu.Button, { className: "flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" },
+                                        react_1.default.createElement("span", { className: "sr-only" }, "Open user menu"),
+                                        react_1.default.createElement(Avatar_1.default, null))),
+                                react_1.default.createElement(react_3.Transition, { as: react_2.Fragment, enter: "transition ease-out duration-100", enterFrom: "transform opacity-0 scale-95", enterTo: "transform opacity-100 scale-100", leave: "transition ease-in duration-75", leaveFrom: "transform opacity-100 scale-100", leaveTo: "transform opacity-0 scale-95" },
+                                    react_1.default.createElement(react_3.Menu.Items, { className: "absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" },
+                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { href: "/profile", className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700') }, "Your Profile"))),
+                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { href: "/api/logout", className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700') }, "Sign out")))))))),
+                    react_1.default.createElement("div", { className: "-mr-2 flex sm:hidden" },
+                        react_1.default.createElement(react_3.Disclosure.Button, { className: "inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" },
+                            react_1.default.createElement("span", { className: "sr-only" }, "Open main menu"),
+                            open
+                                ? (react_1.default.createElement(outline_1.XMarkIcon, { className: "block h-6 w-6", "aria-hidden": "true" }))
+                                : (react_1.default.createElement(outline_1.Bars3Icon, { className: "block h-6 w-6", "aria-hidden": "true" })))))),
+            react_1.default.createElement(react_3.Disclosure.Panel, { className: "sm:hidden" },
+                react_1.default.createElement("div", { className: "space-y-1 px-2 pt-2 pb-3" },
+                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", href: "/", className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium') }, "Dashboard"),
+                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", href: "/about", className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium') }, "About")),
+                react_1.default.createElement("div", { className: "border-t border-gray-700 pt-4 pb-3" },
+                    react_1.default.createElement("div", { className: "flex items-center px-5" },
+                        react_1.default.createElement("div", { className: "flex-shrink-0" },
+                            react_1.default.createElement(Avatar_1.default, null)),
+                        react_1.default.createElement("div", { className: "ml-3" },
+                            react_1.default.createElement("div", { className: "text-base font-medium text-white" }, user.nickname),
+                            react_1.default.createElement("div", { className: "text-sm font-medium text-gray-400" }, user.name))),
+                    react_1.default.createElement("div", { className: "mt-3 space-y-1 px-2" },
+                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", href: "/profile", className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white" }, "Your Profile"),
+                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", href: "/api/logout", className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white" }, "Sign out")))))))));
+};
+exports["default"] = Header;
+
+
+/***/ }),
+
+/***/ "./src/components/base/Image.tsx":
+/*!***************************************!*\
+  !*** ./src/components/base/Image.tsx ***!
+  \***************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const Image = () => {
+    const { prompt } = react_1.default.useContext(appContext_1.default);
+    if (!prompt || !prompt.url) {
+        return null;
+    }
+    return (react_1.default.createElement("div", { className: "p-6 bg-white rounded mt-6" },
+        react_1.default.createElement("img", { src: prompt === null || prompt === void 0 ? void 0 : prompt.url, title: prompt === null || prompt === void 0 ? void 0 : prompt.value, alt: `Image for prompt ${(prompt === null || prompt === void 0 ? void 0 : prompt.value) ? prompt.value : ''}`, width: 512, height: 512, className: "border m-auto rounded shadow p-2 bg-slate-400" })));
+};
+exports["default"] = Image;
+
+
+/***/ }),
+
+/***/ "./src/components/base/Input.tsx":
+/*!***************************************!*\
+  !*** ./src/components/base/Input.tsx ***!
+  \***************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
+const Input = (_a) => {
+    var { className, type, value: valueViaProps, autoFocus, onChange } = _a, otherProps = __rest(_a, ["className", "type", "value", "autoFocus", "onChange"]);
+    const inputRef = react_1.default.useRef(null);
+    const [value, setValue] = react_1.default.useState(valueViaProps);
+    react_1.default.useEffect(() => {
+        if (autoFocus && (inputRef === null || inputRef === void 0 ? void 0 : inputRef.current)) {
+            inputRef.current.focus();
+        }
+    }, [autoFocus]);
+    return (react_1.default.createElement("input", Object.assign({ value: value, ref: inputRef, type: type || 'string', onChange: (e) => {
+            setValue(e.target.value);
+            if (onChange) {
+                onChange(e.target.value);
+            }
+        }, className: (0, clsx_1.default)(className, 'cursor:pointer p-2 rounded-sm bg-gray-200 text-gray-700', 'focus:bg-white focus:outline-none focus:ring focus:ring-blue-200') }, otherProps)));
+};
+exports["default"] = Input;
+
+
+/***/ }),
+
+/***/ "./src/components/base/Logo.tsx":
+/*!**************************************!*\
+  !*** ./src/components/base/Logo.tsx ***!
+  \**************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Logo = () => {
+    return (react_1.default.createElement("div", null,
+        react_1.default.createElement("span", { className: "font-light text-2xl text-white" }, "[ N ]")));
+};
+exports["default"] = Logo;
 
 
 /***/ }),
@@ -283,36 +545,6 @@ const CodeSnippet = ({ title, code = "", }) => (react_1.default.createElement("d
         react_1.default.createElement("div", { className: "code-snippet__wrapper" },
             react_1.default.createElement("pre", { className: "code-snippet__body" }, code)))));
 exports.CodeSnippet = CodeSnippet;
-
-
-/***/ }),
-
-/***/ "./src/components/hero-banner.tsx":
-/*!****************************************!*\
-  !*** ./src/components/hero-banner.tsx ***!
-  \****************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.HeroBanner = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const HeroBanner = () => {
-    const logo = "https://cdn.auth0.com/blog/developer-hub/react-logo.svg";
-    return (react_1.default.createElement("div", { className: "hero-banner hero-banner--pink-yellow" },
-        react_1.default.createElement("div", { className: "hero-banner__logo" },
-            react_1.default.createElement("img", { className: "hero-banner__image", src: logo, alt: "React logo" })),
-        react_1.default.createElement("h1", { className: "hero-banner__headline" }, "Hello, React World!"),
-        react_1.default.createElement("p", { className: "hero-banner__description" },
-            "This is a sample application that demonstrates the authentication flow for React apps using ",
-            react_1.default.createElement("strong", null, "Auth0"),
-            "."),
-        react_1.default.createElement("a", { id: "code-sample-link", target: "_blank", rel: "noopener noreferrer", href: "https://auth0.com/developers/hub/code-samples/spa/react-typescript/basic-authentication", className: "button button--secondary" }, "Check out the React code sample \u2192")));
-};
-exports.HeroBanner = HeroBanner;
 
 
 /***/ }),
@@ -825,12 +1057,12 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_dom_1 = __importDefault(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-const app_1 = __webpack_require__(/*! ./app */ "./src/app.tsx");
+const App_1 = __webpack_require__(/*! ./App */ "./src/App.tsx");
 const auth0_provider_with_history_1 = __webpack_require__(/*! ./auth0-provider-with-history */ "./src/auth0-provider-with-history.tsx");
 react_dom_1.default.render(react_1.default.createElement(react_1.default.StrictMode, null,
     react_1.default.createElement(react_router_dom_1.BrowserRouter, null,
         react_1.default.createElement(auth0_provider_with_history_1.Auth0ProviderWithHistory, null,
-            react_1.default.createElement(app_1.App, null)))), document.getElementById("root"));
+            react_1.default.createElement(App_1.App, null)))), document.getElementById("root"));
 
 
 /***/ }),
@@ -971,19 +1203,70 @@ exports.CallbackPage = CallbackPage;
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.HomePage = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const auth0_features_1 = __webpack_require__(/*! ../components/auth0-features */ "./src/components/auth0-features.tsx");
-const hero_banner_1 = __webpack_require__(/*! ../components/hero-banner */ "./src/components/hero-banner.tsx");
-const page_layout_1 = __webpack_require__(/*! ../components/page-layout */ "./src/components/page-layout.tsx");
-const HomePage = () => (react_1.default.createElement(page_layout_1.PageLayout, null,
-    react_1.default.createElement(hero_banner_1.HeroBanner, null),
-    react_1.default.createElement(auth0_features_1.Auth0Features, null)));
-exports.HomePage = HomePage;
+const uuid_1 = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/commonjs-browser/index.js");
+const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
+const App_1 = __importDefault(__webpack_require__(/*! @components/App */ "./src/components/App.tsx"));
+const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
+const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const Input_1 = __importDefault(__webpack_require__(/*! @components/base/Input */ "./src/components/base/Input.tsx"));
+const Image_1 = __importDefault(__webpack_require__(/*! @components/base/Image */ "./src/components/base/Image.tsx"));
+const localStorage_1 = __importDefault(__webpack_require__(/*! ../utils/localStorage */ "./src/utils/localStorage.ts"));
+const API_SERVER_URL = api_service_1.default.getVar('API_SERVER_URL');
+const Index = () => {
+    const { setPrompt, prompt } = react_1.default.useContext(appContext_1.default);
+    const [promptString, setPromptString] = react_1.default.useState();
+    const submit = () => {
+        setPrompt(Object.assign(Object.assign({}, prompt), { value: promptString, id: (0, uuid_1.v4)(), loading: true }));
+    };
+    react_1.default.useEffect(() => {
+        var _a;
+        function fetchData(promptValue) {
+            return __awaiter(this, void 0, void 0, function* () {
+                const response = yield api_service_1.default.getImage(promptValue);
+                if (response === null || response === void 0 ? void 0 : response.error) {
+                    console.error(`Unable to generated for prompt! ${response.error}`);
+                    return;
+                }
+                if (!(response === null || response === void 0 ? void 0 : response.file)) {
+                    console.error('Missing required file');
+                    return;
+                }
+                const url = `${API_SERVER_URL}/${response.file}`;
+                const newPromptVal = Object.assign(Object.assign({}, prompt), { url, loading: false });
+                setPrompt(newPromptVal);
+                localStorage_1.default.setPrompt(newPromptVal);
+            });
+        }
+        const hasNewPromptId = ((_a = localStorage_1.default.getPrompt()) === null || _a === void 0 ? void 0 : _a.id) !== (prompt === null || prompt === void 0 ? void 0 : prompt.id);
+        if ((prompt === null || prompt === void 0 ? void 0 : prompt.value) && hasNewPromptId) {
+            fetchData(prompt === null || prompt === void 0 ? void 0 : prompt.value);
+        }
+    }, [
+        prompt,
+        setPrompt,
+    ]);
+    return (react_1.default.createElement(App_1.default, null,
+        react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
+            react_1.default.createElement(Input_1.default, { value: prompt === null || prompt === void 0 ? void 0 : prompt.value, onChange: setPromptString, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", autoFocus: true }),
+            react_1.default.createElement(Button_1.default, { onClick: submit }, "Go!")),
+        react_1.default.createElement("div", null,
+            react_1.default.createElement(Image_1.default, null))));
+};
+exports["default"] = Index;
 
 
 /***/ }),
@@ -1233,10 +1516,14 @@ exports.PublicPage = PublicPage;
 /*!*************************************!*\
   !*** ./src/services/api-service.ts ***!
   \*************************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+const fetch_1 = __importDefault(__webpack_require__(/*! ../utils/fetch */ "./src/utils/fetch.ts"));
 window.promptiverse = window.promptiverse || {};
 const ApiService = {
     getVar: (name) => {
@@ -1244,6 +1531,13 @@ const ApiService = {
             return undefined;
         }
         return window.promptiverse.vars[name];
+    },
+    getImage(prompt) {
+        const apiUrl = ApiService.getVar('API_SERVER_URL');
+        return (0, fetch_1.default)(`${apiUrl}/prompt`, {
+            method: 'POST',
+            postBody: { prompt },
+        });
     },
 };
 exports["default"] = ApiService;
@@ -1387,6 +1681,88 @@ const getAdminResource = (accessToken) => __awaiter(void 0, void 0, void 0, func
     };
 });
 exports.getAdminResource = getAdminResource;
+
+
+/***/ }),
+
+/***/ "./src/utils/fetch.ts":
+/*!****************************!*\
+  !*** ./src/utils/fetch.ts ***!
+  \****************************/
+/***/ (function(__unused_webpack_module, exports) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const fetcher = (url, options) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c;
+    try {
+        const fetchOptions = Object.assign({ method: (options === null || options === void 0 ? void 0 : options.method) || 'GET', headers: {
+                'Accept': ((_a = options === null || options === void 0 ? void 0 : options.headers) === null || _a === void 0 ? void 0 : _a.Accept) || 'application/json',
+                'Content-Type': ((_b = options === null || options === void 0 ? void 0 : options.headers) === null || _b === void 0 ? void 0 : _b['Content-Type']) || 'application/json',
+                'Authorization': ((_c = options === null || options === void 0 ? void 0 : options.headers) === null || _c === void 0 ? void 0 : _c.Authorization) || '',
+            } }, ((options === null || options === void 0 ? void 0 : options.postBody) ? { body: JSON.stringify(options.postBody) } : []));
+        return fetch(url, fetchOptions)
+            .then(response => {
+            if (!response.ok) {
+                // throw new Error(response.statusText)
+                console.error(response.statusText);
+                return { error: response.statusText,
+                    status: response.status };
+            }
+            return response.json();
+        })
+            .then(resp => resp);
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
+exports["default"] = fetcher;
+
+
+/***/ }),
+
+/***/ "./src/utils/localStorage.ts":
+/*!***********************************!*\
+  !*** ./src/utils/localStorage.ts ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const localStorageNamespace = 'promptiverse';
+const LocalStorage = {
+    localStorageExists: () => {
+        return typeof window !== 'undefined' && typeof (window === null || window === void 0 ? void 0 : window.localStorage) !== 'undefined';
+    },
+    setPrompt: (prompt) => {
+        console.log('trying to set in ls: ', prompt);
+        if (!LocalStorage.localStorageExists() || !prompt) {
+            return;
+        }
+        localStorage.setItem(`${localStorageNamespace}.prompt`, JSON.stringify(prompt));
+    },
+    getPrompt: () => {
+        if (!LocalStorage.localStorageExists()) {
+            return;
+        }
+        const val = localStorage.getItem(`${localStorageNamespace}.prompt`);
+        if (!val) {
+            return;
+        }
+        return JSON.parse(val);
+    },
+};
+exports["default"] = LocalStorage;
 
 
 /***/ })

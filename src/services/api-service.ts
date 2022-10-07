@@ -1,3 +1,4 @@
+import fetcher from '../utils/fetch'
 declare global {
   interface Window {
     promptiverse: any;
@@ -12,6 +13,13 @@ const ApiService = {
       return undefined;
     }
     return window.promptiverse.vars[name];
+  },
+  getImage(prompt: string) {
+    const apiUrl = ApiService.getVar('API_SERVER_URL')
+    return fetcher(`${apiUrl}/prompt`, {
+      method: 'POST',
+      postBody: { prompt },
+    })
   },
 };
 

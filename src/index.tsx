@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
-import { App } from "./app";
+import { App } from "./App";
 import { Auth0ProviderWithHistory } from "./auth0-provider-with-history";
 
 ReactDOM.render(
@@ -14,3 +14,4 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById("root")
 );
+
