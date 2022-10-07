@@ -12,6 +12,7 @@
     "jsx": "react",
     "moduleResolution": "node",
     "paths": {
+      "@services/*": ["src/services/*"],
       // "@api/*": ["src/api/*"],
       // "@api": ["src/api/index"],
       // "@components/*": ["src/components/*"],

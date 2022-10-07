@@ -18,7 +18,7 @@
   },
   "scripts": {
     "start": "node ./bin/www",
-    "build:css": "npx tailwindcss --postcss -i ./src/css/base.css -o ./public/css/base.bundle.css",
+    "build:css": "npx tailwindcss --postcss -i ./src/css/base.css -o ./static/css/base.bundle.css",
     "build:dev": "NODE_ENV=development webpack --config ./config/webpack/webpack.config.js",
     "build": "NODE_ENV=production webpack --config ./config/webpack/webpack.config.js && npm run build:css",
     "dev": "concurrently --restart-tries=5 --restart-after=100 --prefix={pid} --prefix-colors=blue,yellow,green,magenta 'npm run build:css -- --watch' 'npm run build:dev'",

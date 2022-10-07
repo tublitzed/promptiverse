@@ -1,9 +1,12 @@
 <script>
-  window.wiremesh = window.wiremesh || {};
-  window.wiremesh.vars = {
+  window.promptiverse = window.promptiverse || {};
+  window.promptiverse.vars = {
     APP_TOKEN: "{{ csrf_token() }}",
-    DEFAULT_HIGH_THRESHOLD: parseInt("{{ app_vars.default_high_threshold }}", 10),
-    DEFAULT_LOW_THRESHOLD: parseInt("{{ app_vars.default_low_threshold }}", 10),
+    API_SERVER_URL: "{{ app_vars.API_SERVER_URL }}",
+    CLIENT_APP_AUTH0_DOMAIN: "{{ app_vars.CLIENT_APP_AUTH0_DOMAIN }}",
+    CLIENT_APP_AUTH0_CLIENT_ID: "{{ app_vars.CLIENT_APP_AUTH0_CLIENT_ID }}",
+    CLIENT_APP_AUTH0_AUDIENCE: "{{ app_vars.CLIENT_APP_AUTH0_AUDIENCE }}",
+    CLIENT_APP_AUTH0_CALLBACK_URL: "{{ app_vars.CLIENT_APP_AUTH0_CALLBACK_URL }}",
     IS_DEV: "{{ app_vars.is_dev}}" === 'True'
   };
 </script>

@@ -31,7 +31,7 @@ const sharedConfig = {
       '@api': path.resolve(__dirname, `${assetsPath}/api`),
       '@components': path.resolve(__dirname, `${assetsPath}/components`),
       '@types': path.resolve(__dirname, `${assetsPath}/types`),
-      '@utils': path.resolve(__dirname, `${assetsPath}/utils`),
+      '@services': path.resolve(__dirname, `${assetsPath}/services`),
     },
     extensions: ['.js', '.json', '.ts', '.tsx'],
   },

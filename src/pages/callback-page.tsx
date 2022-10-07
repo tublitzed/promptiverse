@@ -6,7 +6,7 @@ import { PageLayout } from "../components/page-layout";
 
 export const CallbackPage: React.FC = () => {
   const { error } = useAuth0();
-
+  console.log(`callback`, error)
   if (error) {
     return (
       <PageLayout>

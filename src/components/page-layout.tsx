@@ -9,7 +9,7 @@ interface PageLayoutProps {
 
 export const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
   return (
-    <div className="page-layout">
+    <div className="page-layout bg-blue-100">
       <NavBar />
       <MobileNavBar />
       <div className="page-layout__content">{children}</div>
