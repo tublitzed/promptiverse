@@ -39,8 +39,9 @@ def render_static():
     return render_template('index.html',
                            app_vars=app_vars, cache_buster=cache_buster)
 
-@app.route('/')
-def index():
+@app.route('/', defaults={'all_paths': ''})
+@app.route('/<path:all_paths>')
+def catch_all_route(all_paths):
     return render_static()
 
 @app.route("/callback", methods=["GET", "POST"])

@@ -1,0 +1,1571 @@
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./src/app.tsx":
+/*!*********************!*\
+  !*** ./src/app.tsx ***!
+  \*********************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.App = void 0;
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const page_loader_1 = __webpack_require__(/*! ./components/page-loader */ "./src/components/page-loader.tsx");
+const protected_route_1 = __webpack_require__(/*! ./components/protected-route */ "./src/components/protected-route.tsx");
+const admin_page_1 = __webpack_require__(/*! ./pages/admin-page */ "./src/pages/admin-page.tsx");
+const callback_page_1 = __webpack_require__(/*! ./pages/callback-page */ "./src/pages/callback-page.tsx");
+const home_page_1 = __webpack_require__(/*! ./pages/home-page */ "./src/pages/home-page.tsx");
+const not_found_page_1 = __webpack_require__(/*! ./pages/not-found-page */ "./src/pages/not-found-page.tsx");
+const profile_page_1 = __webpack_require__(/*! ./pages/profile-page */ "./src/pages/profile-page.tsx");
+const protected_page_1 = __webpack_require__(/*! ./pages/protected-page */ "./src/pages/protected-page.tsx");
+const public_page_1 = __webpack_require__(/*! ./pages/public-page */ "./src/pages/public-page.tsx");
+const App = () => {
+    const { isLoading } = (0, auth0_react_1.useAuth0)();
+    if (isLoading) {
+        return (react_1.default.createElement("div", { className: "page-layout" },
+            react_1.default.createElement(page_loader_1.PageLoader, null)));
+    }
+    return (react_1.default.createElement(react_router_dom_1.Switch, null,
+        react_1.default.createElement(react_router_dom_1.Route, { path: "/", exact: true, component: home_page_1.HomePage }),
+        react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/profile", component: profile_page_1.ProfilePage }),
+        react_1.default.createElement(react_router_dom_1.Route, { path: "/public", component: public_page_1.PublicPage }),
+        react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/protected", component: protected_page_1.ProtectedPage }),
+        react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/admin", component: admin_page_1.AdminPage }),
+        react_1.default.createElement(react_router_dom_1.Route, { path: "/callback", component: callback_page_1.CallbackPage }),
+        react_1.default.createElement(react_router_dom_1.Route, { path: "*", component: not_found_page_1.NotFoundPage })));
+};
+exports.App = App;
+
+
+/***/ }),
+
+/***/ "./src/auth0-provider-with-history.tsx":
+/*!*********************************************!*\
+  !*** ./src/auth0-provider-with-history.tsx ***!
+  \*********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Auth0ProviderWithHistory = void 0;
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
+const Auth0ProviderWithHistory = ({ children, }) => {
+    const history = (0, react_router_dom_1.useHistory)();
+    const domain = api_service_1.default.getVar('CLIENT_APP_AUTH0_DOMAIN');
+    const clientId = api_service_1.default.getVar('CLIENT_APP_AUTH0_CLIENT_ID');
+    const audience = api_service_1.default.getVar('CLIENT_APP_AUTH0_AUDIENCE');
+    const redirectUri = api_service_1.default.getVar('CLIENT_APP_AUTH0_CALLBACK_URL');
+    console.log('redirectUri', redirectUri);
+    const onRedirectCallback = (appState) => {
+        history.push((appState === null || appState === void 0 ? void 0 : appState.returnTo) || window.location.pathname);
+    };
+    if (!(domain && clientId && audience)) {
+        return null;
+    }
+    return (react_1.default.createElement(auth0_react_1.Auth0Provider, { domain: domain, clientId: clientId, audience: audience, redirectUri: redirectUri, onRedirectCallback: onRedirectCallback }, children));
+};
+exports.Auth0ProviderWithHistory = Auth0ProviderWithHistory;
+
+
+/***/ }),
+
+/***/ "./src/components/auth0-feature.tsx":
+/*!******************************************!*\
+  !*** ./src/components/auth0-feature.tsx ***!
+  \******************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Auth0Feature = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Auth0Feature = ({ title, description, resourceUrl, icon, }) => (react_1.default.createElement("a", { href: resourceUrl, className: "auth0-feature", target: "_blank", rel: "noopener noreferrer" },
+    react_1.default.createElement("h3", { className: "auth0-feature__headline" },
+        react_1.default.createElement("img", { className: "auth0-feature__icon", src: icon, alt: "external link icon" }),
+        title),
+    react_1.default.createElement("p", { className: "auth0-feature__description" }, description)));
+exports.Auth0Feature = Auth0Feature;
+
+
+/***/ }),
+
+/***/ "./src/components/auth0-features.tsx":
+/*!*******************************************!*\
+  !*** ./src/components/auth0-features.tsx ***!
+  \*******************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Auth0Features = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const auth0_feature_1 = __webpack_require__(/*! ./auth0-feature */ "./src/components/auth0-feature.tsx");
+const Auth0Features = () => {
+    const featuresList = [
+        {
+            title: "Identity Providers",
+            description: "Auth0 supports social providers such as Google, Facebook, and Twitter, along with Enterprise providers such as Microsoft Office 365, Google Apps, and Azure. You can also use any OAuth 2.0 Authorization Server.",
+            resourceUrl: "https://auth0.com/docs/connections",
+            icon: "https://cdn.auth0.com/blog/hello-auth0/identity-providers-logo.svg",
+        },
+        {
+            title: "Multi-Factor Authentication",
+            description: "You can require your users to provide more than one piece of identifying information when logging in. MFA delivers one-time codes to your users via SMS, voice, email, WebAuthn, and push notifications.",
+            resourceUrl: "https://auth0.com/docs/multifactor-authentication",
+            icon: "https://cdn.auth0.com/blog/hello-auth0/mfa-logo.svg",
+        },
+        {
+            title: "Attack Protection",
+            description: "Auth0 can detect attacks and stop malicious attempts to access your application such as blocking traffic from certain IPs and displaying CAPTCHA. Auth0 supports the principle of layered protection in security that uses a variety of signals to detect and mitigate attacks.",
+            resourceUrl: "https://auth0.com/docs/attack-protection",
+            icon: "https://cdn.auth0.com/blog/hello-auth0/advanced-protection-logo.svg",
+        },
+        {
+            title: "Serverless Extensibility",
+            description: "Actions are functions that allow you to customize the behavior of Auth0. Each action is bound to a specific triggering event on the Auth0 platform. Auth0 invokes the custom code of these Actions when the corresponding triggering event is produced at runtime.",
+            resourceUrl: "https://auth0.com/docs/actions",
+            icon: "https://cdn.auth0.com/blog/hello-auth0/private-cloud-logo.svg",
+        },
+    ];
+    return (react_1.default.createElement("div", { className: "auth0-features" },
+        react_1.default.createElement("h2", { className: "auth0-features__title" }, "Explore Auth0 Features"),
+        react_1.default.createElement("div", { className: "auth0-features__grid" }, featuresList.map((feature) => (react_1.default.createElement(auth0_feature_1.Auth0Feature, { key: feature.resourceUrl, title: feature.title, description: feature.description, resourceUrl: feature.resourceUrl, icon: feature.icon }))))));
+};
+exports.Auth0Features = Auth0Features;
+
+
+/***/ }),
+
+/***/ "./src/components/buttons/login-button.tsx":
+/*!*************************************************!*\
+  !*** ./src/components/buttons/login-button.tsx ***!
+  \*************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LoginButton = void 0;
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const LoginButton = () => {
+    const { loginWithRedirect } = (0, auth0_react_1.useAuth0)();
+    const handleLogin = () => __awaiter(void 0, void 0, void 0, function* () {
+        yield loginWithRedirect({
+            prompt: "login",
+            appState: {
+                returnTo: "/profile",
+            },
+        });
+    });
+    return (react_1.default.createElement("button", { className: "button__login", onClick: handleLogin }, "Log In"));
+};
+exports.LoginButton = LoginButton;
+
+
+/***/ }),
+
+/***/ "./src/components/buttons/logout-button.tsx":
+/*!**************************************************!*\
+  !*** ./src/components/buttons/logout-button.tsx ***!
+  \**************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LogoutButton = void 0;
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const LogoutButton = () => {
+    const { logout } = (0, auth0_react_1.useAuth0)();
+    const handleLogout = () => {
+        logout({
+            returnTo: window.location.origin,
+        });
+    };
+    return (react_1.default.createElement("button", { className: "button__logout", onClick: handleLogout }, "Log Out"));
+};
+exports.LogoutButton = LogoutButton;
+
+
+/***/ }),
+
+/***/ "./src/components/buttons/signup-button.tsx":
+/*!**************************************************!*\
+  !*** ./src/components/buttons/signup-button.tsx ***!
+  \**************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SignupButton = void 0;
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const SignupButton = () => {
+    const { loginWithRedirect } = (0, auth0_react_1.useAuth0)();
+    const handleSignUp = () => __awaiter(void 0, void 0, void 0, function* () {
+        yield loginWithRedirect({
+            prompt: "login",
+            screen_hint: "signup",
+            appState: {
+                returnTo: "/profile",
+            },
+        });
+    });
+    return (react_1.default.createElement("button", { className: "button__sign-up", onClick: handleSignUp }, "Sign Up"));
+};
+exports.SignupButton = SignupButton;
+
+
+/***/ }),
+
+/***/ "./src/components/code-snippet.tsx":
+/*!*****************************************!*\
+  !*** ./src/components/code-snippet.tsx ***!
+  \*****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CodeSnippet = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const CodeSnippet = ({ title, code = "", }) => (react_1.default.createElement("div", { className: "code-snippet" },
+    react_1.default.createElement("span", { className: "code-snippet__title" }, title),
+    react_1.default.createElement("div", { className: "code-snippet__container" },
+        react_1.default.createElement("div", { className: "code-snippet__wrapper" },
+            react_1.default.createElement("pre", { className: "code-snippet__body" }, code)))));
+exports.CodeSnippet = CodeSnippet;
+
+
+/***/ }),
+
+/***/ "./src/components/hero-banner.tsx":
+/*!****************************************!*\
+  !*** ./src/components/hero-banner.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.HeroBanner = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const HeroBanner = () => {
+    const logo = "https://cdn.auth0.com/blog/developer-hub/react-logo.svg";
+    return (react_1.default.createElement("div", { className: "hero-banner hero-banner--pink-yellow" },
+        react_1.default.createElement("div", { className: "hero-banner__logo" },
+            react_1.default.createElement("img", { className: "hero-banner__image", src: logo, alt: "React logo" })),
+        react_1.default.createElement("h1", { className: "hero-banner__headline" }, "Hello, React World!"),
+        react_1.default.createElement("p", { className: "hero-banner__description" },
+            "This is a sample application that demonstrates the authentication flow for React apps using ",
+            react_1.default.createElement("strong", null, "Auth0"),
+            "."),
+        react_1.default.createElement("a", { id: "code-sample-link", target: "_blank", rel: "noopener noreferrer", href: "https://auth0.com/developers/hub/code-samples/spa/react-typescript/basic-authentication", className: "button button--secondary" }, "Check out the React code sample \u2192")));
+};
+exports.HeroBanner = HeroBanner;
+
+
+/***/ }),
+
+/***/ "./src/components/navigation/desktop/nav-bar-brand.tsx":
+/*!*************************************************************!*\
+  !*** ./src/components/navigation/desktop/nav-bar-brand.tsx ***!
+  \*************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.NavBarBrand = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const NavBarBrand = () => {
+    return (react_1.default.createElement("div", { className: "nav-bar__brand" },
+        react_1.default.createElement(react_router_dom_1.NavLink, { to: "/", exact: true },
+            react_1.default.createElement("img", { className: "nav-bar__logo", src: "https://cdn.auth0.com/blog/hub/code-samples/hello-world/auth0-logo.svg", alt: "Auth0 shield logo", width: "122", height: "36" }))));
+};
+exports.NavBarBrand = NavBarBrand;
+
+
+/***/ }),
+
+/***/ "./src/components/navigation/desktop/nav-bar-buttons.tsx":
+/*!***************************************************************!*\
+  !*** ./src/components/navigation/desktop/nav-bar-buttons.tsx ***!
+  \***************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.NavBarButtons = void 0;
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const login_button_1 = __webpack_require__(/*! ../../buttons/login-button */ "./src/components/buttons/login-button.tsx");
+const logout_button_1 = __webpack_require__(/*! ../../buttons/logout-button */ "./src/components/buttons/logout-button.tsx");
+const signup_button_1 = __webpack_require__(/*! ../../buttons/signup-button */ "./src/components/buttons/signup-button.tsx");
+const NavBarButtons = () => {
+    const { isAuthenticated } = (0, auth0_react_1.useAuth0)();
+    return (react_1.default.createElement("div", { className: "nav-bar__buttons" },
+        !isAuthenticated && (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(signup_button_1.SignupButton, null),
+            react_1.default.createElement(login_button_1.LoginButton, null))),
+        isAuthenticated && (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(logout_button_1.LogoutButton, null)))));
+};
+exports.NavBarButtons = NavBarButtons;
+
+
+/***/ }),
+
+/***/ "./src/components/navigation/desktop/nav-bar-tab.tsx":
+/*!***********************************************************!*\
+  !*** ./src/components/navigation/desktop/nav-bar-tab.tsx ***!
+  \***********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.NavBarTab = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const NavBarTab = ({ path, label }) => {
+    return (react_1.default.createElement(react_router_dom_1.NavLink, { to: path, exact: true, className: "nav-bar__tab", activeClassName: "nav-bar__tab--active" }, label));
+};
+exports.NavBarTab = NavBarTab;
+
+
+/***/ }),
+
+/***/ "./src/components/navigation/desktop/nav-bar-tabs.tsx":
+/*!************************************************************!*\
+  !*** ./src/components/navigation/desktop/nav-bar-tabs.tsx ***!
+  \************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.NavBarTabs = void 0;
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const nav_bar_tab_1 = __webpack_require__(/*! ./nav-bar-tab */ "./src/components/navigation/desktop/nav-bar-tab.tsx");
+const NavBarTabs = () => {
+    const { isAuthenticated } = (0, auth0_react_1.useAuth0)();
+    return (react_1.default.createElement("div", { className: "nav-bar__tabs" },
+        react_1.default.createElement(nav_bar_tab_1.NavBarTab, { path: "/profile", label: "Profile" }),
+        react_1.default.createElement(nav_bar_tab_1.NavBarTab, { path: "/public", label: "Public" }),
+        isAuthenticated && (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(nav_bar_tab_1.NavBarTab, { path: "/protected", label: "Protected" }),
+            react_1.default.createElement(nav_bar_tab_1.NavBarTab, { path: "/admin", label: "Admin" })))));
+};
+exports.NavBarTabs = NavBarTabs;
+
+
+/***/ }),
+
+/***/ "./src/components/navigation/desktop/nav-bar.tsx":
+/*!*******************************************************!*\
+  !*** ./src/components/navigation/desktop/nav-bar.tsx ***!
+  \*******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.NavBar = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const nav_bar_brand_1 = __webpack_require__(/*! ./nav-bar-brand */ "./src/components/navigation/desktop/nav-bar-brand.tsx");
+const nav_bar_buttons_1 = __webpack_require__(/*! ./nav-bar-buttons */ "./src/components/navigation/desktop/nav-bar-buttons.tsx");
+const nav_bar_tabs_1 = __webpack_require__(/*! ./nav-bar-tabs */ "./src/components/navigation/desktop/nav-bar-tabs.tsx");
+const NavBar = () => {
+    return (react_1.default.createElement("div", { className: "nav-bar__container" },
+        react_1.default.createElement("nav", { className: "nav-bar" },
+            react_1.default.createElement(nav_bar_brand_1.NavBarBrand, null),
+            react_1.default.createElement(nav_bar_tabs_1.NavBarTabs, null),
+            react_1.default.createElement(nav_bar_buttons_1.NavBarButtons, null))));
+};
+exports.NavBar = NavBar;
+
+
+/***/ }),
+
+/***/ "./src/components/navigation/mobile/mobile-menu-toggle-button.tsx":
+/*!************************************************************************!*\
+  !*** ./src/components/navigation/mobile/mobile-menu-toggle-button.tsx ***!
+  \************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MobileMenuToggleButton = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const MobileMenuToggleButton = ({ icon, handleClick, }) => {
+    return (react_1.default.createElement("span", { className: "mobile-nav-bar__toggle material-icons", id: "mobile-menu-toggle-button", onClick: handleClick }, icon));
+};
+exports.MobileMenuToggleButton = MobileMenuToggleButton;
+
+
+/***/ }),
+
+/***/ "./src/components/navigation/mobile/mobile-nav-bar-brand.tsx":
+/*!*******************************************************************!*\
+  !*** ./src/components/navigation/mobile/mobile-nav-bar-brand.tsx ***!
+  \*******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MobileNavBarBrand = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const MobileNavBarBrand = ({ handleClick, }) => {
+    return (react_1.default.createElement("div", { onClick: handleClick, className: "mobile-nav-bar__brand" },
+        react_1.default.createElement(react_router_dom_1.NavLink, { to: "/" },
+            react_1.default.createElement("img", { className: "mobile-nav-bar__logo", src: "https://cdn.auth0.com/blog/hub/code-samples/hello-world/auth0-logo.svg", alt: "Auth0 shield logo", width: "82", height: "24" }))));
+};
+exports.MobileNavBarBrand = MobileNavBarBrand;
+
+
+/***/ }),
+
+/***/ "./src/components/navigation/mobile/mobile-nav-bar-buttons.tsx":
+/*!*********************************************************************!*\
+  !*** ./src/components/navigation/mobile/mobile-nav-bar-buttons.tsx ***!
+  \*********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MobileNavBarButtons = void 0;
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const login_button_1 = __webpack_require__(/*! ../../buttons/login-button */ "./src/components/buttons/login-button.tsx");
+const logout_button_1 = __webpack_require__(/*! ../../buttons/logout-button */ "./src/components/buttons/logout-button.tsx");
+const signup_button_1 = __webpack_require__(/*! ../../buttons/signup-button */ "./src/components/buttons/signup-button.tsx");
+const MobileNavBarButtons = () => {
+    const { isAuthenticated } = (0, auth0_react_1.useAuth0)();
+    return (react_1.default.createElement("div", { className: "mobile-nav-bar__buttons" },
+        !isAuthenticated && (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(signup_button_1.SignupButton, null),
+            react_1.default.createElement(login_button_1.LoginButton, null))),
+        isAuthenticated && (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(logout_button_1.LogoutButton, null)))));
+};
+exports.MobileNavBarButtons = MobileNavBarButtons;
+
+
+/***/ }),
+
+/***/ "./src/components/navigation/mobile/mobile-nav-bar-tab.tsx":
+/*!*****************************************************************!*\
+  !*** ./src/components/navigation/mobile/mobile-nav-bar-tab.tsx ***!
+  \*****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MobileNavBarTab = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const MobileNavBarTab = ({ path, label, handleClick, }) => {
+    return (react_1.default.createElement(react_router_dom_1.NavLink, { to: path, onClick: handleClick, exact: true, className: "mobile-nav-bar__tab", activeClassName: "mobile-nav-bar__tab--active" }, label));
+};
+exports.MobileNavBarTab = MobileNavBarTab;
+
+
+/***/ }),
+
+/***/ "./src/components/navigation/mobile/mobile-nav-bar-tabs.tsx":
+/*!******************************************************************!*\
+  !*** ./src/components/navigation/mobile/mobile-nav-bar-tabs.tsx ***!
+  \******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MobileNavBarTabs = void 0;
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const mobile_nav_bar_tab_1 = __webpack_require__(/*! ./mobile-nav-bar-tab */ "./src/components/navigation/mobile/mobile-nav-bar-tab.tsx");
+const MobileNavBarTabs = ({ handleClick, }) => {
+    const { isAuthenticated } = (0, auth0_react_1.useAuth0)();
+    return (react_1.default.createElement("div", { className: "mobile-nav-bar__tabs" },
+        react_1.default.createElement(mobile_nav_bar_tab_1.MobileNavBarTab, { path: "/profile", label: "Profile", handleClick: handleClick }),
+        react_1.default.createElement(mobile_nav_bar_tab_1.MobileNavBarTab, { path: "/public", label: "Public", handleClick: handleClick }),
+        isAuthenticated && (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(mobile_nav_bar_tab_1.MobileNavBarTab, { path: "/protected", label: "Protected", handleClick: handleClick }),
+            react_1.default.createElement(mobile_nav_bar_tab_1.MobileNavBarTab, { path: "/admin", label: "Admin", handleClick: handleClick })))));
+};
+exports.MobileNavBarTabs = MobileNavBarTabs;
+
+
+/***/ }),
+
+/***/ "./src/components/navigation/mobile/mobile-nav-bar.tsx":
+/*!*************************************************************!*\
+  !*** ./src/components/navigation/mobile/mobile-nav-bar.tsx ***!
+  \*************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MobileNavBar = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const mobile_menu_toggle_button_1 = __webpack_require__(/*! ./mobile-menu-toggle-button */ "./src/components/navigation/mobile/mobile-menu-toggle-button.tsx");
+const mobile_nav_bar_brand_1 = __webpack_require__(/*! ./mobile-nav-bar-brand */ "./src/components/navigation/mobile/mobile-nav-bar-brand.tsx");
+const mobile_nav_bar_buttons_1 = __webpack_require__(/*! ./mobile-nav-bar-buttons */ "./src/components/navigation/mobile/mobile-nav-bar-buttons.tsx");
+const mobile_nav_bar_tabs_1 = __webpack_require__(/*! ./mobile-nav-bar-tabs */ "./src/components/navigation/mobile/mobile-nav-bar-tabs.tsx");
+var MobileMenuState;
+(function (MobileMenuState) {
+    MobileMenuState["CLOSED"] = "closed";
+    MobileMenuState["OPEN"] = "open";
+})(MobileMenuState || (MobileMenuState = {}));
+var MobileMenuIcon;
+(function (MobileMenuIcon) {
+    MobileMenuIcon["CLOSE"] = "close";
+    MobileMenuIcon["MENU"] = "menu";
+})(MobileMenuIcon || (MobileMenuIcon = {}));
+const MobileNavBar = () => {
+    const [mobileMenuState, setMobileMenuState] = react_1.default.useState(MobileMenuState.CLOSED);
+    const [mobileMenuIcon, setMobileMenuIcon] = react_1.default.useState(MobileMenuIcon.MENU);
+    const isMobileMenuOpen = () => {
+        return mobileMenuState === MobileMenuState.OPEN;
+    };
+    const closeMobileMenu = () => {
+        document.body.classList.remove("mobile-scroll-lock");
+        setMobileMenuState(MobileMenuState.CLOSED);
+        setMobileMenuIcon(MobileMenuIcon.MENU);
+    };
+    const openMobileMenu = () => {
+        document.body.classList.add("mobile-scroll-lock");
+        setMobileMenuState(MobileMenuState.OPEN);
+        setMobileMenuIcon(MobileMenuIcon.CLOSE);
+    };
+    const toggleMobileMenu = () => {
+        if (isMobileMenuOpen()) {
+            closeMobileMenu();
+        }
+        else {
+            openMobileMenu();
+        }
+    };
+    return (react_1.default.createElement("div", { className: "mobile-nav-bar__container" },
+        react_1.default.createElement("nav", { className: "mobile-nav-bar" },
+            react_1.default.createElement(mobile_nav_bar_brand_1.MobileNavBarBrand, { handleClick: closeMobileMenu }),
+            react_1.default.createElement(mobile_menu_toggle_button_1.MobileMenuToggleButton, { icon: mobileMenuIcon, handleClick: toggleMobileMenu }),
+            isMobileMenuOpen() && (react_1.default.createElement("div", { className: "mobile-nav-bar__menu" },
+                react_1.default.createElement(mobile_nav_bar_tabs_1.MobileNavBarTabs, { handleClick: closeMobileMenu }),
+                react_1.default.createElement(mobile_nav_bar_buttons_1.MobileNavBarButtons, null))))));
+};
+exports.MobileNavBar = MobileNavBar;
+
+
+/***/ }),
+
+/***/ "./src/components/page-footer-hyperlink.tsx":
+/*!**************************************************!*\
+  !*** ./src/components/page-footer-hyperlink.tsx ***!
+  \**************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PageFooterHyperlink = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const PageFooterHyperlink = ({ children, path, }) => {
+    return (react_1.default.createElement("a", { className: "page-footer__hyperlink", href: path, target: "_blank", rel: "noopener noreferrer" }, children));
+};
+exports.PageFooterHyperlink = PageFooterHyperlink;
+
+
+/***/ }),
+
+/***/ "./src/components/page-footer.tsx":
+/*!****************************************!*\
+  !*** ./src/components/page-footer.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PageFooter = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const page_footer_hyperlink_1 = __webpack_require__(/*! ./page-footer-hyperlink */ "./src/components/page-footer-hyperlink.tsx");
+const PageFooter = () => {
+    const resourceList = [
+        {
+            path: "https://auth0.com/why-auth0/",
+            label: "Why Auth0",
+        },
+        {
+            path: "https://auth0.com/docs/get-started",
+            label: "How It Works",
+        },
+        {
+            path: "https://auth0.com/blog/developers/",
+            label: "Developer Blog",
+        },
+        {
+            path: "https://auth0.com/contact-us",
+            label: "Contact an Expert",
+        },
+    ];
+    return (react_1.default.createElement("footer", { className: "page-footer" },
+        react_1.default.createElement("div", { className: "page-footer-grid" },
+            react_1.default.createElement("div", { className: "page-footer-grid__info" },
+                react_1.default.createElement("div", { className: "page-footer-info__message" },
+                    react_1.default.createElement("p", { className: "page-footer-message__headline" },
+                        react_1.default.createElement("span", null, "This sample application is brought to you by\u00A0"),
+                        react_1.default.createElement(page_footer_hyperlink_1.PageFooterHyperlink, { path: "https://auth0.com/" }, "Auth0")),
+                    react_1.default.createElement("p", { className: "page-footer-message__description" },
+                        react_1.default.createElement(page_footer_hyperlink_1.PageFooterHyperlink, { path: "https://auth0.com/docs/quickstarts/" },
+                            react_1.default.createElement("span", null, "Securely implement authentication using Auth0 on any stack and any device\u00A0"),
+                            react_1.default.createElement("u", null, "in less than 10 minutes")))),
+                react_1.default.createElement("div", { className: "page-footer-info__button" },
+                    react_1.default.createElement("a", { id: "create-account-button", className: "button button--secondary", href: "https://auth0.com/signup", target: "_blank", rel: "noreferrer noopener" }, "Create Free Auth0 Account")),
+                react_1.default.createElement("div", { className: "page-footer-info__resource-list" }, resourceList.map((resource) => (react_1.default.createElement("div", { key: resource.path, className: "page-footer-info__resource-list-item" },
+                    react_1.default.createElement(page_footer_hyperlink_1.PageFooterHyperlink, { path: resource.path }, resource.label)))))),
+            react_1.default.createElement("div", { className: "page-footer-grid__brand" },
+                react_1.default.createElement("div", { className: "page-footer-brand" },
+                    react_1.default.createElement("img", { className: "page-footer-brand__logo", src: "https://cdn.auth0.com/blog/hello-auth0/auth0-shield.svg", alt: "Auth0", width: "20", height: "22.22" }),
+                    react_1.default.createElement(page_footer_hyperlink_1.PageFooterHyperlink, { path: "https://auth0.com/" }, "Auth0 Inc"))))));
+};
+exports.PageFooter = PageFooter;
+
+
+/***/ }),
+
+/***/ "./src/components/page-layout.tsx":
+/*!****************************************!*\
+  !*** ./src/components/page-layout.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PageLayout = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const nav_bar_1 = __webpack_require__(/*! ./navigation/desktop/nav-bar */ "./src/components/navigation/desktop/nav-bar.tsx");
+const mobile_nav_bar_1 = __webpack_require__(/*! ./navigation/mobile/mobile-nav-bar */ "./src/components/navigation/mobile/mobile-nav-bar.tsx");
+const page_footer_1 = __webpack_require__(/*! ./page-footer */ "./src/components/page-footer.tsx");
+const PageLayout = ({ children }) => {
+    return (react_1.default.createElement("div", { className: "page-layout bg-blue-100" },
+        react_1.default.createElement(nav_bar_1.NavBar, null),
+        react_1.default.createElement(mobile_nav_bar_1.MobileNavBar, null),
+        react_1.default.createElement("div", { className: "page-layout__content" }, children),
+        react_1.default.createElement(page_footer_1.PageFooter, null)));
+};
+exports.PageLayout = PageLayout;
+
+
+/***/ }),
+
+/***/ "./src/components/page-loader.tsx":
+/*!****************************************!*\
+  !*** ./src/components/page-loader.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PageLoader = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const PageLoader = () => {
+    const loadingImg = "https://cdn.auth0.com/blog/hello-auth0/loader.svg";
+    return (react_1.default.createElement("div", { className: "loader" },
+        react_1.default.createElement("img", { src: loadingImg, alt: "Loading..." })));
+};
+exports.PageLoader = PageLoader;
+
+
+/***/ }),
+
+/***/ "./src/components/protected-route.tsx":
+/*!********************************************!*\
+  !*** ./src/components/protected-route.tsx ***!
+  \********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ProtectedRoute = void 0;
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const page_loader_1 = __webpack_require__(/*! ./page-loader */ "./src/components/page-loader.tsx");
+const ProtectedRoute = (_a) => {
+    var { component } = _a, args = __rest(_a, ["component"]);
+    return (react_1.default.createElement(react_router_dom_1.Route, Object.assign({ component: (0, auth0_react_1.withAuthenticationRequired)(component, {
+            onRedirecting: () => (react_1.default.createElement("div", { className: "page-layout" },
+                react_1.default.createElement(page_loader_1.PageLoader, null))),
+        }) }, args)));
+};
+exports.ProtectedRoute = ProtectedRoute;
+
+
+/***/ }),
+
+/***/ "./src/index.tsx":
+/*!***********************!*\
+  !*** ./src/index.tsx ***!
+  \***********************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_dom_1 = __importDefault(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const app_1 = __webpack_require__(/*! ./app */ "./src/app.tsx");
+const auth0_provider_with_history_1 = __webpack_require__(/*! ./auth0-provider-with-history */ "./src/auth0-provider-with-history.tsx");
+react_dom_1.default.render(react_1.default.createElement(react_1.default.StrictMode, null,
+    react_1.default.createElement(react_router_dom_1.BrowserRouter, null,
+        react_1.default.createElement(auth0_provider_with_history_1.Auth0ProviderWithHistory, null,
+            react_1.default.createElement(app_1.App, null)))), document.getElementById("root"));
+
+
+/***/ }),
+
+/***/ "./src/pages/admin-page.tsx":
+/*!**********************************!*\
+  !*** ./src/pages/admin-page.tsx ***!
+  \**********************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AdminPage = void 0;
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const code_snippet_1 = __webpack_require__(/*! ../components/code-snippet */ "./src/components/code-snippet.tsx");
+const page_layout_1 = __webpack_require__(/*! ../components/page-layout */ "./src/components/page-layout.tsx");
+const message_service_1 = __webpack_require__(/*! ../services/message.service */ "./src/services/message.service.ts");
+const AdminPage = () => {
+    const [message, setMessage] = (0, react_1.useState)("");
+    const { getAccessTokenSilently } = (0, auth0_react_1.useAuth0)();
+    (0, react_1.useEffect)(() => {
+        let isMounted = true;
+        const getMessage = () => __awaiter(void 0, void 0, void 0, function* () {
+            const accessToken = yield getAccessTokenSilently();
+            const { data, error } = yield (0, message_service_1.getAdminResource)(accessToken);
+            if (!isMounted) {
+                return;
+            }
+            if (data) {
+                setMessage(JSON.stringify(data, null, 2));
+            }
+            if (error) {
+                setMessage(JSON.stringify(error, null, 2));
+            }
+        });
+        getMessage();
+        return () => {
+            isMounted = false;
+        };
+    }, [getAccessTokenSilently]);
+    return (react_1.default.createElement(page_layout_1.PageLayout, null,
+        react_1.default.createElement("div", { className: "content-layout" },
+            react_1.default.createElement("h1", { id: "page-title", className: "content__title" }, "Admin Page"),
+            react_1.default.createElement("div", { className: "content__body" },
+                react_1.default.createElement("p", { id: "page-description" },
+                    react_1.default.createElement("span", null,
+                        "This page retrieves an ",
+                        react_1.default.createElement("strong", null, "admin message"),
+                        " from an external API."),
+                    react_1.default.createElement("span", null,
+                        react_1.default.createElement("strong", null,
+                            "Only authenticated users with the",
+                            " ",
+                            react_1.default.createElement("code", null, "read:admin-messages"),
+                            " permission should access this page."))),
+                react_1.default.createElement(code_snippet_1.CodeSnippet, { title: "Admin Message", code: message })))));
+};
+exports.AdminPage = AdminPage;
+
+
+/***/ }),
+
+/***/ "./src/pages/callback-page.tsx":
+/*!*************************************!*\
+  !*** ./src/pages/callback-page.tsx ***!
+  \*************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CallbackPage = void 0;
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const nav_bar_1 = __webpack_require__(/*! ../components/navigation/desktop/nav-bar */ "./src/components/navigation/desktop/nav-bar.tsx");
+const mobile_nav_bar_1 = __webpack_require__(/*! ../components/navigation/mobile/mobile-nav-bar */ "./src/components/navigation/mobile/mobile-nav-bar.tsx");
+const page_layout_1 = __webpack_require__(/*! ../components/page-layout */ "./src/components/page-layout.tsx");
+const CallbackPage = () => {
+    const { error } = (0, auth0_react_1.useAuth0)();
+    console.log(`callback`, error);
+    if (error) {
+        return (react_1.default.createElement(page_layout_1.PageLayout, null,
+            react_1.default.createElement("div", { className: "content-layout" },
+                react_1.default.createElement("h1", { id: "page-title", className: "content__title" }, "Error"),
+                react_1.default.createElement("div", { className: "content__body" },
+                    react_1.default.createElement("p", { id: "page-description" },
+                        react_1.default.createElement("span", null, error.message))))));
+    }
+    return (react_1.default.createElement("div", { className: "page-layout" },
+        react_1.default.createElement(nav_bar_1.NavBar, null),
+        react_1.default.createElement(mobile_nav_bar_1.MobileNavBar, null),
+        react_1.default.createElement("div", { className: "page-layout__content" })));
+};
+exports.CallbackPage = CallbackPage;
+
+
+/***/ }),
+
+/***/ "./src/pages/home-page.tsx":
+/*!*********************************!*\
+  !*** ./src/pages/home-page.tsx ***!
+  \*********************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.HomePage = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const auth0_features_1 = __webpack_require__(/*! ../components/auth0-features */ "./src/components/auth0-features.tsx");
+const hero_banner_1 = __webpack_require__(/*! ../components/hero-banner */ "./src/components/hero-banner.tsx");
+const page_layout_1 = __webpack_require__(/*! ../components/page-layout */ "./src/components/page-layout.tsx");
+const HomePage = () => (react_1.default.createElement(page_layout_1.PageLayout, null,
+    react_1.default.createElement(hero_banner_1.HeroBanner, null),
+    react_1.default.createElement(auth0_features_1.Auth0Features, null)));
+exports.HomePage = HomePage;
+
+
+/***/ }),
+
+/***/ "./src/pages/not-found-page.tsx":
+/*!**************************************!*\
+  !*** ./src/pages/not-found-page.tsx ***!
+  \**************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.NotFoundPage = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const page_layout_1 = __webpack_require__(/*! ../components/page-layout */ "./src/components/page-layout.tsx");
+const NotFoundPage = () => {
+    return (react_1.default.createElement(page_layout_1.PageLayout, null,
+        react_1.default.createElement("div", { className: "content-layout" },
+            react_1.default.createElement("h1", { id: "page-title", className: "content__title" }, "Not Found"))));
+};
+exports.NotFoundPage = NotFoundPage;
+
+
+/***/ }),
+
+/***/ "./src/pages/profile-page.tsx":
+/*!************************************!*\
+  !*** ./src/pages/profile-page.tsx ***!
+  \************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ProfilePage = void 0;
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const code_snippet_1 = __webpack_require__(/*! ../components/code-snippet */ "./src/components/code-snippet.tsx");
+const page_layout_1 = __webpack_require__(/*! ../components/page-layout */ "./src/components/page-layout.tsx");
+const ProfilePage = () => {
+    const { user } = (0, auth0_react_1.useAuth0)();
+    if (!user) {
+        return null;
+    }
+    return (react_1.default.createElement(page_layout_1.PageLayout, null,
+        react_1.default.createElement("div", { className: "content-layout" },
+            react_1.default.createElement("h1", { id: "page-title", className: "content__title" }, "Profile Page"),
+            react_1.default.createElement("div", { className: "content__body" },
+                react_1.default.createElement("p", { id: "page-description" },
+                    react_1.default.createElement("span", null,
+                        "You can use the ",
+                        react_1.default.createElement("strong", null, "ID Token"),
+                        " to get the profile information of an authenticated user."),
+                    react_1.default.createElement("span", null,
+                        react_1.default.createElement("strong", null, "Only authenticated users can access this page."))),
+                react_1.default.createElement("div", { className: "profile-grid" },
+                    react_1.default.createElement("div", { className: "profile__header" },
+                        react_1.default.createElement("img", { src: user.picture, alt: "Profile", className: "profile__avatar" }),
+                        react_1.default.createElement("div", { className: "profile__headline" },
+                            react_1.default.createElement("h2", { className: "profile__title" }, user.name),
+                            react_1.default.createElement("span", { className: "profile__description" }, user.email))),
+                    react_1.default.createElement("div", { className: "profile__details" },
+                        react_1.default.createElement(code_snippet_1.CodeSnippet, { title: "Decoded ID Token", code: JSON.stringify(user, null, 2) })))))));
+};
+exports.ProfilePage = ProfilePage;
+
+
+/***/ }),
+
+/***/ "./src/pages/protected-page.tsx":
+/*!**************************************!*\
+  !*** ./src/pages/protected-page.tsx ***!
+  \**************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ProtectedPage = void 0;
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const code_snippet_1 = __webpack_require__(/*! ../components/code-snippet */ "./src/components/code-snippet.tsx");
+const page_layout_1 = __webpack_require__(/*! ../components/page-layout */ "./src/components/page-layout.tsx");
+const message_service_1 = __webpack_require__(/*! ../services/message.service */ "./src/services/message.service.ts");
+const ProtectedPage = () => {
+    const [message, setMessage] = (0, react_1.useState)("");
+    const { getAccessTokenSilently } = (0, auth0_react_1.useAuth0)();
+    (0, react_1.useEffect)(() => {
+        let isMounted = true;
+        const getMessage = () => __awaiter(void 0, void 0, void 0, function* () {
+            const accessToken = yield getAccessTokenSilently();
+            const { data, error } = yield (0, message_service_1.getProtectedResource)(accessToken);
+            if (!isMounted) {
+                return;
+            }
+            if (data) {
+                setMessage(JSON.stringify(data, null, 2));
+            }
+            if (error) {
+                setMessage(JSON.stringify(error, null, 2));
+            }
+        });
+        getMessage();
+        return () => {
+            isMounted = false;
+        };
+    }, [getAccessTokenSilently]);
+    return (react_1.default.createElement(page_layout_1.PageLayout, null,
+        react_1.default.createElement("div", { className: "content-layout" },
+            react_1.default.createElement("h1", { id: "page-title", className: "content__title" }, "Protected Page"),
+            react_1.default.createElement("div", { className: "content__body" },
+                react_1.default.createElement("p", { id: "page-description" },
+                    react_1.default.createElement("span", null,
+                        "This page retrieves a ",
+                        react_1.default.createElement("strong", null, "protected message"),
+                        " from an external API."),
+                    react_1.default.createElement("span", null,
+                        react_1.default.createElement("strong", null, "Only authenticated users can access this page."))),
+                react_1.default.createElement(code_snippet_1.CodeSnippet, { title: "Protected Message", code: message })))));
+};
+exports.ProtectedPage = ProtectedPage;
+
+
+/***/ }),
+
+/***/ "./src/pages/public-page.tsx":
+/*!***********************************!*\
+  !*** ./src/pages/public-page.tsx ***!
+  \***********************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PublicPage = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const code_snippet_1 = __webpack_require__(/*! ../components/code-snippet */ "./src/components/code-snippet.tsx");
+const page_layout_1 = __webpack_require__(/*! ../components/page-layout */ "./src/components/page-layout.tsx");
+const message_service_1 = __webpack_require__(/*! ../services/message.service */ "./src/services/message.service.ts");
+const PublicPage = () => {
+    const [message, setMessage] = (0, react_1.useState)("");
+    (0, react_1.useEffect)(() => {
+        let isMounted = true;
+        const getMessage = () => __awaiter(void 0, void 0, void 0, function* () {
+            const { data, error } = yield (0, message_service_1.getPublicResource)();
+            if (!isMounted) {
+                return;
+            }
+            if (data) {
+                setMessage(JSON.stringify(data, null, 2));
+            }
+            if (error) {
+                setMessage(JSON.stringify(error, null, 2));
+            }
+        });
+        getMessage();
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+    return (react_1.default.createElement(page_layout_1.PageLayout, null,
+        react_1.default.createElement("div", { className: "content-layout" },
+            react_1.default.createElement("h1", { id: "page-title", className: "content__title" }, "Public Page"),
+            react_1.default.createElement("div", { className: "content__body" },
+                react_1.default.createElement("p", { id: "page-description" },
+                    react_1.default.createElement("span", null,
+                        "This page retrieves a ",
+                        react_1.default.createElement("strong", null, "public message"),
+                        " from an external API."),
+                    react_1.default.createElement("span", null,
+                        react_1.default.createElement("strong", null, "Any visitor can access this page."))),
+                react_1.default.createElement(code_snippet_1.CodeSnippet, { title: "Public Message", code: message })))));
+};
+exports.PublicPage = PublicPage;
+
+
+/***/ }),
+
+/***/ "./src/services/api-service.ts":
+/*!*************************************!*\
+  !*** ./src/services/api-service.ts ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+window.promptiverse = window.promptiverse || {};
+const ApiService = {
+    getVar: (name) => {
+        if (!window.promptiverse || !window.promptiverse.vars) {
+            return undefined;
+        }
+        return window.promptiverse.vars[name];
+    },
+};
+exports["default"] = ApiService;
+
+
+/***/ }),
+
+/***/ "./src/services/external-api.service.ts":
+/*!**********************************************!*\
+  !*** ./src/services/external-api.service.ts ***!
+  \**********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.callExternalApi = void 0;
+const axios_1 = __importDefault(__webpack_require__(/*! axios */ "./node_modules/axios/index.js"));
+const callExternalApi = (options) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const response = yield (0, axios_1.default)(options.config);
+        const { data } = response;
+        return {
+            data,
+            error: null,
+        };
+    }
+    catch (error) {
+        if (axios_1.default.isAxiosError(error)) {
+            const axiosError = error;
+            const { response } = axiosError;
+            let message = "http request failed";
+            if (response && response.statusText) {
+                message = response.statusText;
+            }
+            if (axiosError.message) {
+                message = axiosError.message;
+            }
+            if (response && response.data && response.data.message) {
+                message = response.data.message;
+            }
+            return {
+                data: null,
+                error: {
+                    message,
+                },
+            };
+        }
+        return {
+            data: null,
+            error: {
+                message: error.message,
+            },
+        };
+    }
+});
+exports.callExternalApi = callExternalApi;
+
+
+/***/ }),
+
+/***/ "./src/services/message.service.ts":
+/*!*****************************************!*\
+  !*** ./src/services/message.service.ts ***!
+  \*****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getAdminResource = exports.getProtectedResource = exports.getPublicResource = void 0;
+const external_api_service_1 = __webpack_require__(/*! ./external-api.service */ "./src/services/external-api.service.ts");
+const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
+const apiServerUrl = api_service_1.default.getVar('API_SERVER_URL');
+const getPublicResource = () => __awaiter(void 0, void 0, void 0, function* () {
+    const config = {
+        url: `${apiServerUrl}/api/messages/public`,
+        method: "GET",
+        headers: {
+            "content-type": "application/json",
+        },
+    };
+    const { data, error } = (yield (0, external_api_service_1.callExternalApi)({ config }));
+    return {
+        data,
+        error,
+    };
+});
+exports.getPublicResource = getPublicResource;
+const getProtectedResource = (accessToken) => __awaiter(void 0, void 0, void 0, function* () {
+    const config = {
+        url: `${apiServerUrl}/api/messages/protected`,
+        method: "GET",
+        headers: {
+            "content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+        },
+    };
+    const { data, error } = (yield (0, external_api_service_1.callExternalApi)({ config }));
+    return {
+        data,
+        error,
+    };
+});
+exports.getProtectedResource = getProtectedResource;
+const getAdminResource = (accessToken) => __awaiter(void 0, void 0, void 0, function* () {
+    const config = {
+        url: `${apiServerUrl}/api/messages/admin`,
+        method: "GET",
+        headers: {
+            "content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+        },
+    };
+    const { data, error } = (yield (0, external_api_service_1.callExternalApi)({ config }));
+    return {
+        data,
+        error,
+    };
+});
+exports.getAdminResource = getAdminResource;
+
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = __webpack_modules__;
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/chunk loaded */
+/******/ 	(() => {
+/******/ 		var deferred = [];
+/******/ 		__webpack_require__.O = (result, chunkIds, fn, priority) => {
+/******/ 			if(chunkIds) {
+/******/ 				priority = priority || 0;
+/******/ 				for(var i = deferred.length; i > 0 && deferred[i - 1][2] > priority; i--) deferred[i] = deferred[i - 1];
+/******/ 				deferred[i] = [chunkIds, fn, priority];
+/******/ 				return;
+/******/ 			}
+/******/ 			var notFulfilled = Infinity;
+/******/ 			for (var i = 0; i < deferred.length; i++) {
+/******/ 				var [chunkIds, fn, priority] = deferred[i];
+/******/ 				var fulfilled = true;
+/******/ 				for (var j = 0; j < chunkIds.length; j++) {
+/******/ 					if ((priority & 1 === 0 || notFulfilled >= priority) && Object.keys(__webpack_require__.O).every((key) => (__webpack_require__.O[key](chunkIds[j])))) {
+/******/ 						chunkIds.splice(j--, 1);
+/******/ 					} else {
+/******/ 						fulfilled = false;
+/******/ 						if(priority < notFulfilled) notFulfilled = priority;
+/******/ 					}
+/******/ 				}
+/******/ 				if(fulfilled) {
+/******/ 					deferred.splice(i--, 1)
+/******/ 					var r = fn();
+/******/ 					if (r !== undefined) result = r;
+/******/ 				}
+/******/ 			}
+/******/ 			return result;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/global */
+/******/ 	(() => {
+/******/ 		__webpack_require__.g = (function() {
+/******/ 			if (typeof globalThis === 'object') return globalThis;
+/******/ 			try {
+/******/ 				return this || new Function('return this')();
+/******/ 			} catch (e) {
+/******/ 				if (typeof window === 'object') return window;
+/******/ 			}
+/******/ 		})();
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/jsonp chunk loading */
+/******/ 	(() => {
+/******/ 		// no baseURI
+/******/ 		
+/******/ 		// object to store loaded and loading chunks
+/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
+/******/ 		var installedChunks = {
+/******/ 			"app": 0
+/******/ 		};
+/******/ 		
+/******/ 		// no chunk on demand loading
+/******/ 		
+/******/ 		// no prefetching
+/******/ 		
+/******/ 		// no preloaded
+/******/ 		
+/******/ 		// no HMR
+/******/ 		
+/******/ 		// no HMR manifest
+/******/ 		
+/******/ 		__webpack_require__.O.j = (chunkId) => (installedChunks[chunkId] === 0);
+/******/ 		
+/******/ 		// install a JSONP callback for chunk loading
+/******/ 		var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
+/******/ 			var [chunkIds, moreModules, runtime] = data;
+/******/ 			// add "moreModules" to the modules object,
+/******/ 			// then flag all "chunkIds" as loaded and fire callback
+/******/ 			var moduleId, chunkId, i = 0;
+/******/ 			if(chunkIds.some((id) => (installedChunks[id] !== 0))) {
+/******/ 				for(moduleId in moreModules) {
+/******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 					}
+/******/ 				}
+/******/ 				if(runtime) var result = runtime(__webpack_require__);
+/******/ 			}
+/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
+/******/ 			for(;i < chunkIds.length; i++) {
+/******/ 				chunkId = chunkIds[i];
+/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 					installedChunks[chunkId][0]();
+/******/ 				}
+/******/ 				installedChunks[chunkId] = 0;
+/******/ 			}
+/******/ 			return __webpack_require__.O(result);
+/******/ 		}
+/******/ 		
+/******/ 		var chunkLoadingGlobal = self["webpackChunkpromptiverse"] = self["webpackChunkpromptiverse"] || [];
+/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
+/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["vendors"], () => (__webpack_require__("./src/index.tsx")))
+/******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
+/******/ 	
+/******/ })()
+;
+//# sourceMappingURL=app.bundle.js.map

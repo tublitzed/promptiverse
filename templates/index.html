@@ -13,14 +13,13 @@
   {% if app_vars.is_dev == False %}
     {% include 'partials/trackers.html' %}
   {% endif %}
-  <!-- Just a test...-->
 </head>
 
 <body>
   <div id="root"></div>
   {% include 'partials/app_vars.html' %}
-  <script src="{{ url_for('static', filename='vendors.bundle.js') }}"></script>
-  <script src="{{ url_for('static', filename='app.bundle.js') }}?{{cache_buster}}"></script>
+  <script src="{{ url_for('static', filename='js/vendors.bundle.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/app.bundle.js') }}?{{cache_buster}}"></script>
 </body>
 
 </html>

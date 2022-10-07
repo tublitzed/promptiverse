@@ -39,7 +39,7 @@ const sharedConfig = {
     app: path.join(__dirname, assetsPath, 'index.tsx'),
   },
   output: {
-    path: path.join(__dirname, '../../static/'),
+    path: path.join(__dirname, '../../static/js/'),
     filename: '[name].bundle.js',
   },
   plugins: [],
