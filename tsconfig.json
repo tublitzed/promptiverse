@@ -17,8 +17,6 @@
       "@components": ["src/components/index"],
       "@models/*": ["src/models/*"],
       "@models": ["src/models/index"],
-      "@pages/*": ["src/pages/*"],
-      "@pages": ["src/pages/index"],
       "@services/*": ["src/services/*"],
       "@services": ["src/services/index"],
       "@types/*": ["src/types/*"],

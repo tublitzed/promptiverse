@@ -18,14 +18,14 @@ const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modu
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 const protected_route_1 = __webpack_require__(/*! ./components/protected-route */ "./src/components/protected-route.tsx");
-const Admin_1 = __importDefault(__webpack_require__(/*! @pages/Admin */ "./src/pages/Admin.tsx"));
-const Index_1 = __importDefault(__webpack_require__(/*! @pages/Index */ "./src/pages/Index.tsx"));
-const Profile_1 = __importDefault(__webpack_require__(/*! @pages/Profile */ "./src/pages/Profile.tsx"));
-const Callback_1 = __importDefault(__webpack_require__(/*! @pages/Callback */ "./src/pages/Callback.tsx"));
-const Public_1 = __importDefault(__webpack_require__(/*! @pages/Public */ "./src/pages/Public.tsx"));
-const _404_1 = __importDefault(__webpack_require__(/*! @pages/404 */ "./src/pages/404.tsx"));
-const Protected_1 = __importDefault(__webpack_require__(/*! @pages/Protected */ "./src/pages/Protected.tsx"));
-const About_1 = __importDefault(__webpack_require__(/*! ./pages/About */ "./src/pages/About.tsx"));
+const Admin_1 = __importDefault(__webpack_require__(/*! @components/pages/Admin */ "./src/components/pages/Admin.tsx"));
+const Index_1 = __importDefault(__webpack_require__(/*! @components/pages/Index */ "./src/components/pages/Index.tsx"));
+const Profile_1 = __importDefault(__webpack_require__(/*! @components/pages/Profile */ "./src/components/pages/Profile.tsx"));
+const Callback_1 = __importDefault(__webpack_require__(/*! @components/pages/Callback */ "./src/components/pages/Callback.tsx"));
+const Public_1 = __importDefault(__webpack_require__(/*! @components/pages/Public */ "./src/components/pages/Public.tsx"));
+const _404_1 = __importDefault(__webpack_require__(/*! @components/pages/404 */ "./src/components/pages/404.tsx"));
+const Protected_1 = __importDefault(__webpack_require__(/*! @components/pages/Protected */ "./src/components/pages/Protected.tsx"));
+const About_1 = __importDefault(__webpack_require__(/*! @components/pages/About */ "./src/components/pages/About.tsx"));
 const App = () => {
     const { isLoading } = (0, auth0_react_1.useAuth0)();
     if (isLoading) {
@@ -112,62 +112,10 @@ exports.Auth0ProviderWithHistory = Auth0ProviderWithHistory;
 
 /***/ }),
 
-/***/ "./src/components/base/Avatar.tsx":
-/*!****************************************!*\
-  !*** ./src/components/base/Avatar.tsx ***!
-  \****************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
-const Avatar = () => {
-    const { user } = react_1.default.useContext(appContext_1.default);
-    if (!user) {
-        return null;
-    }
-    return (react_1.default.createElement("img", { src: user.picture, alt: user.username, width: 150, height: 150, className: "h-8 w-8 rounded-full" }));
-};
-exports["default"] = Avatar;
-
-
-/***/ }),
-
-/***/ "./src/components/base/Button.tsx":
-/*!****************************************!*\
-  !*** ./src/components/base/Button.tsx ***!
-  \****************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
-const Button = ({ children, download, href, onClick, disabled, className }) => {
-    const cssClasses = (0, clsx_1.default)(className, 'py-2 px-6 border no-underline border-transparent text-sm font-medium rounded-md text-white', disabled
-        ? 'bg-gray-300'
-        : 'bg-slate-700 hover:bg-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500');
-    if (href) {
-        return (react_1.default.createElement("a", { onClick: onClick, className: `${cssClasses} inline-block`, href: href, download: download }, children));
-    }
-    return (react_1.default.createElement("button", { onClick: onClick, className: cssClasses, disabled: disabled }, children));
-};
-exports["default"] = Button;
-
-
-/***/ }),
-
-/***/ "./src/components/base/Header.tsx":
-/*!****************************************!*\
-  !*** ./src/components/base/Header.tsx ***!
-  \****************************************/
+/***/ "./src/components/Header.tsx":
+/*!***********************************!*\
+  !*** ./src/components/Header.tsx ***!
+  \***********************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -224,7 +172,7 @@ const Header = () => {
                                 react_1.default.createElement(react_3.Transition, { as: react_2.Fragment, enter: "transition ease-out duration-100", enterFrom: "transform opacity-0 scale-95", enterTo: "transform opacity-100 scale-100", leave: "transition ease-in duration-75", leaveFrom: "transform opacity-100 scale-100", leaveTo: "transform opacity-0 scale-95" },
                                     react_1.default.createElement(react_3.Menu.Items, { className: "absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" },
                                         react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { href: "/profile", className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700') }, "Your Profile"))),
-                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: handleLogout, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700') }, "Sign out")))))))),
+                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: handleLogout, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700') }, "Sign Out")))))))),
                     react_1.default.createElement("div", { className: "-mr-2 flex sm:hidden" },
                         react_1.default.createElement(react_3.Disclosure.Button, { className: "inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" },
                             react_1.default.createElement("span", { className: "sr-only" }, "Open main menu"),
@@ -244,9 +192,61 @@ const Header = () => {
                             react_1.default.createElement("div", { className: "text-sm font-medium text-gray-400" }, user.name))),
                     react_1.default.createElement("div", { className: "mt-3 space-y-1 px-2" },
                         react_1.default.createElement(react_3.Disclosure.Button, { as: "a", href: "/profile", className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white" }, "Your Profile"),
-                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: handleLogout, className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white" }, "Sign out")))))))));
+                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: handleLogout, className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white" }, "Sign Out")))))))));
 };
 exports["default"] = Header;
+
+
+/***/ }),
+
+/***/ "./src/components/base/Avatar.tsx":
+/*!****************************************!*\
+  !*** ./src/components/base/Avatar.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const Avatar = () => {
+    const { user } = react_1.default.useContext(appContext_1.default);
+    if (!user) {
+        return null;
+    }
+    return (react_1.default.createElement("img", { src: user.picture, alt: user.username, width: 150, height: 150, className: "h-8 w-8 rounded-full" }));
+};
+exports["default"] = Avatar;
+
+
+/***/ }),
+
+/***/ "./src/components/base/Button.tsx":
+/*!****************************************!*\
+  !*** ./src/components/base/Button.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
+const Button = ({ children, download, href, onClick, disabled, className }) => {
+    const cssClasses = (0, clsx_1.default)(className, 'py-2 px-6 border no-underline border-transparent text-sm font-medium rounded-md text-white', disabled
+        ? 'bg-gray-300'
+        : 'bg-slate-700 hover:bg-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500');
+    if (href) {
+        return (react_1.default.createElement("a", { onClick: onClick, className: `${cssClasses} inline-block`, href: href, download: download }, children));
+    }
+    return (react_1.default.createElement("button", { onClick: onClick, className: cssClasses, disabled: disabled }, children));
+};
+exports["default"] = Button;
 
 
 /***/ }),
@@ -411,7 +411,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const Header_1 = __importDefault(__webpack_require__(/*! @components/base/Header */ "./src/components/base/Header.tsx"));
+const Header_1 = __importDefault(__webpack_require__(/*! @components/Header */ "./src/components/Header.tsx"));
 const appContext_1 = __importStar(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
 const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
@@ -456,7 +456,7 @@ const Layout = ({ children }) => {
         return (react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
             react_1.default.createElement("div", { className: "container mx-auto h-full" },
                 react_1.default.createElement("div", { className: "mx-auto text-center p-12 text-white" },
-                    react_1.default.createElement(Button_1.default, { onClick: handleLogin }, "Login")))));
+                    react_1.default.createElement(Button_1.default, { onClick: handleLogin }, "Sign In")))));
     }
     return (react_1.default.createElement(appContext_1.default.Provider, { value: defaultCtx },
         react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
@@ -488,6 +488,422 @@ const PageLoader = () => {
         react_1.default.createElement("img", { src: loadingImg, alt: "Loading..." })));
 };
 exports.PageLoader = PageLoader;
+
+
+/***/ }),
+
+/***/ "./src/components/pages/404.tsx":
+/*!**************************************!*\
+  !*** ./src/components/pages/404.tsx ***!
+  \**************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const ErrorLayout_1 = __importDefault(__webpack_require__(/*! @components/layouts/ErrorLayout */ "./src/components/layouts/ErrorLayout.tsx"));
+const Page = () => {
+    return (react_1.default.createElement(ErrorLayout_1.default, null,
+        react_1.default.createElement("h1", { className: "text-white" }, "Page Not Found")));
+};
+exports["default"] = Page;
+
+
+/***/ }),
+
+/***/ "./src/components/pages/About.tsx":
+/*!****************************************!*\
+  !*** ./src/components/pages/About.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
+const Page = () => {
+    return (react_1.default.createElement(Layout_1.default, null,
+        react_1.default.createElement("h1", null, "About"),
+        react_1.default.createElement("p", null, "Credits"),
+        react_1.default.createElement("p", null,
+            "Powered by the ",
+            react_1.default.createElement("a", { href: "https://github.com/Stability-AI/stability-sdk" }, "Stability-AI SDK"))));
+};
+exports["default"] = Page;
+
+
+/***/ }),
+
+/***/ "./src/components/pages/Admin.tsx":
+/*!****************************************!*\
+  !*** ./src/components/pages/Admin.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const message_service_1 = __webpack_require__(/*! @services/message.service */ "./src/services/message.service.ts");
+const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
+const Page = () => {
+    const [message, setMessage] = (0, react_1.useState)('');
+    const { getAccessTokenSilently } = (0, auth0_react_1.useAuth0)();
+    (0, react_1.useEffect)(() => {
+        let isMounted = true;
+        const getMessage = () => __awaiter(void 0, void 0, void 0, function* () {
+            const accessToken = yield getAccessTokenSilently();
+            const { data, error } = yield (0, message_service_1.getAdminResource)(accessToken);
+            if (!isMounted) {
+                return;
+            }
+            if (data) {
+                setMessage(JSON.stringify(data, null, 2));
+            }
+            if (error) {
+                setMessage(JSON.stringify(error, null, 2));
+            }
+        });
+        getMessage();
+        return () => {
+            isMounted = false;
+        };
+    }, [getAccessTokenSilently]);
+    return (react_1.default.createElement(Layout_1.default, null,
+        react_1.default.createElement("div", null, "Admin")));
+};
+exports["default"] = Page;
+
+
+/***/ }),
+
+/***/ "./src/components/pages/Callback.tsx":
+/*!*******************************************!*\
+  !*** ./src/components/pages/Callback.tsx ***!
+  \*******************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
+const ErrorLayout_1 = __importDefault(__webpack_require__(/*! @components/layouts/ErrorLayout */ "./src/components/layouts/ErrorLayout.tsx"));
+const Page = () => {
+    const { error } = (0, auth0_react_1.useAuth0)();
+    console.error(error);
+    if (error) {
+        return (react_1.default.createElement(ErrorLayout_1.default, { errorMessage: "Unable to login." }));
+    }
+    return (react_1.default.createElement(Layout_1.default, null));
+};
+exports["default"] = Page;
+
+
+/***/ }),
+
+/***/ "./src/components/pages/Index.tsx":
+/*!****************************************!*\
+  !*** ./src/components/pages/Index.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const uuid_1 = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/commonjs-browser/index.js");
+const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
+const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
+const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
+const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const Input_1 = __importDefault(__webpack_require__(/*! @components/base/Input */ "./src/components/base/Input.tsx"));
+const Image_1 = __importDefault(__webpack_require__(/*! @components/base/Image */ "./src/components/base/Image.tsx"));
+const localStorage_1 = __importDefault(__webpack_require__(/*! ../../utils/localStorage */ "./src/utils/localStorage.ts"));
+const API_SERVER_URL = api_service_1.default.getVar('API_SERVER_URL');
+const Page = () => {
+    const { setPrompt, prompt } = react_1.default.useContext(appContext_1.default);
+    const [promptString, setPromptString] = react_1.default.useState();
+    const submit = () => {
+        setPrompt(Object.assign(Object.assign({}, prompt), { value: promptString, id: (0, uuid_1.v4)(), loading: true }));
+    };
+    react_1.default.useEffect(() => {
+        var _a;
+        function fetchData(promptValue) {
+            return __awaiter(this, void 0, void 0, function* () {
+                const response = yield api_service_1.default.getImage(promptValue);
+                console.log(response);
+                if (response === null || response === void 0 ? void 0 : response.error) {
+                    console.error(`Unable to generated for prompt! ${response.error}`);
+                    return;
+                }
+                if (!(response === null || response === void 0 ? void 0 : response.file)) {
+                    console.error('Missing required file');
+                    return;
+                }
+                const url = `${API_SERVER_URL}/${response.file}`;
+                const newPromptVal = Object.assign(Object.assign({}, prompt), { url, loading: false });
+                setPrompt(newPromptVal);
+                localStorage_1.default.setPrompt(newPromptVal);
+            });
+        }
+        const hasNewPromptId = ((_a = localStorage_1.default.getPrompt()) === null || _a === void 0 ? void 0 : _a.id) !== (prompt === null || prompt === void 0 ? void 0 : prompt.id);
+        if ((prompt === null || prompt === void 0 ? void 0 : prompt.value) && hasNewPromptId) {
+            fetchData(prompt === null || prompt === void 0 ? void 0 : prompt.value);
+        }
+    }, [
+        prompt,
+        setPrompt,
+    ]);
+    return (react_1.default.createElement(Layout_1.default, null,
+        react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
+            react_1.default.createElement(Input_1.default, { value: prompt === null || prompt === void 0 ? void 0 : prompt.value, onChange: setPromptString, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", autoFocus: true }),
+            react_1.default.createElement(Button_1.default, { onClick: submit }, "Go!")),
+        react_1.default.createElement("div", null,
+            react_1.default.createElement(Image_1.default, null))));
+};
+exports["default"] = Page;
+
+
+/***/ }),
+
+/***/ "./src/components/pages/Profile.tsx":
+/*!******************************************!*\
+  !*** ./src/components/pages/Profile.tsx ***!
+  \******************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
+const Page = () => {
+    const { user } = (0, auth0_react_1.useAuth0)();
+    return (react_1.default.createElement(Layout_1.default, null,
+        react_1.default.createElement("ul", { className: "list-disc list-inside text-white" },
+            react_1.default.createElement("li", null,
+                "Name: ",
+                user.name),
+            react_1.default.createElement("li", null,
+                "Email: ",
+                user.email),
+            react_1.default.createElement("li", null,
+                "Nickname: ",
+                user.nickname))));
+};
+exports["default"] = Page;
+
+
+/***/ }),
+
+/***/ "./src/components/pages/Protected.tsx":
+/*!********************************************!*\
+  !*** ./src/components/pages/Protected.tsx ***!
+  \********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const message_service_1 = __webpack_require__(/*! @services/message.service */ "./src/services/message.service.ts");
+const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
+const Page = () => {
+    const [message, setMessage] = (0, react_1.useState)('');
+    const { getAccessTokenSilently } = (0, auth0_react_1.useAuth0)();
+    (0, react_1.useEffect)(() => {
+        let isMounted = true;
+        const getMessage = () => __awaiter(void 0, void 0, void 0, function* () {
+            const accessToken = yield getAccessTokenSilently();
+            const { data, error } = yield (0, message_service_1.getProtectedResource)(accessToken);
+            if (!isMounted) {
+                return;
+            }
+            if (data) {
+                setMessage(JSON.stringify(data, null, 2));
+            }
+            if (error) {
+                setMessage(JSON.stringify(error, null, 2));
+            }
+        });
+        getMessage();
+        return () => {
+            isMounted = false;
+        };
+    }, [getAccessTokenSilently]);
+    return (react_1.default.createElement(Layout_1.default, null,
+        react_1.default.createElement("div", null, "Protected")));
+};
+exports["default"] = Page;
+
+
+/***/ }),
+
+/***/ "./src/components/pages/Public.tsx":
+/*!*****************************************!*\
+  !*** ./src/components/pages/Public.tsx ***!
+  \*****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const message_service_1 = __webpack_require__(/*! @services/message.service */ "./src/services/message.service.ts");
+const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
+const Page = () => {
+    const [message, setMessage] = (0, react_1.useState)('');
+    (0, react_1.useEffect)(() => {
+        let isMounted = true;
+        const getMessage = () => __awaiter(void 0, void 0, void 0, function* () {
+            const { data, error } = yield (0, message_service_1.getPublicResource)();
+            if (!isMounted) {
+                return;
+            }
+            if (data) {
+                setMessage(JSON.stringify(data, null, 2));
+            }
+            if (error) {
+                setMessage(JSON.stringify(error, null, 2));
+            }
+        });
+        getMessage();
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+    return (react_1.default.createElement(Layout_1.default, null,
+        react_1.default.createElement("span", null, "Public")));
+};
+exports["default"] = Page;
 
 
 /***/ }),
@@ -551,422 +967,6 @@ react_dom_1.default.render(react_1.default.createElement(react_1.default.StrictM
     react_1.default.createElement(react_router_dom_1.BrowserRouter, null,
         react_1.default.createElement(auth0_provider_with_history_1.Auth0ProviderWithHistory, null,
             react_1.default.createElement(App_1.App, null)))), document.getElementById('root'));
-
-
-/***/ }),
-
-/***/ "./src/pages/404.tsx":
-/*!***************************!*\
-  !*** ./src/pages/404.tsx ***!
-  \***************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const ErrorLayout_1 = __importDefault(__webpack_require__(/*! @components/layouts/ErrorLayout */ "./src/components/layouts/ErrorLayout.tsx"));
-const Page = () => {
-    return (react_1.default.createElement(ErrorLayout_1.default, null,
-        react_1.default.createElement("h1", { className: "text-white" }, "Page Not Found")));
-};
-exports["default"] = Page;
-
-
-/***/ }),
-
-/***/ "./src/pages/About.tsx":
-/*!*****************************!*\
-  !*** ./src/pages/About.tsx ***!
-  \*****************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
-const Page = () => {
-    return (react_1.default.createElement(Layout_1.default, null,
-        react_1.default.createElement("h1", null, "About"),
-        react_1.default.createElement("p", null, "Credits"),
-        react_1.default.createElement("p", null,
-            "Powered by the ",
-            react_1.default.createElement("a", { href: "https://github.com/Stability-AI/stability-sdk" }, "Stability-AI SDK"))));
-};
-exports["default"] = Page;
-
-
-/***/ }),
-
-/***/ "./src/pages/Admin.tsx":
-/*!*****************************!*\
-  !*** ./src/pages/Admin.tsx ***!
-  \*****************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const message_service_1 = __webpack_require__(/*! ../services/message.service */ "./src/services/message.service.ts");
-const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
-const Page = () => {
-    const [message, setMessage] = (0, react_1.useState)('');
-    const { getAccessTokenSilently } = (0, auth0_react_1.useAuth0)();
-    (0, react_1.useEffect)(() => {
-        let isMounted = true;
-        const getMessage = () => __awaiter(void 0, void 0, void 0, function* () {
-            const accessToken = yield getAccessTokenSilently();
-            const { data, error } = yield (0, message_service_1.getAdminResource)(accessToken);
-            if (!isMounted) {
-                return;
-            }
-            if (data) {
-                setMessage(JSON.stringify(data, null, 2));
-            }
-            if (error) {
-                setMessage(JSON.stringify(error, null, 2));
-            }
-        });
-        getMessage();
-        return () => {
-            isMounted = false;
-        };
-    }, [getAccessTokenSilently]);
-    return (react_1.default.createElement(Layout_1.default, null,
-        react_1.default.createElement("div", null, "Admin")));
-};
-exports["default"] = Page;
-
-
-/***/ }),
-
-/***/ "./src/pages/Callback.tsx":
-/*!********************************!*\
-  !*** ./src/pages/Callback.tsx ***!
-  \********************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
-const ErrorLayout_1 = __importDefault(__webpack_require__(/*! @components/layouts/ErrorLayout */ "./src/components/layouts/ErrorLayout.tsx"));
-const Page = () => {
-    const { error } = (0, auth0_react_1.useAuth0)();
-    console.error(error);
-    if (error) {
-        return (react_1.default.createElement(ErrorLayout_1.default, { errorMessage: "Unable to login." }));
-    }
-    return (react_1.default.createElement(Layout_1.default, null));
-};
-exports["default"] = Page;
-
-
-/***/ }),
-
-/***/ "./src/pages/Index.tsx":
-/*!*****************************!*\
-  !*** ./src/pages/Index.tsx ***!
-  \*****************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const uuid_1 = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/commonjs-browser/index.js");
-const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
-const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
-const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
-const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
-const Input_1 = __importDefault(__webpack_require__(/*! @components/base/Input */ "./src/components/base/Input.tsx"));
-const Image_1 = __importDefault(__webpack_require__(/*! @components/base/Image */ "./src/components/base/Image.tsx"));
-const localStorage_1 = __importDefault(__webpack_require__(/*! ../utils/localStorage */ "./src/utils/localStorage.ts"));
-const API_SERVER_URL = api_service_1.default.getVar('API_SERVER_URL');
-const Page = () => {
-    const { setPrompt, prompt } = react_1.default.useContext(appContext_1.default);
-    const [promptString, setPromptString] = react_1.default.useState();
-    const submit = () => {
-        setPrompt(Object.assign(Object.assign({}, prompt), { value: promptString, id: (0, uuid_1.v4)(), loading: true }));
-    };
-    react_1.default.useEffect(() => {
-        var _a;
-        function fetchData(promptValue) {
-            return __awaiter(this, void 0, void 0, function* () {
-                const response = yield api_service_1.default.getImage(promptValue);
-                console.log(response);
-                if (response === null || response === void 0 ? void 0 : response.error) {
-                    console.error(`Unable to generated for prompt! ${response.error}`);
-                    return;
-                }
-                if (!(response === null || response === void 0 ? void 0 : response.file)) {
-                    console.error('Missing required file');
-                    return;
-                }
-                const url = `${API_SERVER_URL}/${response.file}`;
-                const newPromptVal = Object.assign(Object.assign({}, prompt), { url, loading: false });
-                setPrompt(newPromptVal);
-                localStorage_1.default.setPrompt(newPromptVal);
-            });
-        }
-        const hasNewPromptId = ((_a = localStorage_1.default.getPrompt()) === null || _a === void 0 ? void 0 : _a.id) !== (prompt === null || prompt === void 0 ? void 0 : prompt.id);
-        if ((prompt === null || prompt === void 0 ? void 0 : prompt.value) && hasNewPromptId) {
-            fetchData(prompt === null || prompt === void 0 ? void 0 : prompt.value);
-        }
-    }, [
-        prompt,
-        setPrompt,
-    ]);
-    return (react_1.default.createElement(Layout_1.default, null,
-        react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
-            react_1.default.createElement(Input_1.default, { value: prompt === null || prompt === void 0 ? void 0 : prompt.value, onChange: setPromptString, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", autoFocus: true }),
-            react_1.default.createElement(Button_1.default, { onClick: submit }, "Go!")),
-        react_1.default.createElement("div", null,
-            react_1.default.createElement(Image_1.default, null))));
-};
-exports["default"] = Page;
-
-
-/***/ }),
-
-/***/ "./src/pages/Profile.tsx":
-/*!*******************************!*\
-  !*** ./src/pages/Profile.tsx ***!
-  \*******************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
-const Page = () => {
-    const { user } = (0, auth0_react_1.useAuth0)();
-    return (react_1.default.createElement(Layout_1.default, null,
-        react_1.default.createElement("ul", { className: "list-disc list-inside text-white" },
-            react_1.default.createElement("li", null,
-                "Name: ",
-                user.name),
-            react_1.default.createElement("li", null,
-                "Email: ",
-                user.email),
-            react_1.default.createElement("li", null,
-                "Nickname: ",
-                user.nickname))));
-};
-exports["default"] = Page;
-
-
-/***/ }),
-
-/***/ "./src/pages/Protected.tsx":
-/*!*********************************!*\
-  !*** ./src/pages/Protected.tsx ***!
-  \*********************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const message_service_1 = __webpack_require__(/*! ../services/message.service */ "./src/services/message.service.ts");
-const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
-const Page = () => {
-    const [message, setMessage] = (0, react_1.useState)('');
-    const { getAccessTokenSilently } = (0, auth0_react_1.useAuth0)();
-    (0, react_1.useEffect)(() => {
-        let isMounted = true;
-        const getMessage = () => __awaiter(void 0, void 0, void 0, function* () {
-            const accessToken = yield getAccessTokenSilently();
-            const { data, error } = yield (0, message_service_1.getProtectedResource)(accessToken);
-            if (!isMounted) {
-                return;
-            }
-            if (data) {
-                setMessage(JSON.stringify(data, null, 2));
-            }
-            if (error) {
-                setMessage(JSON.stringify(error, null, 2));
-            }
-        });
-        getMessage();
-        return () => {
-            isMounted = false;
-        };
-    }, [getAccessTokenSilently]);
-    return (react_1.default.createElement(Layout_1.default, null,
-        react_1.default.createElement("div", null, "Protected")));
-};
-exports["default"] = Page;
-
-
-/***/ }),
-
-/***/ "./src/pages/Public.tsx":
-/*!******************************!*\
-  !*** ./src/pages/Public.tsx ***!
-  \******************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const message_service_1 = __webpack_require__(/*! ../services/message.service */ "./src/services/message.service.ts");
-const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
-const Page = () => {
-    const [message, setMessage] = (0, react_1.useState)('');
-    (0, react_1.useEffect)(() => {
-        let isMounted = true;
-        const getMessage = () => __awaiter(void 0, void 0, void 0, function* () {
-            const { data, error } = yield (0, message_service_1.getPublicResource)();
-            if (!isMounted) {
-                return;
-            }
-            if (data) {
-                setMessage(JSON.stringify(data, null, 2));
-            }
-            if (error) {
-                setMessage(JSON.stringify(error, null, 2));
-            }
-        });
-        getMessage();
-        return () => {
-            isMounted = false;
-        };
-    }, []);
-    return (react_1.default.createElement(Layout_1.default, null,
-        react_1.default.createElement("span", null, "Public")));
-};
-exports["default"] = Page;
 
 
 /***/ }),

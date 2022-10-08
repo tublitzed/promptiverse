@@ -1,9 +1,8 @@
 import React from 'react'
-import Header from '@components/base/Header'
+import Header from '@components/Header'
 import AppContext, { defaultContext } from '@src/appContext'
 import { useAuth0, Auth0Provider, AppState } from '@auth0/auth0-react'
 import { Prompt, User } from '@types'
-import { LoginButton } from '@components/buttons/login-button'
 import Button from '@components/base/Button'
 import ApiService from '@services/api-service'
 const API_SERVER_URL = ApiService.getVar('API_SERVER_URL')
@@ -59,7 +58,7 @@ const Layout = ({ children }:Props): JSX.Element => {
             <Button
               onClick={handleLogin}
             >
-              Login
+              Sign In
             </Button>
           </div>
         </div>

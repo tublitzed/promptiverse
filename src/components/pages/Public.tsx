@@ -1,19 +1,16 @@
-import { useAuth0 } from '@auth0/auth0-react'
 import React, { useEffect, useState } from 'react'
-import { getProtectedResource } from '../services/message.service'
+import { getPublicResource } from '@services/message.service'
 import Layout from '@components/layouts/Layout'
+
 
 const Page: React.FC = () => {
   const [message, setMessage] = useState<string>('')
-
-  const { getAccessTokenSilently } = useAuth0()
 
   useEffect(() => {
     let isMounted = true
 
     const getMessage = async () => {
-      const accessToken = await getAccessTokenSilently()
-      const { data, error } = await getProtectedResource(accessToken)
+      const { data, error } = await getPublicResource()
 
       if (!isMounted) {
         return
@@ -33,13 +30,11 @@ const Page: React.FC = () => {
     return () => {
       isMounted = false
     }
-  }, [getAccessTokenSilently])
+  }, [])
 
   return (
     <Layout>
-      <div>
-        Protected
-      </div>
+      <span>Public</span>
     </Layout>
   )
 }

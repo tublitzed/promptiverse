@@ -102,7 +102,7 @@ const Header = () => {
                                   'block px-4 py-2 text-sm text-gray-700',
                                 )}
                               >
-                              Sign out
+                              Sign Out
                               </a>
                             )}
                           </Menu.Item>
@@ -174,7 +174,7 @@ const Header = () => {
                     onClick={handleLogout}
                     className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                   >
-                  Sign out
+                  Sign Out
                   </Disclosure.Button>
                 </div>
               </div>

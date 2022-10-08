@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import React, { useEffect, useState } from 'react'
-import { getAdminResource } from '../services/message.service'
+import { getProtectedResource } from '@services/message.service'
 import Layout from '@components/layouts/Layout'
 
 const Page: React.FC = () => {
@@ -13,7 +13,7 @@ const Page: React.FC = () => {
 
     const getMessage = async () => {
       const accessToken = await getAccessTokenSilently()
-      const { data, error } = await getAdminResource(accessToken)
+      const { data, error } = await getProtectedResource(accessToken)
 
       if (!isMounted) {
         return
@@ -38,7 +38,7 @@ const Page: React.FC = () => {
   return (
     <Layout>
       <div>
-        Admin
+        Protected
       </div>
     </Layout>
   )

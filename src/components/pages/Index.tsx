@@ -6,7 +6,7 @@ import Button from '@components/base/Button'
 import AppContext from '@src/appContext'
 import Input from '@components/base/Input'
 import Image from '@components/base/Image'
-import LocalStorage from '../utils/localStorage'
+import LocalStorage from '../../utils/localStorage'
 
 const API_SERVER_URL = ApiService.getVar('API_SERVER_URL')
 
