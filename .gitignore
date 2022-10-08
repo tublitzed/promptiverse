@@ -18,4 +18,4 @@ coverage/
 
 tmp/img/*
 
-static/img/generated
+static/img/generated/*
