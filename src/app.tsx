@@ -24,7 +24,8 @@ export const App: React.FC = () => {
         </div>
       </main>
     )
-  };
+  }
+
 
   return (
     <Switch>
