@@ -4,6 +4,7 @@ import AppContext, { defaultContext } from '@src/appContext'
 import { useAuth0, Auth0Provider, AppState } from '@auth0/auth0-react'
 import { Prompt, User } from '@types'
 import { LoginButton } from '@components/buttons/login-button'
+import Button from '@components/base/Button'
 import ApiService from '@services/api-service'
 const API_SERVER_URL = ApiService.getVar('API_SERVER_URL')
 
@@ -12,7 +13,7 @@ export interface Props {
 }
 
 const Layout = ({ children }:Props): JSX.Element => {
-  const { user: userViaAuth0 } = useAuth0()
+  const { user: userViaAuth0, loginWithRedirect } = useAuth0()
   const [user, setUser] = React.useState<any | undefined>(userViaAuth0)
   const [isLoading, setIsLoading] = React.useState<boolean>(defaultContext.isLoading)
   const [prompt, setPrompt] = React.useState<Prompt | undefined>(defaultContext.prompt)
@@ -41,12 +42,25 @@ const Layout = ({ children }:Props): JSX.Element => {
     setPrompt,
   }
 
+  const handleLogin = async () => {
+    await loginWithRedirect({
+      prompt: 'login',
+      appState: {
+        returnTo: '/',
+      },
+    })
+  }
+
   if (!user) {
     return (
       <main className="bg-slate-600 w-full min-h-screen">
         <div className="container mx-auto h-full">
           <div className="mx-auto text-center p-12 text-white">
-            <LoginButton />
+            <Button
+              onClick={handleLogin}
+            >
+              Login
+            </Button>
           </div>
         </div>
       </main>

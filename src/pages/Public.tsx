@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { CodeSnippet } from '../components/code-snippet'
-import { PageLayout } from '../components/page-layout'
 import { getPublicResource } from '../services/message.service'
-import Layout from '@components/Layout'
+import Layout from '@components/layouts/Layout'
 
-export const PublicPage: React.FC = () => {
+
+const Page: React.FC = () => {
   const [message, setMessage] = useState<string>('')
 
   useEffect(() => {
@@ -34,8 +33,10 @@ export const PublicPage: React.FC = () => {
   }, [])
 
   return (
-    <div>
-      Public Page
-    </div>
+    <Layout>
+      <span>Public</span>
+    </Layout>
   )
 }
+
+export default Page

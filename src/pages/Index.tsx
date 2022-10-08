@@ -1,7 +1,7 @@
 import React from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import ApiService from '@services/api-service'
-import Layout from '@components/Layout'
+import Layout from '@components/layouts/Layout'
 import Button from '@components/base/Button'
 import AppContext from '@src/appContext'
 import Input from '@components/base/Input'
@@ -10,7 +10,7 @@ import LocalStorage from '../utils/localStorage'
 
 const API_SERVER_URL = ApiService.getVar('API_SERVER_URL')
 
-const Index = () => {
+const Page = () => {
   const { setPrompt, prompt } = React.useContext(AppContext)
   const [promptString, setPromptString] = React.useState<string>()
 
@@ -70,4 +70,4 @@ const Index = () => {
   )
 }
 
-export default Index
+export default Page

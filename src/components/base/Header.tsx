@@ -1,21 +1,27 @@
 import React from 'react'
 import clsx from 'clsx'
+import { useAuth0 } from '@auth0/auth0-react'
 import { Fragment } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Avatar from '@components/base/Avatar'
 import Logo from '@components/base/Logo'
 import AppContext from '@src/appContext'
-import { LoginButton } from '@components/buttons/login-button'
-import { LogoutButton } from '@components/buttons/logout-button'
-import { SignupButton } from '@components/buttons/signup-button'
 
 function classNames(...classes:any) {
   return classes.filter(Boolean).join(' ')
 }
 
 const Header = () => {
+  const { logout } = useAuth0()
+
+  const handleLogout = () => {
+    logout({
+      returnTo: window.location.origin,
+    })
+  }
+
   const { user } = React.useContext(AppContext)
   const activeNavLinkClassname = 'bg-gray-900 text-white'
   const navLinkClassname = 'text-gray-300 hover:bg-gray-700 hover:text-white'
@@ -34,7 +40,7 @@ const Header = () => {
               <div className="flex h-16 items-center justify-between">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <Logo />
+                    <a href="/"><Logo /></a>
                   </div>
                   <div className="hidden sm:ml-6 sm:block">
                     <div className="flex space-x-4">
@@ -90,7 +96,7 @@ const Header = () => {
                           <Menu.Item>
                             {({ active }) => (
                               <a
-                                href="/api/logout"
+                                onClick={handleLogout}
                                 className={classNames(
                                   active ? 'bg-gray-100' : '',
                                   'block px-4 py-2 text-sm text-gray-700',
@@ -165,7 +171,7 @@ const Header = () => {
                   </Disclosure.Button>
                   <Disclosure.Button
                     as="a"
-                    href="/api/logout"
+                    onClick={handleLogout}
                     className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                   >
                   Sign out

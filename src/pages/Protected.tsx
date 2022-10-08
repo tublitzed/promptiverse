@@ -1,10 +1,9 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import React, { useEffect, useState } from 'react'
-import { CodeSnippet } from '../components/code-snippet'
-import { PageLayout } from '../components/page-layout'
 import { getProtectedResource } from '../services/message.service'
-import Layout from '@components/Layout'
-export const ProtectedPage: React.FC = () => {
+import Layout from '@components/layouts/Layout'
+
+const Page: React.FC = () => {
   const [message, setMessage] = useState<string>('')
 
   const { getAccessTokenSilently } = useAuth0()
@@ -37,24 +36,12 @@ export const ProtectedPage: React.FC = () => {
   }, [getAccessTokenSilently])
 
   return (
-    <PageLayout>
-      <div className="content-layout">
-        <h1 id="page-title" className="content__title">
-          Protected Page
-        </h1>
-        <div className="content__body">
-          <p id="page-description">
-            <span>
-              This page retrieves a <strong>protected message</strong> from an
-              external API.
-            </span>
-            <span>
-              <strong>Only authenticated users can access this page.</strong>
-            </span>
-          </p>
-          <CodeSnippet title="Protected Message" code={message} />
-        </div>
+    <Layout>
+      <div>
+        Protected
       </div>
-    </PageLayout>
+    </Layout>
   )
 }
+
+export default Page
