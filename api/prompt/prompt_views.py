@@ -17,7 +17,8 @@ bp_name = 'api-prompt'
 bp_url_prefix = '/api/prompt'
 bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
 
-@bp.route("", methods=["POST"])
+@bp.route("", methods=["POST", "GET", "OPTIONS"])
+@requires_auth
 def public():
     request_data = request.get_json()
     required = ["prompt"]

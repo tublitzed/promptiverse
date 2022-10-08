@@ -9,6 +9,29 @@
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -26,23 +49,43 @@ const Public_1 = __importDefault(__webpack_require__(/*! @components/pages/Publi
 const _404_1 = __importDefault(__webpack_require__(/*! @components/pages/404 */ "./src/components/pages/404.tsx"));
 const Protected_1 = __importDefault(__webpack_require__(/*! @components/pages/Protected */ "./src/components/pages/Protected.tsx"));
 const About_1 = __importDefault(__webpack_require__(/*! @components/pages/About */ "./src/components/pages/About.tsx"));
+const appContext_1 = __importStar(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const App = () => {
-    const { isLoading } = (0, auth0_react_1.useAuth0)();
+    const { isLoading: isLoadingViaAuth0 } = (0, auth0_react_1.useAuth0)();
+    const { user: userViaAuth0, loginWithRedirect } = (0, auth0_react_1.useAuth0)();
+    const [user, setUser] = react_1.default.useState(userViaAuth0);
+    const [isLoading, setIsLoading] = react_1.default.useState(isLoadingViaAuth0);
+    const [prompt, setPrompt] = react_1.default.useState(appContext_1.defaultContext.prompt);
+    react_1.default.useEffect(() => {
+        setIsLoading(isLoadingViaAuth0);
+    }, [isLoadingViaAuth0]);
+    react_1.default.useEffect(() => {
+        setUser(userViaAuth0);
+    }, [userViaAuth0]);
     if (isLoading) {
         return (react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
             react_1.default.createElement("div", { className: "container mx-auto h-full" },
                 react_1.default.createElement("div", { className: "mx-auto text-center p-12 text-white" },
                     react_1.default.createElement("div", { className: "text-center py-24 text-xl font-thin" }, "Loading...")))));
     }
-    return (react_1.default.createElement(react_router_dom_1.Switch, null,
-        react_1.default.createElement(react_router_dom_1.Route, { path: "/", exact: true, component: Index_1.default }),
-        react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/profile", component: Profile_1.default }),
-        react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/about", component: About_1.default }),
-        react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/protected", component: Protected_1.default }),
-        react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/admin", component: Admin_1.default }),
-        react_1.default.createElement(react_router_dom_1.Route, { path: "/public", component: Public_1.default }),
-        react_1.default.createElement(react_router_dom_1.Route, { path: "/callback", component: Callback_1.default }),
-        react_1.default.createElement(react_router_dom_1.Route, { path: "*", component: _404_1.default })));
+    const defaultCtx = {
+        user,
+        isLoading,
+        setUser,
+        setIsLoading,
+        prompt,
+        setPrompt,
+    };
+    return (react_1.default.createElement(appContext_1.default.Provider, { value: defaultCtx },
+        react_1.default.createElement(react_router_dom_1.Switch, null,
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/", exact: true, component: Index_1.default }),
+            react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/profile", component: Profile_1.default }),
+            react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/about", component: About_1.default }),
+            react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/protected", component: Protected_1.default }),
+            react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/admin", component: Admin_1.default }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/public", component: Public_1.default }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/callback", component: Callback_1.default }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "*", component: _404_1.default }))));
 };
 exports.App = App;
 
@@ -374,29 +417,6 @@ exports["default"] = ErrorLayout;
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -412,20 +432,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Header_1 = __importDefault(__webpack_require__(/*! @components/Header */ "./src/components/Header.tsx"));
-const appContext_1 = __importStar(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
 const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
 const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
 const API_SERVER_URL = api_service_1.default.getVar('API_SERVER_URL');
 const Layout = ({ children }) => {
-    const { user: userViaAuth0, loginWithRedirect } = (0, auth0_react_1.useAuth0)();
-    const [user, setUser] = react_1.default.useState(userViaAuth0);
-    const [isLoading, setIsLoading] = react_1.default.useState(appContext_1.defaultContext.isLoading);
-    const [prompt, setPrompt] = react_1.default.useState(appContext_1.defaultContext.prompt);
-    const { getAccessTokenSilently } = (0, auth0_react_1.useAuth0)();
+    const { loginWithRedirect } = (0, auth0_react_1.useAuth0)();
+    const { getAccessTokenSilently, user } = (0, auth0_react_1.useAuth0)();
     const verifyApiAuthIsWorking = () => __awaiter(void 0, void 0, void 0, function* () {
         const accessToken = yield getAccessTokenSilently();
-        console.log(accessToken);
         // const testUrl = `${process.env.NEXT_PUBLIC_API_URL}api/private`
         // const authResp = await fetcher(testUrl, {
         //   method: 'POST',
@@ -436,14 +451,6 @@ const Layout = ({ children }) => {
         // console.log(authResp)
     });
     verifyApiAuthIsWorking();
-    const defaultCtx = {
-        user,
-        isLoading,
-        setUser,
-        setIsLoading,
-        prompt,
-        setPrompt,
-    };
     const handleLogin = () => __awaiter(void 0, void 0, void 0, function* () {
         yield loginWithRedirect({
             prompt: 'login',
@@ -458,11 +465,10 @@ const Layout = ({ children }) => {
                 react_1.default.createElement("div", { className: "mx-auto text-center p-12 text-white" },
                     react_1.default.createElement(Button_1.default, { onClick: handleLogin }, "Sign In")))));
     }
-    return (react_1.default.createElement(appContext_1.default.Provider, { value: defaultCtx },
-        react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
-            react_1.default.createElement(Header_1.default, null),
-            react_1.default.createElement("div", { className: "container mx-auto h-full" },
-                react_1.default.createElement("div", { className: "py-6 px-8" }, children)))));
+    return (react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
+        react_1.default.createElement(Header_1.default, null),
+        react_1.default.createElement("div", { className: "container mx-auto h-full" },
+            react_1.default.createElement("div", { className: "py-6 px-8" }, children))));
 };
 exports["default"] = Layout;
 
@@ -712,7 +718,7 @@ const Page = () => {
     ]);
     return (react_1.default.createElement(Layout_1.default, null,
         react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
-            react_1.default.createElement(Input_1.default, { value: prompt === null || prompt === void 0 ? void 0 : prompt.value, onChange: setPromptString, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", autoFocus: true }),
+            react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.value) || '', onChange: setPromptString, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", autoFocus: true }),
             react_1.default.createElement(Button_1.default, { onClick: submit }, "Go!")),
         react_1.default.createElement("div", null,
             react_1.default.createElement(Image_1.default, null))));
@@ -993,7 +999,7 @@ const ApiService = {
     },
     getImage(prompt) {
         const apiUrl = ApiService.getVar('API_SERVER_URL');
-        return (0, fetch_1.default)(`${apiUrl}/prompt`, {
+        return (0, fetch_1.default)(`${apiUrl}/api/prompt`, {
             method: 'POST',
             postBody: { prompt },
         });
@@ -1148,7 +1154,7 @@ exports.getAdminResource = getAdminResource;
 /*!****************************!*\
   !*** ./src/utils/fetch.ts ***!
   \****************************/
-/***/ (function(__unused_webpack_module, exports) {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -1160,14 +1166,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
 const fetcher = (url, options) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
+    const csrfToken = api_service_1.default.getVar('APP_TOKEN');
     try {
         const fetchOptions = Object.assign({ method: (options === null || options === void 0 ? void 0 : options.method) || 'GET', headers: {
                 'Accept': ((_a = options === null || options === void 0 ? void 0 : options.headers) === null || _a === void 0 ? void 0 : _a.Accept) || 'application/json',
                 'Content-Type': ((_b = options === null || options === void 0 ? void 0 : options.headers) === null || _b === void 0 ? void 0 : _b['Content-Type']) || 'application/json',
                 'Authorization': ((_c = options === null || options === void 0 ? void 0 : options.headers) === null || _c === void 0 ? void 0 : _c.Authorization) || '',
+                'X-CSRF-Token': ((_d = options === null || options === void 0 ? void 0 : options.headers) === null || _d === void 0 ? void 0 : _d['X-CSRF-Token']) || csrfToken,
             } }, ((options === null || options === void 0 ? void 0 : options.postBody) ? { body: JSON.stringify(options.postBody) } : []));
         return fetch(url, fetchOptions)
             .then(response => {

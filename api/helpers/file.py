@@ -2,7 +2,7 @@ from flask import current_app
 import os, logging, traceback
 from datetime import datetime
 
-ROOT_STATIC_DIR = "/static"
+ROOT_STATIC_DIR = "static"
 GENERATED_IMG_DIR = os.path.join(ROOT_STATIC_DIR, "img", "generated")
 
 def create_img_dir():

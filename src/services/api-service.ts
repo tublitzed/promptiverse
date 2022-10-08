@@ -16,7 +16,7 @@ const ApiService = {
   },
   getImage(prompt: string) {
     const apiUrl = ApiService.getVar('API_SERVER_URL')
-    return fetcher(`${apiUrl}/prompt`, {
+    return fetcher(`${apiUrl}/api/prompt`, {
       method: 'POST',
       postBody: { prompt },
     })

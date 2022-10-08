@@ -17,3 +17,5 @@ static/*bundle*
 coverage/
 
 tmp/img/*
+
+static/img/generated

@@ -56,7 +56,7 @@ const Page = () => {
     <Layout>
       <div className="flex flex-row gap-x-2">
         <Input
-          value={prompt?.value}
+          value={prompt?.value || ''}
           onChange={setPromptString}
           className="grow"
           placeholder="enter a prompt, like 'cat dancing on the moon'"

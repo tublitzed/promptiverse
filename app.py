@@ -1,4 +1,4 @@
-from flask import Flask, render_template, make_response, redirect
+from flask import Flask, render_template, make_response, redirect, jsonify
 from waitress import serve
 from flask_cors import CORS
 from flask_wtf.csrf import CSRFProtect
@@ -6,6 +6,7 @@ import logging
 import random
 import os
 import pdb
+from api.prompt import prompt_views
 
 def is_dev():
     return True if os.getenv("FLASK_ENV") == "development" else False
@@ -25,6 +26,7 @@ config_name = 'DevelopmentConfig' if is_dev() else 'Config'
 app.config.from_object(f'config.flask.config.{config_name}')
 
 # CORS(app)
+app.register_blueprint(prompt_views.bp)
 
 def render_static():
     cache_buster = random.randint(0, 1000000000)
@@ -39,10 +41,19 @@ def render_static():
     return render_template('index.html',
                            app_vars=app_vars, cache_buster=cache_buster)
 
-@app.route('/', defaults={'all_paths': ''})
-@app.route('/<path:all_paths>')
-def catch_all_route(all_paths):
+# @app.route('/', defaults={'all_paths': ''})
+# @app.route('/<path:all_paths>')
+# def catch_all_route(all_paths):
+#     return render_static()
+
+@app.route("/", methods=["GET", "POST"])
+def index():
     return render_static()
+
+# @app.route("/api/prompt", methods=["GET", "POST"])
+# def test():
+#     return jsonify({"foo": "bar"})
+
 
 @app.route("/callback", methods=["GET", "POST"])
 def callback():

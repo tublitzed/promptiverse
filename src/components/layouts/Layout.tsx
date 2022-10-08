@@ -1,7 +1,6 @@
 import React from 'react'
 import Header from '@components/Header'
-import AppContext, { defaultContext } from '@src/appContext'
-import { useAuth0, Auth0Provider, AppState } from '@auth0/auth0-react'
+import { useAuth0 } from '@auth0/auth0-react'
 import { Prompt, User } from '@types'
 import Button from '@components/base/Button'
 import ApiService from '@services/api-service'
@@ -12,15 +11,11 @@ export interface Props {
 }
 
 const Layout = ({ children }:Props): JSX.Element => {
-  const { user: userViaAuth0, loginWithRedirect } = useAuth0()
-  const [user, setUser] = React.useState<any | undefined>(userViaAuth0)
-  const [isLoading, setIsLoading] = React.useState<boolean>(defaultContext.isLoading)
-  const [prompt, setPrompt] = React.useState<Prompt | undefined>(defaultContext.prompt)
+  const { loginWithRedirect } = useAuth0()
 
-  const { getAccessTokenSilently } = useAuth0()
+  const { getAccessTokenSilently, user } = useAuth0()
   const verifyApiAuthIsWorking = async () => {
     const accessToken = await getAccessTokenSilently()
-    console.log(accessToken)
     // const testUrl = `${process.env.NEXT_PUBLIC_API_URL}api/private`
     // const authResp = await fetcher(testUrl, {
     //   method: 'POST',
@@ -31,15 +26,6 @@ const Layout = ({ children }:Props): JSX.Element => {
     // console.log(authResp)
   }
   verifyApiAuthIsWorking()
-
-  const defaultCtx = {
-    user,
-    isLoading,
-    setUser,
-    setIsLoading,
-    prompt,
-    setPrompt,
-  }
 
   const handleLogin = async () => {
     await loginWithRedirect({
@@ -67,16 +53,14 @@ const Layout = ({ children }:Props): JSX.Element => {
   }
 
   return (
-    <AppContext.Provider value={defaultCtx}>
-      <main className="bg-slate-600 w-full min-h-screen">
-        <Header />
-        <div className="container mx-auto h-full">
-          <div className="py-6 px-8">
-            {children}
-          </div>
+    <main className="bg-slate-600 w-full min-h-screen">
+      <Header />
+      <div className="container mx-auto h-full">
+        <div className="py-6 px-8">
+          {children}
         </div>
-      </main>
-    </AppContext.Provider>
+      </div>
+    </main>
   )
 }
 
