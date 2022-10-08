@@ -1,5 +1,5 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React from 'react'
+import { NavLink } from 'react-router-dom'
 
 export const NavBarBrand: React.FC = () => {
   return (
@@ -14,5 +14,5 @@ export const NavBarBrand: React.FC = () => {
         />
       </NavLink>
     </div>
-  );
-};
+  )
+}

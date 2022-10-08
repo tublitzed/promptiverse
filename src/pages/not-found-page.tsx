@@ -1,5 +1,5 @@
-import React from "react";
-import { PageLayout } from "../components/page-layout";
+import React from 'react'
+import { PageLayout } from '../components/page-layout'
 
 export const NotFoundPage: React.FC = () => {
   return (
@@ -10,5 +10,5 @@ export const NotFoundPage: React.FC = () => {
         </h1>
       </div>
     </PageLayout>
-  );
-};
+  )
+}

@@ -1,6 +1,6 @@
-import { AxiosRequestConfig } from "axios";
-import { ApiResponse } from "../models/api-response";
-import { callExternalApi } from "./external-api.service";
+import { AxiosRequestConfig } from 'axios'
+import { ApiResponse } from '../models/api-response'
+import { callExternalApi } from './external-api.service'
 import ApiService from '@services/api-service'
 
 const apiServerUrl = ApiService.getVar('API_SERVER_URL')
@@ -8,56 +8,56 @@ const apiServerUrl = ApiService.getVar('API_SERVER_URL')
 export const getPublicResource = async (): Promise<ApiResponse> => {
   const config: AxiosRequestConfig = {
     url: `${apiServerUrl}/api/messages/public`,
-    method: "GET",
+    method: 'GET',
     headers: {
-      "content-type": "application/json",
+      'content-type': 'application/json',
     },
-  };
+  }
 
-  const { data, error } = (await callExternalApi({ config })) as ApiResponse;
+  const { data, error } = (await callExternalApi({ config })) as ApiResponse
 
   return {
     data,
     error,
-  };
-};
+  }
+}
 
 export const getProtectedResource = async (
-  accessToken: string
+  accessToken: string,
 ): Promise<ApiResponse> => {
   const config: AxiosRequestConfig = {
     url: `${apiServerUrl}/api/messages/protected`,
-    method: "GET",
+    method: 'GET',
     headers: {
-      "content-type": "application/json",
+      'content-type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
     },
-  };
+  }
 
-  const { data, error } = (await callExternalApi({ config })) as ApiResponse;
+  const { data, error } = (await callExternalApi({ config })) as ApiResponse
 
   return {
     data,
     error,
-  };
-};
+  }
+}
 
 export const getAdminResource = async (
-  accessToken: string
+  accessToken: string,
 ): Promise<ApiResponse> => {
   const config: AxiosRequestConfig = {
     url: `${apiServerUrl}/api/messages/admin`,
-    method: "GET",
+    method: 'GET',
     headers: {
-      "content-type": "application/json",
+      'content-type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
     },
-  };
+  }
 
-  const { data, error } = (await callExternalApi({ config })) as ApiResponse;
+  const { data, error } = (await callExternalApi({ config })) as ApiResponse
 
   return {
     data,
     error,
-  };
-};
+  }
+}

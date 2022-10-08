@@ -1,5 +1,5 @@
-const path = require('path');
-const assetsPath = '../../src';
+const path = require('path')
+const assetsPath = '../../src'
 
 const sharedConfig = {
   module: {
@@ -36,7 +36,12 @@ const sharedConfig = {
       '@src': path.resolve(__dirname, `${assetsPath}/`),
       '@utils': path.resolve(__dirname, `${assetsPath}/utils`),
     },
-    extensions: ['.js', '.json', '.ts', '.tsx'],
+    extensions: [
+      '.js',
+      '.json',
+      '.ts',
+      '.tsx',
+    ],
   },
   entry: {
     app: path.join(__dirname, assetsPath, 'index.tsx'),
@@ -46,6 +51,6 @@ const sharedConfig = {
     filename: '[name].bundle.js',
   },
   plugins: [],
-};
+}
 
-module.exports = sharedConfig;
+module.exports = sharedConfig

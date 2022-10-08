@@ -1,7 +1,7 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import React from "react";
-import { CodeSnippet } from "../components/code-snippet";
-import { PageLayout } from "../components/page-layout";
+import { useAuth0 } from '@auth0/auth0-react'
+import React from 'react'
+import { CodeSnippet } from '../components/code-snippet'
+import { PageLayout } from '../components/page-layout'
 import Layout from '@components/Layout'
 import AppContext from '@src/appContext'
 export const ProfilePage: React.FC = () => {
@@ -53,5 +53,5 @@ export const ProfilePage: React.FC = () => {
         </div>
       </div>
     </Layout>
-  );
-};
+  )
+}

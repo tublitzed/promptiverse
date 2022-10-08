@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react'
 
 export const HeroBanner: React.FC = () => {
-  const logo = "https://cdn.auth0.com/blog/developer-hub/react-logo.svg";
+  const logo = 'https://cdn.auth0.com/blog/developer-hub/react-logo.svg'
 
   return (
     <div className="hero-banner hero-banner--pink-yellow">
@@ -23,5 +23,5 @@ export const HeroBanner: React.FC = () => {
         Check out the React code sample →
       </a>
     </div>
-  );
-};
+  )
+}

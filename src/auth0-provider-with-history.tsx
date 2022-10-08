@@ -1,6 +1,6 @@
-import { AppState, Auth0Provider } from "@auth0/auth0-react";
-import React, { PropsWithChildren } from "react";
-import { useHistory } from "react-router-dom";
+import { AppState, Auth0Provider } from '@auth0/auth0-react'
+import React, { PropsWithChildren } from 'react'
+import { useHistory } from 'react-router-dom'
 import ApiService from '@services/api-service'
 
 interface Auth0ProviderWithConfigProps {
@@ -10,19 +10,19 @@ interface Auth0ProviderWithConfigProps {
 export const Auth0ProviderWithHistory = ({
   children,
 }: PropsWithChildren<Auth0ProviderWithConfigProps>): JSX.Element | null => {
-  const history = useHistory();
+  const history = useHistory()
 
   const domain = ApiService.getVar('CLIENT_APP_AUTH0_DOMAIN')
-  const clientId = ApiService.getVar('CLIENT_APP_AUTH0_CLIENT_ID');
-  const audience = ApiService.getVar('CLIENT_APP_AUTH0_AUDIENCE');
-  const redirectUri = ApiService.getVar('CLIENT_APP_AUTH0_CALLBACK_URL');
+  const clientId = ApiService.getVar('CLIENT_APP_AUTH0_CLIENT_ID')
+  const audience = ApiService.getVar('CLIENT_APP_AUTH0_AUDIENCE')
+  const redirectUri = ApiService.getVar('CLIENT_APP_AUTH0_CALLBACK_URL')
 
   const onRedirectCallback = (appState?: AppState) => {
-    history.push(appState?.returnTo || window.location.pathname);
-  };
+    history.push(appState?.returnTo || window.location.pathname)
+  }
 
   if (!(domain && clientId && audience)) {
-    return null;
+    return null
   }
 
   return (
@@ -35,5 +35,5 @@ export const Auth0ProviderWithHistory = ({
     >
       {children}
     </Auth0Provider>
-  );
-};
+  )
+}

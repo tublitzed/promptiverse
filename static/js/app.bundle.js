@@ -29,8 +29,10 @@ const public_page_1 = __webpack_require__(/*! ./pages/public-page */ "./src/page
 const App = () => {
     const { isLoading } = (0, auth0_react_1.useAuth0)();
     if (isLoading) {
-        return (react_1.default.createElement("div", { className: "page-layout" },
-            react_1.default.createElement(page_loader_1.PageLoader, null)));
+        return (react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
+            react_1.default.createElement("div", { className: "container mx-auto h-full" },
+                react_1.default.createElement("div", { className: "mx-auto text-center p-12 text-white" },
+                    react_1.default.createElement(page_loader_1.PageLoader, null)))));
     }
     return (react_1.default.createElement(react_router_dom_1.Switch, null,
         react_1.default.createElement(react_router_dom_1.Route, { path: "/", exact: true, component: home_page_1.default }),

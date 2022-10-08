@@ -1,5 +1,5 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React from 'react'
+import { NavLink } from 'react-router-dom'
 
 interface NavBarTabProps {
   path: string;
@@ -16,5 +16,5 @@ export const NavBarTab: React.FC<NavBarTabProps> = ({ path, label }) => {
     >
       {label}
     </NavLink>
-  );
-};
+  )
+}

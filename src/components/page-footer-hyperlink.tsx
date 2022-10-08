@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 interface FooterHyperlinkProps {
   path: string;
@@ -18,5 +18,5 @@ export const PageFooterHyperlink: React.FC<FooterHyperlinkProps> = ({
     >
       {children}
     </a>
-  );
-};
+  )
+}

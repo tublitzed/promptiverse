@@ -1,5 +1,5 @@
-const shared = require('./shared');
+const shared = require('./shared')
 
-const config = { ...shared };
+const config = { ...shared }
 
-module.exports = config;
+module.exports = config

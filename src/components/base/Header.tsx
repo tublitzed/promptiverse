@@ -1,15 +1,15 @@
 import React from 'react'
 import clsx from 'clsx'
 import { Fragment } from 'react'
-import { useLocation } from "react-router-dom";
+import { useLocation } from 'react-router-dom'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Avatar from '@components/base/Avatar'
 import Logo from '@components/base/Logo'
 import AppContext from '@src/appContext'
-import { LoginButton } from "@components/buttons/login-button";
-import { LogoutButton } from "@components/buttons/logout-button";
-import { SignupButton } from "@components/buttons/signup-button";
+import { LoginButton } from '@components/buttons/login-button'
+import { LogoutButton } from '@components/buttons/logout-button'
+import { SignupButton } from '@components/buttons/signup-button'
 
 function classNames(...classes:any) {
   return classes.filter(Boolean).join(' ')

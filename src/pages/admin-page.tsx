@@ -1,41 +1,41 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import React, { useEffect, useState } from "react";
-import { CodeSnippet } from "../components/code-snippet";
-import { PageLayout } from "../components/page-layout";
-import { getAdminResource } from "../services/message.service";
+import { useAuth0 } from '@auth0/auth0-react'
+import React, { useEffect, useState } from 'react'
+import { CodeSnippet } from '../components/code-snippet'
+import { PageLayout } from '../components/page-layout'
+import { getAdminResource } from '../services/message.service'
 import Layout from '@components/Layout'
 
 export const AdminPage: React.FC = () => {
-  const [message, setMessage] = useState<string>("");
+  const [message, setMessage] = useState<string>('')
 
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth0()
 
   useEffect(() => {
-    let isMounted = true;
+    let isMounted = true
 
     const getMessage = async () => {
-      const accessToken = await getAccessTokenSilently();
-      const { data, error } = await getAdminResource(accessToken);
+      const accessToken = await getAccessTokenSilently()
+      const { data, error } = await getAdminResource(accessToken)
 
       if (!isMounted) {
-        return;
+        return
       }
 
       if (data) {
-        setMessage(JSON.stringify(data, null, 2));
+        setMessage(JSON.stringify(data, null, 2))
       }
 
       if (error) {
-        setMessage(JSON.stringify(error, null, 2));
+        setMessage(JSON.stringify(error, null, 2))
       }
-    };
+    }
 
-    getMessage();
+    getMessage()
 
     return () => {
-      isMounted = false;
-    };
-  }, [getAccessTokenSilently]);
+      isMounted = false
+    }
+  }, [getAccessTokenSilently])
 
   return (
     <PageLayout>
@@ -51,7 +51,7 @@ export const AdminPage: React.FC = () => {
             </span>
             <span>
               <strong>
-                Only authenticated users with the{" "}
+                Only authenticated users with the{' '}
                 <code>read:admin-messages</code> permission should access this
                 page.
               </strong>
@@ -61,5 +61,5 @@ export const AdminPage: React.FC = () => {
         </div>
       </div>
     </PageLayout>
-  );
-};
+  )
+}

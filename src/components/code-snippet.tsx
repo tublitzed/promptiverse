@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 interface CodeSnippetProps {
   title?: string;
@@ -7,7 +7,7 @@ interface CodeSnippetProps {
 
 export const CodeSnippet: React.FC<CodeSnippetProps> = ({
   title,
-  code = "",
+  code = '',
 }) => (
   <div className="code-snippet">
     <span className="code-snippet__title">{title}</span>
@@ -17,4 +17,4 @@ export const CodeSnippet: React.FC<CodeSnippetProps> = ({
       </div>
     </div>
   </div>
-);
+)

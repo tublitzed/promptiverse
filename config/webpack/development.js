@@ -1,4 +1,4 @@
-const shared = require('./shared');
+const shared = require('./shared')
 
 const config = {
   ...shared,
@@ -13,6 +13,6 @@ const config = {
     errorDetails: true,
   },
   plugins: shared.plugins.concat([]),
-};
+}
 
-module.exports = config;
+module.exports = config

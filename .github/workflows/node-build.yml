@@ -1,0 +1,39 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    env:
+      # NEXT_PUBLIC_AUTH0_CLIENT_ID: TEST
+      # NEXT_PUBLIC_AUTH0_SCOPE: "openid profile"
+      # NEXT_PUBLIC_AUTH0_DOMAIN: "http://example.com"
+      # NEXT_PUBLIC_BASE_URL: "http://localhost:3000"
+      # NEXT_PUBLIC_REDIRECT_URI: "/api/callback"
+      # NEXT_PUBLIC_POST_LOGOUT_REDIRECT_URI: "/"
+
+      # # See https://docs.github.com/en/actions/security-guides/encrypted-secrets
+      # AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+      # SESSION_COOKIE_SECRET: ${{ secrets.SESSION_COOKIE_SECRET }}
+      # SESSION_COOKIE_LIFETIME: 7200
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+    - run: npm ci
+    - run: npm run build --if-present

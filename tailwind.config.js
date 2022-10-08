@@ -1,4 +1,3 @@
-
 // const colors = require('tailwindcss/colors')
 // console.log(colors);
 module.exports = {
@@ -19,4 +18,4 @@ module.exports = {
     // },
   },
   plugins: [],
-};
+}

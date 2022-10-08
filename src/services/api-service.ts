@@ -5,14 +5,14 @@ declare global {
   }
 }
 
-window.promptiverse = window.promptiverse || {};
+window.promptiverse = window.promptiverse || {}
 
 const ApiService = {
   getVar: (name: any) => {
     if (!window.promptiverse || !window.promptiverse.vars) {
-      return undefined;
+      return undefined
     }
-    return window.promptiverse.vars[name];
+    return window.promptiverse.vars[name]
   },
   getImage(prompt: string) {
     const apiUrl = ApiService.getVar('API_SERVER_URL')
@@ -21,6 +21,6 @@ const ApiService = {
       postBody: { prompt },
     })
   },
-};
+}
 
-export default ApiService;
+export default ApiService

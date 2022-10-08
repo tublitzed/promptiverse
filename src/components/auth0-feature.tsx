@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 interface Auth0FeatureProps {
   title: string;
@@ -29,4 +29,4 @@ export const Auth0Feature: React.FC<Auth0FeatureProps> = ({
     </h3>
     <p className="auth0-feature__description">{description}</p>
   </a>
-);
+)

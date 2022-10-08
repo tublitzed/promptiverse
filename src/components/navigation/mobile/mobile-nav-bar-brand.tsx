@@ -1,5 +1,5 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React from 'react'
+import { NavLink } from 'react-router-dom'
 
 interface MobileNavBarBrandProps {
   handleClick: () => void;
@@ -20,5 +20,5 @@ export const MobileNavBarBrand: React.FC<MobileNavBarBrandProps> = ({
         />
       </NavLink>
     </div>
-  );
-};
+  )
+}
