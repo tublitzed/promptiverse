@@ -32,6 +32,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -51,7 +60,7 @@ const Protected_1 = __importDefault(__webpack_require__(/*! @components/pages/Pr
 const About_1 = __importDefault(__webpack_require__(/*! @components/pages/About */ "./src/components/pages/About.tsx"));
 const appContext_1 = __importStar(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const App = () => {
-    const { isLoading: isLoadingViaAuth0 } = (0, auth0_react_1.useAuth0)();
+    const { isLoading: isLoadingViaAuth0, getAccessTokenSilently } = (0, auth0_react_1.useAuth0)();
     const { user: userViaAuth0, loginWithRedirect } = (0, auth0_react_1.useAuth0)();
     const [user, setUser] = react_1.default.useState(userViaAuth0);
     const [isLoading, setIsLoading] = react_1.default.useState(isLoadingViaAuth0);
@@ -61,6 +70,13 @@ const App = () => {
     }, [isLoadingViaAuth0]);
     react_1.default.useEffect(() => {
         setUser(userViaAuth0);
+        const getAccessToken = () => __awaiter(void 0, void 0, void 0, function* () {
+            const token = yield getAccessTokenSilently();
+            setUser(Object.assign(Object.assign({}, userViaAuth0), { access_token: token }));
+        });
+        if (userViaAuth0) {
+            getAccessToken();
+        }
     }, [userViaAuth0]);
     if (isLoading) {
         return (react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
@@ -682,8 +698,8 @@ const Input_1 = __importDefault(__webpack_require__(/*! @components/base/Input *
 const Image_1 = __importDefault(__webpack_require__(/*! @components/base/Image */ "./src/components/base/Image.tsx"));
 const localStorage_1 = __importDefault(__webpack_require__(/*! ../../utils/localStorage */ "./src/utils/localStorage.ts"));
 const API_SERVER_URL = api_service_1.default.getVar('API_SERVER_URL');
-const Page = () => {
-    const { setPrompt, prompt } = react_1.default.useContext(appContext_1.default);
+const Page = ({}) => {
+    const { setPrompt, prompt, user } = react_1.default.useContext(appContext_1.default);
     const [promptString, setPromptString] = react_1.default.useState();
     const submit = () => {
         setPrompt(Object.assign(Object.assign({}, prompt), { value: promptString, id: (0, uuid_1.v4)(), loading: true }));
@@ -692,8 +708,7 @@ const Page = () => {
         var _a;
         function fetchData(promptValue) {
             return __awaiter(this, void 0, void 0, function* () {
-                const response = yield api_service_1.default.getImage(promptValue);
-                console.log(response);
+                const response = yield api_service_1.default.getImage(promptValue, user.access_token);
                 if (response === null || response === void 0 ? void 0 : response.error) {
                     console.error(`Unable to generated for prompt! ${response.error}`);
                     return;
@@ -997,11 +1012,14 @@ const ApiService = {
         }
         return window.promptiverse.vars[name];
     },
-    getImage(prompt) {
+    getImage: (prompt, accessToken) => {
         const apiUrl = ApiService.getVar('API_SERVER_URL');
         return (0, fetch_1.default)(`${apiUrl}/api/prompt`, {
             method: 'POST',
             postBody: { prompt },
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            },
         });
     },
 };

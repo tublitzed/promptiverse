@@ -10,8 +10,8 @@ import LocalStorage from '../../utils/localStorage'
 
 const API_SERVER_URL = ApiService.getVar('API_SERVER_URL')
 
-const Page = () => {
-  const { setPrompt, prompt } = React.useContext(AppContext)
+const Page: React.FC<{}> = ({}) => {
+  const { setPrompt, prompt, user } = React.useContext(AppContext)
   const [promptString, setPromptString] = React.useState<string>()
 
   const submit = () => {
@@ -25,8 +25,7 @@ const Page = () => {
 
   React.useEffect(() => {
     async function fetchData(promptValue:string) {
-      const response = await ApiService.getImage(promptValue)
-      console.log(response)
+      const response = await ApiService.getImage(promptValue, user.access_token)
       if (response?.error) {
         console.error(`Unable to generated for prompt! ${response.error}`)
         return

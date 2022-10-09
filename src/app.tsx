@@ -14,17 +14,28 @@ import AppContext, { defaultContext } from '@src/appContext'
 import { Prompt } from '@types'
 
 export const App: React.FC = () => {
-  const { isLoading: isLoadingViaAuth0 } = useAuth0()
+  const { isLoading: isLoadingViaAuth0, getAccessTokenSilently } = useAuth0()
   const { user: userViaAuth0, loginWithRedirect } = useAuth0()
   const [user, setUser] = React.useState<any | undefined>(userViaAuth0)
   const [isLoading, setIsLoading] = React.useState<boolean>(isLoadingViaAuth0)
   const [prompt, setPrompt] = React.useState<Prompt | undefined>(defaultContext.prompt)
+
   React.useEffect(() => {
     setIsLoading(isLoadingViaAuth0)
   }, [isLoadingViaAuth0])
 
   React.useEffect(() => {
     setUser(userViaAuth0)
+    const getAccessToken = async () => {
+      const token = await getAccessTokenSilently()
+      setUser({
+        ...userViaAuth0,
+        access_token: token,
+      })
+    }
+    if (userViaAuth0) {
+      getAccessToken()
+    }
   }, [userViaAuth0])
 
   if (isLoading) {

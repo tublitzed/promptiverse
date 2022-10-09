@@ -14,11 +14,14 @@ const ApiService = {
     }
     return window.promptiverse.vars[name]
   },
-  getImage(prompt: string) {
+  getImage: (prompt: string, accessToken: string) => {
     const apiUrl = ApiService.getVar('API_SERVER_URL')
     return fetcher(`${apiUrl}/api/prompt`, {
       method: 'POST',
       postBody: { prompt },
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
     })
   },
 }

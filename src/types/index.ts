@@ -7,6 +7,7 @@ export interface User {
   picture: string
   sub: string
   updated_at: string
+  access_token?: string
 }
 
 export interface Prompt {

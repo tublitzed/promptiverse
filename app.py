@@ -50,10 +50,6 @@ def render_static():
 def index():
     return render_static()
 
-# @app.route("/api/prompt", methods=["GET", "POST"])
-# def test():
-#     return jsonify({"foo": "bar"})
-
 
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
