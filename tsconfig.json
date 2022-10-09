@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    // "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "lib": ["es6", "dom"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitThis": true,
+    "outDir": "./static/",
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "target": "es6",
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@components": ["src/components/index"],
+      "@models/*": ["src/models/*"],
+      "@models": ["src/models/index"],
+      "@services/*": ["src/services/*"],
+      "@services": ["src/services/index"],
+      "@types/*": ["src/types/*"],
+      "@types": ["src/types/index"],
+      "@src/*": ["src/*"],
+      "@src": ["src/index"],
+      "@utils/*": ["utils/*"],
+      "@utils": ["src/utils/index"],
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}

@@ -1,0 +1,25 @@
+FLASK_APP=app.py
+FLASK_DEBUG=1
+FLASK_RUN_PORT=3001
+FLASK_ENV=development
+
+# https://docs.python.org/3/library/logging.html#logging-levels
+LOG_LEVEL=DEBUG
+
+PORT=3001
+API_SERVER_URL=http://localhost:3001
+
+# Auth0 - used by Flask (make sure it matches below)
+AUTH0_DOMAIN=
+AUTH0_AUDIENCE=
+
+# Auth0 - used by client
+CLIENT_APP_AUTH0_DOMAIN=
+CLIENT_APP_AUTH0_CLIENT_ID=
+CLIENT_APP_AUTH0_AUDIENCE=
+CLIENT_APP_AUTH0_CALLBACK_URL=
+
+# StabilityAI
+# Get it here: https://beta.dreamstudio.ai/membership
+STABILITY_KEY=
+STABILITY_HOST=grpc.stability.ai:443

@@ -1,0 +1,20 @@
+version: '3.7'
+
+networks:
+  prompt_network:
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prompt_api
+    volumes:
+      - ./:/app
+    ports:
+      - "3002:3001" # map flask port 3001 to localhost port - ie visit http://0.0.0.0:3002
+    restart: always
+    networks:
+      - prompt_network
+    env_file:
+      - .flaskenv

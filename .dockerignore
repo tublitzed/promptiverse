@@ -1,0 +1,6 @@
+static/img/generated
+
+__pycache__
+venv
+
+node_modules

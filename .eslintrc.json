@@ -1,0 +1,97 @@
+{
+    "env": {
+      "browser": true,
+      "es2021": true,
+      "node": true,
+      "jest": true
+    },
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaFeatures": {
+        "jsx": true
+      },
+      "ecmaVersion": "latest",
+      "sourceType": "module"
+    },
+    "rules": {
+      "array-bracket-newline": ["error", { "multiline": true }],
+      "array-bracket-spacing": ["error", "never"],
+      "array-element-newline": [
+        "error",
+        {
+          "ArrayExpression": "always",
+          "ArrayPattern": { "minItems": 3 }
+        }
+      ],
+      "arrow-parens": ["error", "as-needed"],
+      "arrow-spacing": "error",
+      "block-spacing": "error",
+      "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
+      "comma-dangle": ["error", "always-multiline"],
+      "comma-spacing": "error",
+      "comma-style": "error",
+      "computed-property-spacing": "error",
+      "curly": "error",
+      "dot-location": ["error", "property"],
+      "dot-notation": "error",
+      "eol-last": "error",
+      "eqeqeq": ["error", "always"],
+      "func-call-spacing": "error",
+      "function-call-argument-newline": ["error", "consistent"],
+      "function-paren-newline": ["error", "multiline-arguments"],
+      "indent": [
+        "error",
+        2,
+        {
+          "offsetTernaryExpressions": true,
+          "SwitchCase": 1
+        }
+      ],
+      "jsx-quotes": "error",
+      "key-spacing": ["error", { "mode": "strict" }],
+      "keyword-spacing": "error",
+      "multiline-ternary": ["error", "always-multiline"],
+      "new-parens": "error",
+      "newline-per-chained-call": "error",
+      "no-else-return": "error",
+      "no-extra-semi": "error",
+      "no-floating-decimal": "error",
+      "no-lonely-if": "error",
+      "no-multi-spaces": "error",
+      "no-multiple-empty-lines": ["error", { "max": 3, "maxEOF": 1, "maxBOF": 0 }],
+      "no-redeclare": "error",
+      "no-trailing-spaces": "error",
+      "no-undef-init": "error",
+      "no-unneeded-ternary": "error",
+      "no-useless-computed-key": "error",
+      "no-useless-return": "error",
+      "no-var": "error",
+      "no-whitespace-before-property": "error",
+      "object-curly-spacing": ["error", "always"],
+      "object-property-newline": "error",
+      "padded-blocks": ["error", "never"],
+      "prefer-arrow-callback": "error",
+      "prefer-const": "error",
+      "prefer-object-spread": "error",
+      "prefer-template": "error",
+      "quotes": ["error", "single", { "allowTemplateLiterals": true, "avoidEscape": true }],
+      "rest-spread-spacing": ["error", "never"],
+      "semi": ["error", "never"],
+      "space-before-blocks": "error",
+      "space-before-function-paren": [
+        "error",
+        {
+          "anonymous": "never",
+          "named": "never",
+          "asyncArrow": "always"
+        }
+      ],
+      "sort-vars": "error",
+      "space-in-parens": "error",
+      // support TS style triple slash file referencing with the '/' marker:
+      "spaced-comment": ["error", "always", { "markers": ["/"] }],
+      "switch-colon-spacing": "error",
+      "template-curly-spacing": "error",
+      "wrap-iife": "error"
+    }
+  }

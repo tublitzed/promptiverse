@@ -1,0 +1,21 @@
+node_modules
+venv
+__pycache__
+
+.DS_Store
+.vscode
+
+static/img/uploads/*
+static/img/samples/copying.*
+static/*bundle*
+
+
+.flaskenv
+.env
+
+# Jest related
+coverage/
+
+tmp/img/*
+
+static/img/generated/*
