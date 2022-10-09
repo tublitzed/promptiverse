@@ -22,7 +22,6 @@ PyJWT==2.5.0
 python-dotenv==0.21.0
 python-jose==3.3.0
 rsa==4.9
-six==1.16.0
 stability-sdk==0.2.3
 Werkzeug==2.2.2
 WTForms==3.0.1
