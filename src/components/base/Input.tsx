@@ -14,6 +14,7 @@ const Input = ({
   value: valueViaProps,
   autoFocus,
   onChange,
+  disabled,
   ...otherProps
 }:Props) => {
   const inputRef = React.useRef<HTMLInputElement>(null)
@@ -27,6 +28,7 @@ const Input = ({
     <input
       value={value}
       ref={inputRef}
+      disabled={disabled}
       type={type || 'string'}
       onChange={(e:any) => {
         setValue(e.target.value)
@@ -36,7 +38,8 @@ const Input = ({
       }}
       className={clsx(
         className,
-        'cursor:pointer p-2 rounded-sm bg-gray-200 text-gray-700',
+        'p-2 rounded-sm',
+        disabled ? 'bg-gray-300 text-gray-500' : 'bg-gray-200 text-gray-700 cursor:pointer',
         'focus:bg-white focus:outline-none focus:ring focus:ring-blue-200',
       )}
       {...otherProps}

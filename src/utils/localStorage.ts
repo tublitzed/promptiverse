@@ -7,7 +7,6 @@ const LocalStorage = {
   },
 
   setPrompt: (prompt?: Prompt) => {
-    console.log('trying to set in ls: ', prompt)
     if (!LocalStorage.localStorageExists() || !prompt) {
       return
     }

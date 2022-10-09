@@ -17,7 +17,7 @@ const Button = ({ children, download, href, onClick, disabled, className }: Prop
     className,
     'py-2 px-6 border no-underline border-transparent text-sm font-medium rounded-md text-white',
     disabled
-      ? 'bg-gray-300'
+      ? 'bg-slate-500'
       : 'bg-slate-700 hover:bg-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500',
   )
 

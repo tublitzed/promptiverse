@@ -5,7 +5,8 @@ import Layout from '@components/layouts/Layout'
 import Button from '@components/base/Button'
 import AppContext from '@src/appContext'
 import Input from '@components/base/Input'
-import Image from '@components/base/Image'
+import Image from '@components/Image'
+import Loader from '@components/base/Loader'
 import LocalStorage from '../../utils/localStorage'
 
 const API_SERVER_URL = ApiService.getVar('API_SERVER_URL')
@@ -59,8 +60,12 @@ const Page: React.FC<{}> = ({}) => {
           onChange={setPromptString}
           className="grow"
           placeholder="enter a prompt, like 'cat dancing on the moon'"
+          disabled={prompt.loading}
           autoFocus />
-        <Button onClick={submit}>Go!</Button>
+        <Button
+          onClick={submit}
+          disabled={prompt.loading}
+        >Go!</Button>
       </div>
       <div>
         <Image />

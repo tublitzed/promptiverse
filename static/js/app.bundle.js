@@ -258,6 +258,38 @@ exports["default"] = Header;
 
 /***/ }),
 
+/***/ "./src/components/Image.tsx":
+/*!**********************************!*\
+  !*** ./src/components/Image.tsx ***!
+  \**********************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Loader_1 = __importDefault(__webpack_require__(/*! @components/base/Loader */ "./src/components/base/Loader.tsx"));
+const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const Image = () => {
+    const { prompt } = react_1.default.useContext(appContext_1.default);
+    if (!prompt) {
+        return null;
+    }
+    if (prompt.loading) {
+        return (react_1.default.createElement("div", { className: "mt-4 text-center" },
+            react_1.default.createElement(Loader_1.default, null),
+            react_1.default.createElement("h2", { className: "text-slate-50 font-thin text-lg mt-4" }, "Loading...")));
+    }
+    return (react_1.default.createElement("div", { className: "p-6 bg-white rounded mt-6" },
+        react_1.default.createElement("img", { src: prompt === null || prompt === void 0 ? void 0 : prompt.url, title: prompt === null || prompt === void 0 ? void 0 : prompt.value, alt: `Image for prompt ${(prompt === null || prompt === void 0 ? void 0 : prompt.value) ? prompt.value : ''}`, width: 512, height: 512, className: "border m-auto rounded shadow p-2 bg-slate-400" })));
+};
+exports["default"] = Image;
+
+
+/***/ }),
+
 /***/ "./src/components/base/Avatar.tsx":
 /*!****************************************!*\
   !*** ./src/components/base/Avatar.tsx ***!
@@ -298,7 +330,7 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
 const Button = ({ children, download, href, onClick, disabled, className }) => {
     const cssClasses = (0, clsx_1.default)(className, 'py-2 px-6 border no-underline border-transparent text-sm font-medium rounded-md text-white', disabled
-        ? 'bg-gray-300'
+        ? 'bg-slate-500'
         : 'bg-slate-700 hover:bg-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500');
     if (href) {
         return (react_1.default.createElement("a", { onClick: onClick, className: `${cssClasses} inline-block`, href: href, download: download }, children));
@@ -306,32 +338,6 @@ const Button = ({ children, download, href, onClick, disabled, className }) => {
     return (react_1.default.createElement("button", { onClick: onClick, className: cssClasses, disabled: disabled }, children));
 };
 exports["default"] = Button;
-
-
-/***/ }),
-
-/***/ "./src/components/base/Image.tsx":
-/*!***************************************!*\
-  !*** ./src/components/base/Image.tsx ***!
-  \***************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
-const Image = () => {
-    const { prompt } = react_1.default.useContext(appContext_1.default);
-    if (!prompt || !prompt.url) {
-        return null;
-    }
-    return (react_1.default.createElement("div", { className: "p-6 bg-white rounded mt-6" },
-        react_1.default.createElement("img", { src: prompt === null || prompt === void 0 ? void 0 : prompt.url, title: prompt === null || prompt === void 0 ? void 0 : prompt.value, alt: `Image for prompt ${(prompt === null || prompt === void 0 ? void 0 : prompt.value) ? prompt.value : ''}`, width: 512, height: 512, className: "border m-auto rounded shadow p-2 bg-slate-400" })));
-};
-exports["default"] = Image;
 
 
 /***/ }),
@@ -361,7 +367,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
 const Input = (_a) => {
-    var { className, type, value: valueViaProps, autoFocus, onChange } = _a, otherProps = __rest(_a, ["className", "type", "value", "autoFocus", "onChange"]);
+    var { className, type, value: valueViaProps, autoFocus, onChange, disabled } = _a, otherProps = __rest(_a, ["className", "type", "value", "autoFocus", "onChange", "disabled"]);
     const inputRef = react_1.default.useRef(null);
     const [value, setValue] = react_1.default.useState(valueViaProps);
     react_1.default.useEffect(() => {
@@ -369,14 +375,35 @@ const Input = (_a) => {
             inputRef.current.focus();
         }
     }, [autoFocus]);
-    return (react_1.default.createElement("input", Object.assign({ value: value, ref: inputRef, type: type || 'string', onChange: (e) => {
+    return (react_1.default.createElement("input", Object.assign({ value: value, ref: inputRef, disabled: disabled, type: type || 'string', onChange: (e) => {
             setValue(e.target.value);
             if (onChange) {
                 onChange(e.target.value);
             }
-        }, className: (0, clsx_1.default)(className, 'cursor:pointer p-2 rounded-sm bg-gray-200 text-gray-700', 'focus:bg-white focus:outline-none focus:ring focus:ring-blue-200') }, otherProps)));
+        }, className: (0, clsx_1.default)(className, 'p-2 rounded-sm', disabled ? 'bg-gray-300 text-gray-500' : 'bg-gray-200 text-gray-700 cursor:pointer', 'focus:bg-white focus:outline-none focus:ring focus:ring-blue-200') }, otherProps)));
 };
 exports["default"] = Input;
+
+
+/***/ }),
+
+/***/ "./src/components/base/Loader.tsx":
+/*!****************************************!*\
+  !*** ./src/components/base/Loader.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
+const Loader = ({ bgClassName = 'bg-white' }) => {
+    return (react_1.default.createElement("div", { className: (0, clsx_1.default)('bg-gradient-to-r from-slate-300 to-slate-400 h-[3px] w-full', `after:absolute after:h-[3px] after:bg-slate-600 after:left-0 after:right-[100%] after:animate-loader`) }));
+};
+exports["default"] = Loader;
 
 
 /***/ }),
@@ -395,7 +422,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Logo = () => {
     return (react_1.default.createElement("div", null,
-        react_1.default.createElement("span", { className: "font-light text-2xl text-white" }, "[ N ]")));
+        react_1.default.createElement("span", { className: "font-light text-2xl text-white" }, "[ P ]")));
 };
 exports["default"] = Logo;
 
@@ -695,7 +722,7 @@ const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Lay
 const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const Input_1 = __importDefault(__webpack_require__(/*! @components/base/Input */ "./src/components/base/Input.tsx"));
-const Image_1 = __importDefault(__webpack_require__(/*! @components/base/Image */ "./src/components/base/Image.tsx"));
+const Image_1 = __importDefault(__webpack_require__(/*! @components/Image */ "./src/components/Image.tsx"));
 const localStorage_1 = __importDefault(__webpack_require__(/*! ../../utils/localStorage */ "./src/utils/localStorage.ts"));
 const API_SERVER_URL = api_service_1.default.getVar('API_SERVER_URL');
 const Page = ({}) => {
@@ -733,8 +760,8 @@ const Page = ({}) => {
     ]);
     return (react_1.default.createElement(Layout_1.default, null,
         react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
-            react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.value) || '', onChange: setPromptString, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", autoFocus: true }),
-            react_1.default.createElement(Button_1.default, { onClick: submit }, "Go!")),
+            react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.value) || '', onChange: setPromptString, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", disabled: prompt.loading, autoFocus: true }),
+            react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt.loading }, "Go!")),
         react_1.default.createElement("div", null,
             react_1.default.createElement(Image_1.default, null))));
 };
@@ -1234,7 +1261,6 @@ const LocalStorage = {
         return typeof window !== 'undefined' && typeof (window === null || window === void 0 ? void 0 : window.localStorage) !== 'undefined';
     },
     setPrompt: (prompt) => {
-        console.log('trying to set in ls: ', prompt);
         if (!LocalStorage.localStorageExists() || !prompt) {
             return;
         }
