@@ -10,8 +10,8 @@ const Loader = ({ bgClassName = 'bg-white' }:Props): JSX.Element => {
     <div
       className={
         clsx(
-          'bg-gradient-to-r from-blue-500 to-blue-900 h-[3px] w-full',
-          `after:absolute after:h-full after:${bgClassName} after:left-0 after:right-[100%] after:animate-loader`,
+          'bg-gradient-to-r from-slate-300 to-slate-400 h-[3px] w-full',
+          `after:absolute after:h-[3px] after:bg-slate-600 after:left-0 after:right-[100%] after:animate-loader`,
         )
       }
     ></div>

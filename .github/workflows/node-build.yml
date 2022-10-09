@@ -15,18 +15,6 @@ jobs:
       matrix:
         node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-    env:
-      # NEXT_PUBLIC_AUTH0_CLIENT_ID: TEST
-      # NEXT_PUBLIC_AUTH0_SCOPE: "openid profile"
-      # NEXT_PUBLIC_AUTH0_DOMAIN: "http://example.com"
-      # NEXT_PUBLIC_BASE_URL: "http://localhost:3000"
-      # NEXT_PUBLIC_REDIRECT_URI: "/api/callback"
-      # NEXT_PUBLIC_POST_LOGOUT_REDIRECT_URI: "/"
-
-      # # See https://docs.github.com/en/actions/security-guides/encrypted-secrets
-      # AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
-      # SESSION_COOKIE_SECRET: ${{ secrets.SESSION_COOKIE_SECRET }}
-      # SESSION_COOKIE_LIFETIME: 7200
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}

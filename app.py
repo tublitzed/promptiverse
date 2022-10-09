@@ -1,11 +1,9 @@
 from flask import Flask, render_template, make_response, redirect, jsonify
-from waitress import serve
 from flask_cors import CORS
 from flask_wtf.csrf import CSRFProtect
 import logging
 import random
 import os
-import pdb
 from api.prompt import prompt_views
 
 def is_dev():
@@ -41,10 +39,10 @@ def render_static():
     return render_template('index.html',
                            app_vars=app_vars, cache_buster=cache_buster)
 
-# @app.route('/', defaults={'all_paths': ''})
-# @app.route('/<path:all_paths>')
-# def catch_all_route(all_paths):
-#     return render_static()
+@app.route('/', defaults={'all_paths': ''})
+@app.route('/<path:all_paths>')
+def catch_all_route(all_paths):
+    return render_static()
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -67,4 +65,4 @@ def health_check():
 
 if __name__ == '__app__':
     port = int(os.environ.get('PORT', 3001))
-    serve(app, host='0.0.0.0', port=port)
+    app.run(port=port)
