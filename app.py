@@ -5,6 +5,7 @@ import logging
 import random
 import os
 from api.prompt import prompt_views
+from api.models import models
 
 def is_dev():
     return True if os.getenv("FLASK_ENV") == "development" else False
@@ -62,6 +63,8 @@ def health_check():
     logging.exception("exception log")
 
     return make_response("OK", 200)
+
+models.create_tables()
 
 if __name__ == '__app__':
     port = int(os.environ.get('PORT', 3001))
