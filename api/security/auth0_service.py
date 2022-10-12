@@ -1,6 +1,6 @@
 from flask import current_app
 import json, os
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 from functools import wraps
 
 from flask import Flask, request, jsonify, _request_ctx_stack
@@ -17,7 +17,6 @@ class AuthError(Exception):
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
-
 
 # Format error response and append status code
 def get_token_auth_header():

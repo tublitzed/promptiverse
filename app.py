@@ -7,6 +7,8 @@ import random
 import os
 from api.prompt import prompt_views
 from api.models import models
+from api.helpers import user
+from api.security import auth0_service
 
 def is_dev():
     return True if os.getenv("FLASK_ENV") == "development" else False
@@ -52,9 +54,9 @@ def index():
 
 @app.route("/sandbox", methods=["POST"])
 def sandbox():
-    auth = request.headers.get("Authorization", None)
-    print(auth)
-    return jsonify(message="interesting")
+    user_info = user.get_user_info()
+    print(user_info)
+    return jsonify(user_info=user_info)
 
 
 @app.route("/callback", methods=["GET", "POST"])
