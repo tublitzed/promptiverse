@@ -7,11 +7,12 @@ from api.helpers.file import (
 )
 
 stability_api = client.StabilityInference(
-    key=os.environ['STABILITY_KEY'],
+    key=os.environ["STABILITY_KEY"],
     verbose=True,
 )
 
-def generate(prompt:string):
+
+def generate(prompt: string):
     answers = stability_api.generate(
         prompt=prompt,
         # seed=34567, # if provided, specifying a random seed makes results deterministic
@@ -22,7 +23,8 @@ def generate(prompt:string):
             if artifact.finish_reason == generation.FILTER:
                 warnings.warn(
                     "Your request activated the API's safety filters and could not be processed."
-                    "Please modify the prompt and try again.")
+                    "Please modify the prompt and try again."
+                )
             if artifact.type == generation.ARTIFACT_IMAGE:
                 # First, make sure we have a file to work with
                 file_meta = create_img_file()
@@ -33,4 +35,3 @@ def generate(prompt:string):
                 outfile.flush()  # Optional but a good idea
                 outfile.close()
     return file_meta["public_path"]
-

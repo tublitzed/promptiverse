@@ -1,21 +1,16 @@
 import os
-from flask import (
-    Blueprint,
-    jsonify,
-    request
-)
+from flask import Blueprint, jsonify, request
 
 from api.prompt.prompt import Prompt
 
 from api.security.auth0_service import requires_auth, AuthError
 
-from api.prompt.prompt_service import (
-  generate
-)
+from api.prompt.prompt_service import generate
 
-bp_name = 'api-prompt'
-bp_url_prefix = '/api/prompt'
+bp_name = "api-prompt"
+bp_url_prefix = "/api/prompt"
 bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
+
 
 @bp.route("", methods=["POST", "GET", "OPTIONS"])
 @requires_auth
@@ -30,11 +25,12 @@ def public():
     path = generate(prompt)
     prompt_response = jsonify({"file": path})
     # Example of allow listing everything:
-    prompt_response.headers.add('Access-Control-Allow-Origin', '*')
+    prompt_response.headers.add("Access-Control-Allow-Origin", "*")
 
     # Only allow client app to access this endpoint
     # prompt_response.headers.add('Access-Control-Allow-Origin', os.environ['CLIENT_ORIGIN_URL'])
     return (prompt_response, 201)
+
 
 # http://localhost:5002/api/prompt/authtest
 @bp.route("/authtest", methods=["POST", "GET"])
