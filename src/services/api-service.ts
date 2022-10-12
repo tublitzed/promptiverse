@@ -24,6 +24,15 @@ const ApiService = {
       },
     })
   },
+  sandboxTest: (accessToken: string) => {
+    const apiUrl = ApiService.getVar('API_SERVER_URL')
+    return fetcher(`${apiUrl}/sandbox`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    })
+  },
 }
 
 export default ApiService

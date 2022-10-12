@@ -1,4 +1,5 @@
-from flask import Flask, render_template, make_response, redirect, jsonify
+import json
+from flask import Flask, render_template, make_response, redirect, jsonify, request
 from flask_cors import CORS
 from flask_wtf.csrf import CSRFProtect
 import logging
@@ -48,6 +49,12 @@ def catch_all_route(all_paths):
 @app.route("/", methods=["GET", "POST"])
 def index():
     return render_static()
+
+@app.route("/sandbox", methods=["POST"])
+def sandbox():
+    auth = request.headers.get("Authorization", None)
+    print(auth)
+    return jsonify(message="interesting")
 
 
 @app.route("/callback", methods=["GET", "POST"])

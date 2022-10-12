@@ -17,22 +17,8 @@ psql_db = PostgresqlDatabase(
 
 
 class BaseModel(Model):
-    """A base model that will use our Postgresql database"""
-
     class Meta:
         database = psql_db
-
-
-class User(BaseModel):
-    db_table = "User"
-    created_at = DateTimeField(default=datetime.datetime.now)
-    first_name = CharField(null=True, max_length=50)
-    id = UUIDField(unique=True, primary_key=True)
-    last_name = CharField(null=True, max_length=50)
-    password = CharField(max_length=100)
-    updated_at = DateTimeField(default=datetime.datetime.now)
-    username = CharField(unique=True, max_length=50)
-
 
 IMAGE_ENGINES = [
     (1, "STABLE_DIFFUSION"),
@@ -43,8 +29,9 @@ IMAGE_ENGINES = [
 class Prompt(BaseModel):
     db_table = "Prompt"
     created_at = DateTimeField(default=datetime.datetime.now)
-    creator = ForeignKeyField(User, backref="prompts")
-    id = UUIDField(unique=True, primary_key=True)
+    # linked to Auth0
+    user_id = CharField(max_length=255)
+    id = CharField(unique=True, primary_key=True)
     img_url = CharField(max_length=255)
     img_engine = IntegerField(default=1)
     value = CharField(
@@ -58,6 +45,5 @@ def create_tables():
         psql_db.create_tables(
             [
                 Prompt,
-                User,
             ]
         )

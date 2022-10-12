@@ -5,6 +5,7 @@ import { ProtectedRoute } from './components/protected-route'
 import AdminPage from '@components/pages/Admin'
 import IndexPage from '@components/pages/Index'
 import ProfilePage from '@components/pages/Profile'
+import SandboxPage from '@components/pages/Sandbox'
 import CallbackPage from '@components/pages/Callback'
 import PublicPage from '@components/pages/Public'
 import NotFoundPage from '@components/pages/404'
@@ -14,8 +15,12 @@ import AppContext, { defaultContext } from '@src/appContext'
 import { Prompt } from '@types'
 
 export const App: React.FC = () => {
-  const { isLoading: isLoadingViaAuth0, getAccessTokenSilently } = useAuth0()
-  const { user: userViaAuth0, loginWithRedirect } = useAuth0()
+  const {
+    user: userViaAuth0,
+    loginWithRedirect,
+    isLoading: isLoadingViaAuth0,
+    getAccessTokenSilently,
+  } = useAuth0()
   const [user, setUser] = React.useState<any | undefined>(userViaAuth0)
   const [isLoading, setIsLoading] = React.useState<boolean>(isLoadingViaAuth0)
   const [prompt, setPrompt] = React.useState<Prompt | undefined>(defaultContext.prompt)
@@ -25,6 +30,7 @@ export const App: React.FC = () => {
   }, [isLoadingViaAuth0])
 
   React.useEffect(() => {
+    // Can also use hook
     setUser(userViaAuth0)
     const getAccessToken = async () => {
       const token = await getAccessTokenSilently()
@@ -66,6 +72,7 @@ export const App: React.FC = () => {
         <ProtectedRoute path="/profile" component={ProfilePage} />
         <ProtectedRoute path="/about" component={AboutPage} />
         <ProtectedRoute path="/protected" component={ProtectedPage} />
+        <ProtectedRoute path="/sandbox" component={SandboxPage} />
         <ProtectedRoute path="/admin" component={AdminPage} />
         <Route path="/public" component={PublicPage} />
         <Route path="/callback" component={CallbackPage} />
