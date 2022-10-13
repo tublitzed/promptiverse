@@ -1,5 +1,5 @@
 import json
-from flask import Flask, render_template, make_response, redirect, jsonify, request
+from flask import Flask, render_template, make_response, redirect, jsonify, request, got_request_exception
 from flask_cors import CORS
 from flask_wtf.csrf import CSRFProtect
 import logging
@@ -54,9 +54,12 @@ def index():
 
 @app.route("/sandbox", methods=["POST"])
 def sandbox():
+    if (is_dev() is False):
+        return make_response('error', 400)
     user_info = user.get_user_info()
-    print(user_info)
-    return jsonify(user_info=user_info)
+    user_id = user.get_user_id(user_info=user_info)
+    models.create_prompt(user_id=user_id, value="just a test")
+    return jsonify(user_info=user_info, user_id=user_id)
 
 
 @app.route("/callback", methods=["GET", "POST"])
