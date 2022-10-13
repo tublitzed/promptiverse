@@ -49,15 +49,12 @@ exports.App = void 0;
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-const protected_route_1 = __webpack_require__(Object(function webpackMissingModule() { var e = new Error("Cannot find module './components/protected-route'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-const Admin_1 = __importDefault(__webpack_require__(/*! @components/pages/Admin */ "./src/components/pages/Admin.tsx"));
+const ProtectedRoute_1 = __importDefault(__webpack_require__(/*! @components/auth/ProtectedRoute */ "./src/components/auth/ProtectedRoute.tsx"));
 const Index_1 = __importDefault(__webpack_require__(/*! @components/pages/Index */ "./src/components/pages/Index.tsx"));
 const Profile_1 = __importDefault(__webpack_require__(/*! @components/pages/Profile */ "./src/components/pages/Profile.tsx"));
 const Sandbox_1 = __importDefault(__webpack_require__(/*! @components/pages/Sandbox */ "./src/components/pages/Sandbox.tsx"));
 const Callback_1 = __importDefault(__webpack_require__(/*! @components/pages/Callback */ "./src/components/pages/Callback.tsx"));
-const Public_1 = __importDefault(__webpack_require__(/*! @components/pages/Public */ "./src/components/pages/Public.tsx"));
 const _404_1 = __importDefault(__webpack_require__(/*! @components/pages/404 */ "./src/components/pages/404.tsx"));
-const Protected_1 = __importDefault(__webpack_require__(/*! @components/pages/Protected */ "./src/components/pages/Protected.tsx"));
 const About_1 = __importDefault(__webpack_require__(/*! @components/pages/About */ "./src/components/pages/About.tsx"));
 const appContext_1 = __importStar(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const App = () => {
@@ -96,16 +93,58 @@ const App = () => {
     return (react_1.default.createElement(appContext_1.default.Provider, { value: defaultCtx },
         react_1.default.createElement(react_router_dom_1.Switch, null,
             react_1.default.createElement(react_router_dom_1.Route, { path: "/", exact: true, component: Index_1.default }),
-            react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/profile", component: Profile_1.default }),
-            react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/about", component: About_1.default }),
-            react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/protected", component: Protected_1.default }),
-            react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/sandbox", component: Sandbox_1.default }),
-            react_1.default.createElement(protected_route_1.ProtectedRoute, { path: "/admin", component: Admin_1.default }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/public", component: Public_1.default }),
+            react_1.default.createElement(ProtectedRoute_1.default, { path: "/profile", component: Profile_1.default }),
+            react_1.default.createElement(ProtectedRoute_1.default, { path: "/about", component: About_1.default }),
+            react_1.default.createElement(ProtectedRoute_1.default, { path: "/sandbox", component: Sandbox_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/callback", component: Callback_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "*", component: _404_1.default }))));
 };
 exports.App = App;
+
+
+/***/ }),
+
+/***/ "./src/api/api.ts":
+/*!************************!*\
+  !*** ./src/api/api.ts ***!
+  \************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const fetch_1 = __importDefault(__webpack_require__(/*! ../utils/fetch */ "./src/utils/fetch.ts"));
+window.promptiverse = window.promptiverse || {};
+const ApiService = {
+    getVar: (name) => {
+        if (!window.promptiverse || !window.promptiverse.vars) {
+            return undefined;
+        }
+        return window.promptiverse.vars[name];
+    },
+    getImage: (prompt, accessToken) => {
+        const apiUrl = ApiService.getVar('API_SERVER_URL');
+        return (0, fetch_1.default)(`${apiUrl}/api/prompt`, {
+            method: 'POST',
+            postBody: { prompt },
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        });
+    },
+    sandboxTest: (accessToken) => {
+        const apiUrl = ApiService.getVar('API_SERVER_URL');
+        return (0, fetch_1.default)(`${apiUrl}/sandbox`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        });
+    },
+};
+exports["default"] = ApiService;
 
 
 /***/ }),
@@ -134,41 +173,6 @@ exports.defaultContext = {
 };
 const AppContext = (0, react_1.createContext)(exports.defaultContext);
 exports["default"] = AppContext;
-
-
-/***/ }),
-
-/***/ "./src/auth0-provider-with-history.tsx":
-/*!*********************************************!*\
-  !*** ./src/auth0-provider-with-history.tsx ***!
-  \*********************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Auth0ProviderWithHistory = void 0;
-const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
-const Auth0ProviderWithHistory = ({ children, }) => {
-    const history = (0, react_router_dom_1.useHistory)();
-    const domain = api_service_1.default.getVar('CLIENT_APP_AUTH0_DOMAIN');
-    const clientId = api_service_1.default.getVar('CLIENT_APP_AUTH0_CLIENT_ID');
-    const audience = api_service_1.default.getVar('CLIENT_APP_AUTH0_AUDIENCE');
-    const redirectUri = api_service_1.default.getVar('CLIENT_APP_AUTH0_CALLBACK_URL');
-    const onRedirectCallback = (appState) => {
-        history.push((appState === null || appState === void 0 ? void 0 : appState.returnTo) || window.location.pathname);
-    };
-    if (!(domain && clientId && audience)) {
-        return null;
-    }
-    return (react_1.default.createElement(auth0_react_1.Auth0Provider, { domain: domain, clientId: clientId, audience: audience, redirectUri: redirectUri, onRedirectCallback: onRedirectCallback }, children));
-};
-exports.Auth0ProviderWithHistory = Auth0ProviderWithHistory;
 
 
 /***/ }),
@@ -288,6 +292,77 @@ const Image = () => {
         react_1.default.createElement("img", { src: prompt === null || prompt === void 0 ? void 0 : prompt.url, title: prompt === null || prompt === void 0 ? void 0 : prompt.value, alt: `Image for prompt ${(prompt === null || prompt === void 0 ? void 0 : prompt.value) ? prompt.value : ''}`, width: 512, height: 512, className: "border m-auto rounded shadow p-2 bg-slate-400" })));
 };
 exports["default"] = Image;
+
+
+/***/ }),
+
+/***/ "./src/components/auth/Auth0ProviderWithHistory.tsx":
+/*!**********************************************************!*\
+  !*** ./src/components/auth/Auth0ProviderWithHistory.tsx ***!
+  \**********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Auth0ProviderWithHistory = void 0;
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const api_1 = __importDefault(__webpack_require__(/*! ../../api/api */ "./src/api/api.ts"));
+const Auth0ProviderWithHistory = ({ children, }) => {
+    const history = (0, react_router_dom_1.useHistory)();
+    const domain = api_1.default.getVar('CLIENT_APP_AUTH0_DOMAIN');
+    const clientId = api_1.default.getVar('CLIENT_APP_AUTH0_CLIENT_ID');
+    const audience = api_1.default.getVar('CLIENT_APP_AUTH0_AUDIENCE');
+    const redirectUri = api_1.default.getVar('CLIENT_APP_AUTH0_CALLBACK_URL');
+    const onRedirectCallback = (appState) => {
+        history.push((appState === null || appState === void 0 ? void 0 : appState.returnTo) || window.location.pathname);
+    };
+    if (!(domain && clientId && audience)) {
+        return null;
+    }
+    return (react_1.default.createElement(auth0_react_1.Auth0Provider, { domain: domain, clientId: clientId, audience: audience, redirectUri: redirectUri, onRedirectCallback: onRedirectCallback }, children));
+};
+exports.Auth0ProviderWithHistory = Auth0ProviderWithHistory;
+
+
+/***/ }),
+
+/***/ "./src/components/auth/ProtectedRoute.tsx":
+/*!************************************************!*\
+  !*** ./src/components/auth/ProtectedRoute.tsx ***!
+  \************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const ProtectedRoute = (_a) => {
+    var { component } = _a, args = __rest(_a, ["component"]);
+    return (react_1.default.createElement(react_router_dom_1.Route, Object.assign({ component: (0, auth0_react_1.withAuthenticationRequired)(component, {
+            onRedirecting: () => (react_1.default.createElement("div", null, "Loading")),
+        }) }, args)));
+};
+exports["default"] = ProtectedRoute;
 
 
 /***/ }),
@@ -479,23 +554,10 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const Header_1 = __importDefault(__webpack_require__(/*! @components/Header */ "./src/components/Header.tsx"));
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
 const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
-const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
-const API_SERVER_URL = api_service_1.default.getVar('API_SERVER_URL');
+const api_1 = __importDefault(__webpack_require__(/*! ../../api/api */ "./src/api/api.ts"));
+const API_SERVER_URL = api_1.default.getVar('API_SERVER_URL');
 const Layout = ({ children }) => {
-    const { loginWithRedirect } = (0, auth0_react_1.useAuth0)();
-    const { getAccessTokenSilently, user } = (0, auth0_react_1.useAuth0)();
-    const verifyApiAuthIsWorking = () => __awaiter(void 0, void 0, void 0, function* () {
-        const accessToken = yield getAccessTokenSilently();
-        // const testUrl = `${process.env.NEXT_PUBLIC_API_URL}api/private`
-        // const authResp = await fetcher(testUrl, {
-        //   method: 'POST',
-        //   headers: {
-        //     'Authorization': `Bearer ${accessToken}`,
-        //   },
-        // })
-        // console.log(authResp)
-    });
-    verifyApiAuthIsWorking();
+    const { loginWithRedirect, user } = (0, auth0_react_1.useAuth0)();
     const handleLogin = () => __awaiter(void 0, void 0, void 0, function* () {
         yield loginWithRedirect({
             prompt: 'login',
@@ -568,84 +630,6 @@ exports["default"] = Page;
 
 /***/ }),
 
-/***/ "./src/components/pages/Admin.tsx":
-/*!****************************************!*\
-  !*** ./src/components/pages/Admin.tsx ***!
-  \****************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const message_service_1 = __webpack_require__(/*! @services/message.service */ "./src/services/message.service.ts");
-const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
-const Page = () => {
-    const [message, setMessage] = (0, react_1.useState)('');
-    const { getAccessTokenSilently } = (0, auth0_react_1.useAuth0)();
-    (0, react_1.useEffect)(() => {
-        let isMounted = true;
-        const getMessage = () => __awaiter(void 0, void 0, void 0, function* () {
-            const accessToken = yield getAccessTokenSilently();
-            const { data, error } = yield (0, message_service_1.getAdminResource)(accessToken);
-            if (!isMounted) {
-                return;
-            }
-            if (data) {
-                setMessage(JSON.stringify(data, null, 2));
-            }
-            if (error) {
-                setMessage(JSON.stringify(error, null, 2));
-            }
-        });
-        getMessage();
-        return () => {
-            isMounted = false;
-        };
-    }, [getAccessTokenSilently]);
-    return (react_1.default.createElement(Layout_1.default, null,
-        react_1.default.createElement("div", null, "Admin")));
-};
-exports["default"] = Page;
-
-
-/***/ }),
-
 /***/ "./src/components/pages/Callback.tsx":
 /*!*******************************************!*\
   !*** ./src/components/pages/Callback.tsx ***!
@@ -696,14 +680,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const uuid_1 = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/commonjs-browser/index.js");
-const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
+const api_1 = __importDefault(__webpack_require__(/*! ../../api/api */ "./src/api/api.ts"));
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
 const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const Input_1 = __importDefault(__webpack_require__(/*! @components/base/Input */ "./src/components/base/Input.tsx"));
 const Image_1 = __importDefault(__webpack_require__(/*! @components/Image */ "./src/components/Image.tsx"));
 const localStorage_1 = __importDefault(__webpack_require__(/*! ../../utils/localStorage */ "./src/utils/localStorage.ts"));
-const API_SERVER_URL = api_service_1.default.getVar('API_SERVER_URL');
+const API_SERVER_URL = api_1.default.getVar('API_SERVER_URL');
 const Page = ({}) => {
     const { setPrompt, prompt, user } = react_1.default.useContext(appContext_1.default);
     const [promptString, setPromptString] = react_1.default.useState();
@@ -714,7 +698,7 @@ const Page = ({}) => {
         var _a;
         function fetchData(promptValue) {
             return __awaiter(this, void 0, void 0, function* () {
-                const response = yield api_service_1.default.getImage(promptValue, user.access_token);
+                const response = yield api_1.default.getImage(promptValue, user.access_token);
                 if (response === null || response === void 0 ? void 0 : response.error) {
                     console.error(`Unable to generated for prompt! ${response.error}`);
                     return;
@@ -782,159 +766,6 @@ exports["default"] = Page;
 
 /***/ }),
 
-/***/ "./src/components/pages/Protected.tsx":
-/*!********************************************!*\
-  !*** ./src/components/pages/Protected.tsx ***!
-  \********************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const message_service_1 = __webpack_require__(/*! @services/message.service */ "./src/services/message.service.ts");
-const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
-const Page = () => {
-    const [message, setMessage] = (0, react_1.useState)('');
-    const { getAccessTokenSilently } = (0, auth0_react_1.useAuth0)();
-    (0, react_1.useEffect)(() => {
-        let isMounted = true;
-        const getMessage = () => __awaiter(void 0, void 0, void 0, function* () {
-            const accessToken = yield getAccessTokenSilently();
-            const { data, error } = yield (0, message_service_1.getProtectedResource)(accessToken);
-            if (!isMounted) {
-                return;
-            }
-            if (data) {
-                setMessage(JSON.stringify(data, null, 2));
-            }
-            if (error) {
-                setMessage(JSON.stringify(error, null, 2));
-            }
-        });
-        getMessage();
-        return () => {
-            isMounted = false;
-        };
-    }, [getAccessTokenSilently]);
-    return (react_1.default.createElement(Layout_1.default, null,
-        react_1.default.createElement("div", null, "Protected")));
-};
-exports["default"] = Page;
-
-
-/***/ }),
-
-/***/ "./src/components/pages/Public.tsx":
-/*!*****************************************!*\
-  !*** ./src/components/pages/Public.tsx ***!
-  \*****************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const message_service_1 = __webpack_require__(/*! @services/message.service */ "./src/services/message.service.ts");
-const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
-const Page = () => {
-    const [message, setMessage] = (0, react_1.useState)('');
-    (0, react_1.useEffect)(() => {
-        let isMounted = true;
-        const getMessage = () => __awaiter(void 0, void 0, void 0, function* () {
-            const { data, error } = yield (0, message_service_1.getPublicResource)();
-            if (!isMounted) {
-                return;
-            }
-            if (data) {
-                setMessage(JSON.stringify(data, null, 2));
-            }
-            if (error) {
-                setMessage(JSON.stringify(error, null, 2));
-            }
-        });
-        getMessage();
-        return () => {
-            isMounted = false;
-        };
-    }, []);
-    return (react_1.default.createElement(Layout_1.default, null,
-        react_1.default.createElement("span", null, "Public")));
-};
-exports["default"] = Page;
-
-
-/***/ }),
-
 /***/ "./src/components/pages/Sandbox.tsx":
 /*!******************************************!*\
   !*** ./src/components/pages/Sandbox.tsx ***!
@@ -958,11 +789,11 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
 const getAccessToken_1 = __importDefault(__webpack_require__(/*! @hooks/getAccessToken */ "./src/hooks/getAccessToken.ts"));
-const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
+const api_1 = __importDefault(__webpack_require__(/*! ../../api/api */ "./src/api/api.ts"));
 const Page = () => {
     const token = (0, getAccessToken_1.default)();
     const testSandboxApi = () => __awaiter(void 0, void 0, void 0, function* () {
-        const resp = yield api_service_1.default.sandboxTest(token);
+        const resp = yield api_1.default.sandboxTest(token);
     });
     if (token) {
         testSandboxApi();
@@ -1036,196 +867,11 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const react_dom_1 = __importDefault(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 const App_1 = __webpack_require__(/*! ./App */ "./src/App.tsx");
-const auth0_provider_with_history_1 = __webpack_require__(/*! ./auth0-provider-with-history */ "./src/auth0-provider-with-history.tsx");
+const Auth0ProviderWithHistory_1 = __webpack_require__(/*! @components/auth/Auth0ProviderWithHistory */ "./src/components/auth/Auth0ProviderWithHistory.tsx");
 react_dom_1.default.render(react_1.default.createElement(react_1.default.StrictMode, null,
     react_1.default.createElement(react_router_dom_1.BrowserRouter, null,
-        react_1.default.createElement(auth0_provider_with_history_1.Auth0ProviderWithHistory, null,
+        react_1.default.createElement(Auth0ProviderWithHistory_1.Auth0ProviderWithHistory, null,
             react_1.default.createElement(App_1.App, null)))), document.getElementById('root'));
-
-
-/***/ }),
-
-/***/ "./src/services/api-service.ts":
-/*!*************************************!*\
-  !*** ./src/services/api-service.ts ***!
-  \*************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const fetch_1 = __importDefault(__webpack_require__(/*! ../utils/fetch */ "./src/utils/fetch.ts"));
-window.promptiverse = window.promptiverse || {};
-const ApiService = {
-    getVar: (name) => {
-        if (!window.promptiverse || !window.promptiverse.vars) {
-            return undefined;
-        }
-        return window.promptiverse.vars[name];
-    },
-    getImage: (prompt, accessToken) => {
-        const apiUrl = ApiService.getVar('API_SERVER_URL');
-        return (0, fetch_1.default)(`${apiUrl}/api/prompt`, {
-            method: 'POST',
-            postBody: { prompt },
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-            },
-        });
-    },
-    sandboxTest: (accessToken) => {
-        const apiUrl = ApiService.getVar('API_SERVER_URL');
-        return (0, fetch_1.default)(`${apiUrl}/sandbox`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-            },
-        });
-    },
-};
-exports["default"] = ApiService;
-
-
-/***/ }),
-
-/***/ "./src/services/external-api.service.ts":
-/*!**********************************************!*\
-  !*** ./src/services/external-api.service.ts ***!
-  \**********************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.callExternalApi = void 0;
-const axios_1 = __importDefault(__webpack_require__(/*! axios */ "./node_modules/axios/index.js"));
-const callExternalApi = (options) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const response = yield (0, axios_1.default)(options.config);
-        const { data } = response;
-        return {
-            data,
-            error: null,
-        };
-    }
-    catch (error) {
-        if (axios_1.default.isAxiosError(error)) {
-            const axiosError = error;
-            const { response } = axiosError;
-            let message = 'http request failed';
-            if (response && response.statusText) {
-                message = response.statusText;
-            }
-            if (axiosError.message) {
-                message = axiosError.message;
-            }
-            if (response && response.data && response.data.message) {
-                message = response.data.message;
-            }
-            return {
-                data: null,
-                error: {
-                    message,
-                },
-            };
-        }
-        return {
-            data: null,
-            error: {
-                message: error.message,
-            },
-        };
-    }
-});
-exports.callExternalApi = callExternalApi;
-
-
-/***/ }),
-
-/***/ "./src/services/message.service.ts":
-/*!*****************************************!*\
-  !*** ./src/services/message.service.ts ***!
-  \*****************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getAdminResource = exports.getProtectedResource = exports.getPublicResource = void 0;
-const external_api_service_1 = __webpack_require__(/*! ./external-api.service */ "./src/services/external-api.service.ts");
-const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
-const apiServerUrl = api_service_1.default.getVar('API_SERVER_URL');
-const getPublicResource = () => __awaiter(void 0, void 0, void 0, function* () {
-    const config = {
-        url: `${apiServerUrl}/api/messages/public`,
-        method: 'GET',
-        headers: {
-            'content-type': 'application/json',
-        },
-    };
-    const { data, error } = (yield (0, external_api_service_1.callExternalApi)({ config }));
-    return {
-        data,
-        error,
-    };
-});
-exports.getPublicResource = getPublicResource;
-const getProtectedResource = (accessToken) => __awaiter(void 0, void 0, void 0, function* () {
-    const config = {
-        url: `${apiServerUrl}/api/messages/protected`,
-        method: 'GET',
-        headers: {
-            'content-type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-        },
-    };
-    const { data, error } = (yield (0, external_api_service_1.callExternalApi)({ config }));
-    return {
-        data,
-        error,
-    };
-});
-exports.getProtectedResource = getProtectedResource;
-const getAdminResource = (accessToken) => __awaiter(void 0, void 0, void 0, function* () {
-    const config = {
-        url: `${apiServerUrl}/api/messages/admin`,
-        method: 'GET',
-        headers: {
-            'content-type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-        },
-    };
-    const { data, error } = (yield (0, external_api_service_1.callExternalApi)({ config }));
-    return {
-        data,
-        error,
-    };
-});
-exports.getAdminResource = getAdminResource;
 
 
 /***/ }),
@@ -1250,10 +896,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
+const api_1 = __importDefault(__webpack_require__(/*! ../api/api */ "./src/api/api.ts"));
 const fetcher = (url, options) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
-    const csrfToken = api_service_1.default.getVar('APP_TOKEN');
+    const csrfToken = api_1.default.getVar('APP_TOKEN');
     try {
         const fetchOptions = Object.assign({ method: (options === null || options === void 0 ? void 0 : options.method) || 'GET', headers: {
                 'Accept': ((_a = options === null || options === void 0 ? void 0 : options.headers) === null || _a === void 0 ? void 0 : _a.Accept) || 'application/json',

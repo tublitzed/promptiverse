@@ -18,6 +18,7 @@ class AuthError(Exception):
         self.error = error
         self.status_code = status_code
 
+
 # Format error response and append status code
 def get_token_auth_header():
     """Obtains the Access Token from the Authorization Header"""

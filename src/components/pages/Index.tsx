@@ -1,6 +1,6 @@
 import React from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import ApiService from '@services/api-service'
+import Api from '../../api/api'
 import Layout from '@components/layouts/Layout'
 import Button from '@components/base/Button'
 import AppContext from '@src/appContext'
@@ -9,7 +9,7 @@ import Image from '@components/Image'
 import Loader from '@components/base/Loader'
 import LocalStorage from '../../utils/localStorage'
 
-const API_SERVER_URL = ApiService.getVar('API_SERVER_URL')
+const API_SERVER_URL = Api.getVar('API_SERVER_URL')
 
 const Page: React.FC<{}> = ({}) => {
   const { setPrompt, prompt, user } = React.useContext(AppContext)
@@ -26,7 +26,7 @@ const Page: React.FC<{}> = ({}) => {
 
   React.useEffect(() => {
     async function fetchData(promptValue:string) {
-      const response = await ApiService.getImage(promptValue, user.access_token)
+      const response = await Api.getImage(promptValue, user.access_token)
       if (response?.error) {
         console.error(`Unable to generated for prompt! ${response.error}`)
         return

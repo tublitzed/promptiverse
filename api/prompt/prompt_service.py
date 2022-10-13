@@ -12,8 +12,10 @@ stability_api = client.StabilityInference(
     verbose=True,
 )
 
-def save(prompt:string, img_url:string, user_id:string):
+
+def save(prompt: string, img_url: string, user_id: string):
     models.create_prompt(user_id=user_id, value=prompt, img_url=img_url)
+
 
 def generate(prompt: string, user_id: string):
     answers = stability_api.generate(

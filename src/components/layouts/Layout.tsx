@@ -3,29 +3,15 @@ import Header from '@components/Header'
 import { useAuth0 } from '@auth0/auth0-react'
 import { Prompt, User } from '@types'
 import Button from '@components/base/Button'
-import ApiService from '@services/api-service'
-const API_SERVER_URL = ApiService.getVar('API_SERVER_URL')
+import Api from '../../api/api'
+const API_SERVER_URL = Api.getVar('API_SERVER_URL')
 
 export interface Props {
   children: React.ReactNode
 }
 
 const Layout = ({ children }:Props): JSX.Element => {
-  const { loginWithRedirect } = useAuth0()
-
-  const { getAccessTokenSilently, user } = useAuth0()
-  const verifyApiAuthIsWorking = async () => {
-    const accessToken = await getAccessTokenSilently()
-    // const testUrl = `${process.env.NEXT_PUBLIC_API_URL}api/private`
-    // const authResp = await fetcher(testUrl, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Authorization': `Bearer ${accessToken}`,
-    //   },
-    // })
-    // console.log(authResp)
-  }
-  verifyApiAuthIsWorking()
+  const { loginWithRedirect, user } = useAuth0()
 
   const handleLogin = async () => {
     await loginWithRedirect({

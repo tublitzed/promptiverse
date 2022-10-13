@@ -15,8 +15,9 @@ psql_db = PostgresqlDatabase(
     user=DB_USER,
 )
 
-ENGINE_STABLE_DIFFUSION = "STABLE_DIFFUSION" # 1
-ENGINE_MIDJOURNEY = "MIDJOURNEY" # 2
+ENGINE_STABLE_DIFFUSION = "STABLE_DIFFUSION"  # 1
+ENGINE_MIDJOURNEY = "MIDJOURNEY"  # 2
+
 
 def image_engine_value_to_int(value):
     if value == "STABLE_DIFFUSION":
@@ -30,7 +31,8 @@ def image_engine_value_to_int(value):
 class BaseModel(Model):
     class Meta:
         database = psql_db
-        schema = 'public'
+        schema = "public"
+
 
 class Prompt(BaseModel):
     db_table = "Prompt"
@@ -39,18 +41,18 @@ class Prompt(BaseModel):
     user_id = CharField(max_length=255)
     id = CharField(unique=True, primary_key=True)
     img_url = CharField(max_length=255)
-    img_engine = IntegerField(default=image_engine_value_to_int(ENGINE_STABLE_DIFFUSION))
+    img_engine = IntegerField(
+        default=image_engine_value_to_int(ENGINE_STABLE_DIFFUSION)
+    )
     value = CharField(
         max_length=255
     )  # 77 tokens is not characters -- TODO: is there a limit here?
     version = IntegerField(default=1)
 
+
 def create_prompt(user_id, value, img_url):
-    Prompt.create(
-        user_id=user_id,
-        id=uuid.uuid4(),
-        value=value,
-        img_url=img_url)
+    Prompt.create(user_id=user_id, id=uuid.uuid4(), value=value, img_url=img_url)
+
 
 def create_tables():
     with psql_db:

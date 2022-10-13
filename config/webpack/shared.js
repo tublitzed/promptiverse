@@ -30,8 +30,7 @@ const sharedConfig = {
     alias: {
       '@components': path.resolve(__dirname, `${assetsPath}/components`),
       '@hooks': path.resolve(__dirname, `${assetsPath}/hooks`),
-      '@models': path.resolve(__dirname, `${assetsPath}/models`),
-      '@services': path.resolve(__dirname, `${assetsPath}/services`),
+      '@api': path.resolve(__dirname, `${assetsPath}/api`),
       '@types': path.resolve(__dirname, `${assetsPath}/types`),
       '@src': path.resolve(__dirname, `${assetsPath}/`),
       '@utils': path.resolve(__dirname, `${assetsPath}/utils`),

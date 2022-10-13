@@ -1,4 +1,4 @@
-import ApiService from '@services/api-service'
+import Api from '../api/api'
 
 interface FetchOptions {
   method?: 'POST' | 'GET',
@@ -12,7 +12,7 @@ interface FetchOptions {
 }
 
 const fetcher = async (url: string, options?: FetchOptions) => {
-  const csrfToken = ApiService.getVar('APP_TOKEN')
+  const csrfToken = Api.getVar('APP_TOKEN')
   try {
     const fetchOptions = {
       method: options?.method || 'GET',

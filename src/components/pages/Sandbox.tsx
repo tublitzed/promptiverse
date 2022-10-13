@@ -2,12 +2,12 @@ import { useAuth0 } from '@auth0/auth0-react'
 import React from 'react'
 import Layout from '@components/layouts/Layout'
 import getAccessToken from '@hooks/getAccessToken'
-import ApiService from '@services/api-service'
+import Api from '../../api/api'
 
 const Page: React.FC = () => {
   const token = getAccessToken()
   const testSandboxApi = async () => {
-    const resp = await ApiService.sandboxTest(token)
+    const resp = await Api.sandboxTest(token)
   }
 
   if (token) {

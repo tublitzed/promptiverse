@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 import { App } from './App'
-import { Auth0ProviderWithHistory } from './auth0-provider-with-history'
+import { Auth0ProviderWithHistory } from '@components/auth/Auth0ProviderWithHistory'
 
 ReactDOM.render(
   <React.StrictMode>
