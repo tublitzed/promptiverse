@@ -17,6 +17,7 @@ const getAccessToken = () => {
       setAccessToken(token)
     }
     getAccessToken()
+    return () => {} // needed as callback
   }, [
     user,
     isLoading,
@@ -25,18 +26,3 @@ const getAccessToken = () => {
 }
 
 export default getAccessToken
-
-
-// React.useEffect(() => {
-//   setUser(userViaAuth0)
-//   const getAccessToken = async () => {
-//     const token = await getAccessTokenSilently()
-//     setUser({
-//       ...userViaAuth0,
-//       access_token: token,
-//     })
-//   }
-//   if (userViaAuth0) {
-//     getAccessToken()
-//   }
-// }, [userViaAuth0])

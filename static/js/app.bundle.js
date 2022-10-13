@@ -49,7 +49,7 @@ exports.App = void 0;
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-const protected_route_1 = __webpack_require__(/*! ./components/protected-route */ "./src/components/protected-route.tsx");
+const protected_route_1 = __webpack_require__(Object(function webpackMissingModule() { var e = new Error("Cannot find module './components/protected-route'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 const Admin_1 = __importDefault(__webpack_require__(/*! @components/pages/Admin */ "./src/components/pages/Admin.tsx"));
 const Index_1 = __importDefault(__webpack_require__(/*! @components/pages/Index */ "./src/components/pages/Index.tsx"));
 const Profile_1 = __importDefault(__webpack_require__(/*! @components/pages/Profile */ "./src/components/pages/Profile.tsx"));
@@ -520,29 +520,6 @@ exports["default"] = Layout;
 
 /***/ }),
 
-/***/ "./src/components/page-loader.tsx":
-/*!****************************************!*\
-  !*** ./src/components/page-loader.tsx ***!
-  \****************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.PageLoader = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const PageLoader = () => {
-    const loadingImg = 'https://cdn.auth0.com/blog/hello-auth0/loader.svg';
-    return (react_1.default.createElement("div", { className: "loader" },
-        react_1.default.createElement("img", { src: loadingImg, alt: "Loading..." })));
-};
-exports.PageLoader = PageLoader;
-
-
-/***/ }),
-
 /***/ "./src/components/pages/404.tsx":
 /*!**************************************!*\
   !*** ./src/components/pages/404.tsx ***!
@@ -978,19 +955,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
 const getAccessToken_1 = __importDefault(__webpack_require__(/*! @hooks/getAccessToken */ "./src/hooks/getAccessToken.ts"));
 const api_service_1 = __importDefault(__webpack_require__(/*! @services/api-service */ "./src/services/api-service.ts"));
 const Page = () => {
-    const { user } = (0, auth0_react_1.useAuth0)();
     const token = (0, getAccessToken_1.default)();
-    console.log(token);
-    console.log('for messing with stuff');
     const testSandboxApi = () => __awaiter(void 0, void 0, void 0, function* () {
         const resp = yield api_service_1.default.sandboxTest(token);
-        console.log(resp);
     });
     if (token) {
         testSandboxApi();
@@ -999,45 +971,6 @@ const Page = () => {
         react_1.default.createElement(react_1.default.Fragment, null, "sandbox")));
 };
 exports["default"] = Page;
-
-
-/***/ }),
-
-/***/ "./src/components/protected-route.tsx":
-/*!********************************************!*\
-  !*** ./src/components/protected-route.tsx ***!
-  \********************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ProtectedRoute = void 0;
-const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-const page_loader_1 = __webpack_require__(/*! ./page-loader */ "./src/components/page-loader.tsx");
-const ProtectedRoute = (_a) => {
-    var { component } = _a, args = __rest(_a, ["component"]);
-    return (react_1.default.createElement(react_router_dom_1.Route, Object.assign({ component: (0, auth0_react_1.withAuthenticationRequired)(component, {
-            onRedirecting: () => (react_1.default.createElement("div", { className: "page-layout" },
-                react_1.default.createElement(page_loader_1.PageLoader, null))),
-        }) }, args)));
-};
-exports.ProtectedRoute = ProtectedRoute;
 
 
 /***/ }),
@@ -1076,6 +1009,7 @@ const getAccessToken = () => {
             setAccessToken(token);
         });
         getAccessToken();
+        return () => { }; // needed as callback
     }, [
         user,
         isLoading,
@@ -1083,19 +1017,6 @@ const getAccessToken = () => {
     return accessToken;
 };
 exports["default"] = getAccessToken;
-// React.useEffect(() => {
-//   setUser(userViaAuth0)
-//   const getAccessToken = async () => {
-//     const token = await getAccessTokenSilently()
-//     setUser({
-//       ...userViaAuth0,
-//       access_token: token,
-//     })
-//   }
-//   if (userViaAuth0) {
-//     getAccessToken()
-//   }
-// }, [userViaAuth0])
 
 
 /***/ }),

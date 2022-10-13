@@ -7,7 +7,7 @@ interface ProtectedRouteProps extends RouteProps {
   component: ComponentType;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   component,
   ...args
 }) => (
@@ -22,3 +22,5 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     {...args}
   />
 )
+
+export default ProtectedRoute

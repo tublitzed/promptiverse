@@ -45,12 +45,12 @@ class Prompt(BaseModel):
     )  # 77 tokens is not characters -- TODO: is there a limit here?
     version = IntegerField(default=1)
 
-def create_prompt(user_id, value):
+def create_prompt(user_id, value, img_url):
     Prompt.create(
         user_id=user_id,
         id=uuid.uuid4(),
         value=value,
-        img_url="https://todo.replaceme/soon.png")
+        img_url=img_url)
 
 def create_tables():
     with psql_db:

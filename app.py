@@ -58,7 +58,6 @@ def sandbox():
         return make_response('error', 400)
     user_info = user.get_user_info()
     user_id = user.get_user_id(user_info=user_info)
-    models.create_prompt(user_id=user_id, value="just a test")
     return jsonify(user_info=user_info, user_id=user_id)
 
 

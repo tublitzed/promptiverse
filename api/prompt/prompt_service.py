@@ -1,6 +1,7 @@
 import string, os, warnings
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
+from api.models import models
 
 from api.helpers.file import (
     create_img_file,
@@ -11,8 +12,10 @@ stability_api = client.StabilityInference(
     verbose=True,
 )
 
+def save(prompt:string, img_url:string, user_id:string):
+    models.create_prompt(user_id=user_id, value=prompt, img_url=img_url)
 
-def generate(prompt: string):
+def generate(prompt: string, user_id: string):
     answers = stability_api.generate(
         prompt=prompt,
         # seed=34567, # if provided, specifying a random seed makes results deterministic
@@ -34,4 +37,5 @@ def generate(prompt: string):
                 outfile.write(artifact.binary)
                 outfile.flush()  # Optional but a good idea
                 outfile.close()
+    save(prompt=prompt, img_url=file_meta["public_path"], user_id=user_id)
     return file_meta["public_path"]
