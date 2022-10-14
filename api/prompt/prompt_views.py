@@ -22,15 +22,17 @@ def public():
 
     user_id = user.get_user_id(user_info=user.get_user_info())
     saved_prompt = generate(prompt, user_id)
-    prompt_response = jsonify({
-        "prompt": {
-            "id": saved_prompt.id,
-            "img_url": saved_prompt.img_url,
-            "value": saved_prompt.value,
-            "version": saved_prompt.version,
-            "engine": saved_prompt.img_engine,
+    prompt_response = jsonify(
+        {
+            "prompt": {
+                "id": saved_prompt.id,
+                "img_url": saved_prompt.img_url,
+                "value": saved_prompt.value,
+                "version": saved_prompt.version,
+                "engine": saved_prompt.img_engine,
+            }
         }
-    })
+    )
     return (prompt_response, 201)
 
 

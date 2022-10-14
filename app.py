@@ -58,7 +58,7 @@ def sandbox():
         return make_response('error', 400)
     user_info = user.get_user_info()
     user_id = user.get_user_id(user_info=user_info)
-    return jsonify(user_info=user_info, user_id=user_id)
+    return jsonify(user_info=user_info, user_id=user_id,)
 
 
 @app.route("/callback", methods=["GET", "POST"])

@@ -13,7 +13,7 @@ stability_api = client.StabilityInference(
     key=os.environ["STABILITY_KEY"],
     verbose=True,
     wait_for_ready=True,
-    engine=ENGINE_SD_1
+    engine=ENGINE_SD_1,
 )
 
 
@@ -43,5 +43,7 @@ def generate(prompt: string, user_id: string):
                 outfile.write(artifact.binary)
                 outfile.flush()  # Optional but a good idea
                 outfile.close()
-                saved_prompt = save(prompt=prompt, img_url=file_meta["public_path"], user_id=user_id)
+                saved_prompt = save(
+                    prompt=prompt, img_url=file_meta["public_path"], user_id=user_id
+                )
     return saved_prompt
