@@ -17,5 +17,5 @@ deploy:
 	docker buildx build --platform linux/amd64 -t promptiverse . && docker tag promptiverse registry.heroku.com/promptiverse/web && docker push registry.heroku.com/promptiverse/web && heroku container:release web -a promptiverse
 
 format_api:
-		source venv/bin/activate && black api
-		@echo "python syntax fixes complete"
+	source venv/bin/activate && black api
+	@echo "python syntax fixes complete"

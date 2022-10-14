@@ -43,7 +43,7 @@ const sharedConfig = {
     ],
   },
   entry: {
-    app: path.join(__dirname, assetsPath, 'index.tsx'),
+    app: path.join(__dirname, assetsPath, 'Index.tsx'),
   },
   output: {
     path: path.join(__dirname, '../../static/js/'),
