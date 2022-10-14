@@ -2,19 +2,23 @@ import string, os, warnings
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 from api.models import models
+from api.models.models import ENGINE_SD_1
 
 from api.helpers.file import (
     create_img_file,
 )
 
+# https://github.com/Stability-AI/stability-sdk
 stability_api = client.StabilityInference(
     key=os.environ["STABILITY_KEY"],
     verbose=True,
+    wait_for_ready=True,
+    engine=ENGINE_SD_1
 )
 
 
 def save(prompt: string, img_url: string, user_id: string):
-    models.create_prompt(user_id=user_id, value=prompt, img_url=img_url)
+    return models.save_prompt(user_id=user_id, value=prompt, img_url=img_url)
 
 
 def generate(prompt: string, user_id: string):
@@ -39,5 +43,5 @@ def generate(prompt: string, user_id: string):
                 outfile.write(artifact.binary)
                 outfile.flush()  # Optional but a good idea
                 outfile.close()
-    save(prompt=prompt, img_url=file_meta["public_path"], user_id=user_id)
-    return file_meta["public_path"]
+                saved_prompt = save(prompt=prompt, img_url=file_meta["public_path"], user_id=user_id)
+    return saved_prompt

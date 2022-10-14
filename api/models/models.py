@@ -15,18 +15,7 @@ psql_db = PostgresqlDatabase(
     user=DB_USER,
 )
 
-ENGINE_STABLE_DIFFUSION = "STABLE_DIFFUSION"  # 1
-ENGINE_MIDJOURNEY = "MIDJOURNEY"  # 2
-
-
-def image_engine_value_to_int(value):
-    if value == "STABLE_DIFFUSION":
-        return 1
-    elif value == "MIDJOURNEY":
-        return 2
-    else:
-        raise "Unknown image engine"
-
+ENGINE_SD_1 = "stable-diffusion-v1-5"  # 1
 
 class BaseModel(Model):
     class Meta:
@@ -41,17 +30,20 @@ class Prompt(BaseModel):
     user_id = CharField(max_length=255)
     id = CharField(unique=True, primary_key=True)
     img_url = CharField(max_length=255)
-    img_engine = IntegerField(
-        default=image_engine_value_to_int(ENGINE_STABLE_DIFFUSION)
-    )
+    img_engine = CharField(default=ENGINE_SD_1,max_length=100)
     value = CharField(
         max_length=255
     )  # 77 tokens is not characters -- TODO: is there a limit here?
     version = IntegerField(default=1)
 
 
-def create_prompt(user_id, value, img_url):
-    Prompt.create(user_id=user_id, id=uuid.uuid4(), value=value, img_url=img_url)
+def save_prompt(user_id, value, img_url):
+    return Prompt.create(
+        user_id=user_id,
+        id=uuid.uuid4(),
+        value=value,
+        img_url=img_url,
+    )
 
 
 def create_tables():

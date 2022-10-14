@@ -19,7 +19,7 @@ const Image = () => {
   return (
     <div className="p-6 bg-white rounded mt-6">
       <img
-        src={prompt?.url}
+        src={prompt?.imgUrl}
         title={prompt?.value}
         alt={`Image for prompt ${prompt?.value ? prompt.value : ''}`}
         width={512}

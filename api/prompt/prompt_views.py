@@ -1,11 +1,9 @@
 import os
 from flask import Blueprint, jsonify, request
 
-from api.prompt.prompt import Prompt
-from api.security.auth0_service import requires_auth, AuthError
+from api.security.auth0_service import requires_auth
 from api.prompt.prompt_service import generate
 
-from api.models import models
 from api.helpers import user
 
 bp_name = "api-prompt"
@@ -13,24 +11,26 @@ bp_url_prefix = "/api/prompt"
 bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
 
 
-@bp.route("", methods=["POST", "GET", "OPTIONS"])
+@bp.route("", methods=["POST", "OPTIONS"])
 @requires_auth
 def public():
     request_data = request.get_json()
-    required = ["prompt"]
-    for value in required:
+    for value in ["prompt"]:
         if value not in request_data:
             return jsonify(error=f"Missing required request param: {value}"), 400
     prompt = request_data["prompt"]
 
     user_id = user.get_user_id(user_info=user.get_user_info())
-    path = generate(prompt, user_id)
-
-    prompt_response = jsonify({"file": path})
-    # Example of allow listing everything:
-    prompt_response.headers.add("Access-Control-Allow-Origin", "*")
-    # Only allow client app to access this endpoint
-    # prompt_response.headers.add('Access-Control-Allow-Origin', os.environ['CLIENT_ORIGIN_URL'])
+    saved_prompt = generate(prompt, user_id)
+    prompt_response = jsonify({
+        "prompt": {
+            "id": saved_prompt.id,
+            "img_url": saved_prompt.img_url,
+            "value": saved_prompt.value,
+            "version": saved_prompt.version,
+            "engine": saved_prompt.img_engine,
+        }
+    })
     return (prompt_response, 201)
 
 

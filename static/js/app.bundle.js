@@ -124,7 +124,7 @@ const ApiService = {
         }
         return window.promptiverse.vars[name];
     },
-    getImage: (prompt, accessToken) => {
+    generateImage: (prompt, accessToken) => {
         const apiUrl = ApiService.getVar('API_SERVER_URL');
         return (0, fetch_1.default)(`${apiUrl}/api/prompt`, {
             method: 'POST',
@@ -289,9 +289,73 @@ const Image = () => {
             react_1.default.createElement("h2", { className: "text-slate-50 font-thin text-lg mt-4" }, "Loading...")));
     }
     return (react_1.default.createElement("div", { className: "p-6 bg-white rounded mt-6" },
-        react_1.default.createElement("img", { src: prompt === null || prompt === void 0 ? void 0 : prompt.url, title: prompt === null || prompt === void 0 ? void 0 : prompt.value, alt: `Image for prompt ${(prompt === null || prompt === void 0 ? void 0 : prompt.value) ? prompt.value : ''}`, width: 512, height: 512, className: "border m-auto rounded shadow p-2 bg-slate-400" })));
+        react_1.default.createElement("img", { src: prompt === null || prompt === void 0 ? void 0 : prompt.imgUrl, title: prompt === null || prompt === void 0 ? void 0 : prompt.value, alt: `Image for prompt ${(prompt === null || prompt === void 0 ? void 0 : prompt.value) ? prompt.value : ''}`, width: 512, height: 512, className: "border m-auto rounded shadow p-2 bg-slate-400" })));
 };
 exports["default"] = Image;
+
+
+/***/ }),
+
+/***/ "./src/components/PromptGenerator.tsx":
+/*!********************************************!*\
+  !*** ./src/components/PromptGenerator.tsx ***!
+  \********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const api_1 = __importDefault(__webpack_require__(/*! ../api/api */ "./src/api/api.ts"));
+const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
+const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const Input_1 = __importDefault(__webpack_require__(/*! @components/base/Input */ "./src/components/base/Input.tsx"));
+const Image_1 = __importDefault(__webpack_require__(/*! @components/Image */ "./src/components/Image.tsx"));
+const localStorage_1 = __importDefault(__webpack_require__(/*! ../utils/localStorage */ "./src/utils/localStorage.ts"));
+const PromptGenerator = () => {
+    const { setPrompt, prompt, user } = react_1.default.useContext(appContext_1.default);
+    const [promptString, setPromptString] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.value);
+    const submit = () => __awaiter(void 0, void 0, void 0, function* () {
+        if (typeof promptString !== 'string' || promptString.trim() === '') {
+            return;
+        }
+        setPrompt(Object.assign(Object.assign({}, prompt), { loading: true }));
+        const response = yield api_1.default.generateImage(promptString, user.access_token);
+        if (!response.prompt) {
+            console.error(`Unable to generate prompt`, response);
+            setPrompt(Object.assign(Object.assign({}, prompt), { loading: false }));
+            return;
+        }
+        const { prompt: promptResp } = response;
+        const newPromptVal = {
+            id: promptResp.id,
+            imgUrl: promptResp.img_url,
+            version: promptResp.version,
+            value: promptString,
+            loading: false,
+        };
+        setPrompt(newPromptVal);
+        localStorage_1.default.setPrompt(newPromptVal);
+    });
+    return (react_1.default.createElement("div", null,
+        react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
+            react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.value) || '', onChange: setPromptString, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", disabled: prompt.loading, autoFocus: true }),
+            react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt.loading }, "Go!")),
+        react_1.default.createElement("div", null,
+            react_1.default.createElement(Image_1.default, null))));
+};
+exports["default"] = PromptGenerator;
 
 
 /***/ }),
@@ -665,68 +729,16 @@ exports["default"] = Page;
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const uuid_1 = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/commonjs-browser/index.js");
-const api_1 = __importDefault(__webpack_require__(/*! ../../api/api */ "./src/api/api.ts"));
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
-const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
-const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
-const Input_1 = __importDefault(__webpack_require__(/*! @components/base/Input */ "./src/components/base/Input.tsx"));
-const Image_1 = __importDefault(__webpack_require__(/*! @components/Image */ "./src/components/Image.tsx"));
-const localStorage_1 = __importDefault(__webpack_require__(/*! ../../utils/localStorage */ "./src/utils/localStorage.ts"));
-const API_SERVER_URL = api_1.default.getVar('API_SERVER_URL');
-const Page = ({}) => {
-    const { setPrompt, prompt, user } = react_1.default.useContext(appContext_1.default);
-    const [promptString, setPromptString] = react_1.default.useState();
-    const submit = () => {
-        setPrompt(Object.assign(Object.assign({}, prompt), { value: promptString, id: (0, uuid_1.v4)(), loading: true }));
-    };
-    react_1.default.useEffect(() => {
-        var _a;
-        function fetchData(promptValue) {
-            return __awaiter(this, void 0, void 0, function* () {
-                const response = yield api_1.default.getImage(promptValue, user.access_token);
-                if (response === null || response === void 0 ? void 0 : response.error) {
-                    console.error(`Unable to generated for prompt! ${response.error}`);
-                    return;
-                }
-                if (!(response === null || response === void 0 ? void 0 : response.file)) {
-                    console.error('Missing required file');
-                    return;
-                }
-                const url = `${API_SERVER_URL}/${response.file}`;
-                const newPromptVal = Object.assign(Object.assign({}, prompt), { url, loading: false });
-                setPrompt(newPromptVal);
-                localStorage_1.default.setPrompt(newPromptVal);
-            });
-        }
-        const hasNewPromptId = ((_a = localStorage_1.default.getPrompt()) === null || _a === void 0 ? void 0 : _a.id) !== (prompt === null || prompt === void 0 ? void 0 : prompt.id);
-        if ((prompt === null || prompt === void 0 ? void 0 : prompt.value) && hasNewPromptId) {
-            fetchData(prompt === null || prompt === void 0 ? void 0 : prompt.value);
-        }
-    }, [
-        prompt,
-        setPrompt,
-    ]);
+const PromptGenerator_1 = __importDefault(__webpack_require__(/*! @components/PromptGenerator */ "./src/components/PromptGenerator.tsx"));
+const Page = () => {
     return (react_1.default.createElement(Layout_1.default, null,
-        react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
-            react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.value) || '', onChange: setPromptString, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", disabled: prompt.loading, autoFocus: true }),
-            react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt.loading }, "Go!")),
-        react_1.default.createElement("div", null,
-            react_1.default.createElement(Image_1.default, null))));
+        react_1.default.createElement(PromptGenerator_1.default, null)));
 };
 exports["default"] = Page;
 
