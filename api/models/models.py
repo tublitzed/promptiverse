@@ -1,22 +1,10 @@
 import os, datetime, uuid
 from peewee import *
+from playhouse.db_url import connect
 
-DB_NAME = os.environ["DB_NAME"]
-DB_USER = os.environ["DB_USER"]
-DB_PASSWORD = os.environ["DB_PASSWORD"]
-DB_HOST = os.environ["DB_HOST"]
-DB_PORT = 5432
-
-psql_db = PostgresqlDatabase(
-    DB_NAME,
-    host=DB_HOST,
-    password=DB_PASSWORD,
-    port=DB_PORT,
-    user=DB_USER,
-)
+psql_db = connect(os.environ.get('DATABASE_URL'))
 
 ENGINE_SD_1 = "stable-diffusion-v1-5"  # 1
-
 
 class BaseModel(Model):
     class Meta:
