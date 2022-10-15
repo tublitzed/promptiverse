@@ -79,4 +79,5 @@ models.create_tables()
 
 if __name__ == '__app__':
     port = int(os.environ.get('PORT', 3001))
-    app.run(port=port)
+    debug = os.environ.get('DEBUG', False)
+    app.run(port=port, debug=debug)
