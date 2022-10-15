@@ -1,10 +1,14 @@
-from flask import Flask, render_template, make_response, redirect, jsonify
+import json
+from flask import Flask, render_template, make_response, redirect, jsonify, request, got_request_exception
 from flask_cors import CORS
 from flask_wtf.csrf import CSRFProtect
 import logging
 import random
 import os
 from api.prompt import prompt_views
+from api.models import models
+from api.helpers import user
+from api.security import auth0_service
 
 def is_dev():
     return True if os.getenv("FLASK_ENV") == "development" else False
@@ -48,6 +52,14 @@ def catch_all_route(all_paths):
 def index():
     return render_static()
 
+@app.route("/sandbox", methods=["POST"])
+def sandbox():
+    if (is_dev() is False):
+        return make_response('error', 400)
+    user_info = user.get_user_info()
+    user_id = user.get_user_id(user_info=user_info)
+    return jsonify(user_info=user_info, user_id=user_id,)
+
 
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
@@ -62,6 +74,8 @@ def health_check():
     logging.exception("exception log")
 
     return make_response("OK", 200)
+
+models.create_tables()
 
 if __name__ == '__app__':
     port = int(os.environ.get('PORT', 3001))

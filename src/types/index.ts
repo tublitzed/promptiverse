@@ -12,7 +12,9 @@ export interface User {
 
 export interface Prompt {
   value?: string
-  url?: string
+  imgUrl?: string
   id?: string
+  engine?: string
+  version?: number
   loading: boolean
 }

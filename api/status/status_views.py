@@ -1,11 +1,9 @@
 import logging
 
-from flask import (
-    Blueprint
-)
+from flask import Blueprint
 
-bp_name = 'status'
-bp_url_prefix = '/status'
+bp_name = "status"
+bp_url_prefix = "/status"
 bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
 
 
@@ -16,6 +14,4 @@ def public():
     logging.warning("warning log")
     logging.error("error log")
     logging.exception("exception log")
-    return {
-        "status": "ok"
-    }
+    return {"status": "ok"}

@@ -29,8 +29,8 @@ const sharedConfig = {
   resolve: {
     alias: {
       '@components': path.resolve(__dirname, `${assetsPath}/components`),
-      '@models': path.resolve(__dirname, `${assetsPath}/models`),
-      '@services': path.resolve(__dirname, `${assetsPath}/services`),
+      '@hooks': path.resolve(__dirname, `${assetsPath}/hooks`),
+      '@api': path.resolve(__dirname, `${assetsPath}/api`),
       '@types': path.resolve(__dirname, `${assetsPath}/types`),
       '@src': path.resolve(__dirname, `${assetsPath}/`),
       '@utils': path.resolve(__dirname, `${assetsPath}/utils`),
@@ -43,7 +43,7 @@ const sharedConfig = {
     ],
   },
   entry: {
-    app: path.join(__dirname, assetsPath, 'index.tsx'),
+    app: path.join(__dirname, assetsPath, 'Index.tsx'),
   },
   output: {
     path: path.join(__dirname, '../../static/js/'),
