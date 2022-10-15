@@ -8,6 +8,7 @@ from api.helpers.file import (
     create_img_file,
 )
 
+
 # https://github.com/Stability-AI/stability-sdk
 stability_api = client.StabilityInference(
     key=os.environ["STABILITY_KEY"],
@@ -44,6 +45,8 @@ def generate(prompt: string, user_id: string):
                 outfile.flush()  # Optional but a good idea
                 outfile.close()
                 saved_prompt = save(
-                    prompt=prompt, img_url=file_meta["public_path"], user_id=user_id
+                    prompt=prompt,
+                    img_url=file_meta["public_path"],
+                    user_id=user_id,
                 )
     return saved_prompt

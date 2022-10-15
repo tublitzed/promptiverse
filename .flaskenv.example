@@ -26,3 +26,11 @@ CLIENT_APP_AUTH0_CALLBACK_URL=
 # Get it here: https://beta.dreamstudio.ai/membership
 STABILITY_KEY=
 STABILITY_HOST=grpc.stability.ai:443
+
+
+# AWS
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+S3_BUCKET_NAME=promptiverse-dev
+
+BOTO_LOG_LEVEL=DEBUG
