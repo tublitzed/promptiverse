@@ -2,9 +2,14 @@ import os, datetime, uuid
 from peewee import *
 from playhouse.db_url import connect
 
-psql_db = connect(os.environ.get('DATABASE_URL'))
+from api.helpers.aws import (
+    copy_to_s3,
+)
+
+psql_db = connect(os.environ.get("DATABASE_URL"))
 
 ENGINE_SD_1 = "stable-diffusion-v1-5"  # 1
+
 
 class BaseModel(Model):
     class Meta:
@@ -40,11 +45,17 @@ def create_prompt_version(value, user_id):
 
 def save_prompt(user_id, value, img_url):
     version = create_prompt_version(value, user_id)
+    prompt_id = uuid.uuid4()
+    s3_img_url = copy_to_s3(
+        user_id=user_id,
+        src_filepath=img_url,
+        filename=f"{prompt_id}/image.png",
+    )
     return Prompt.create(
         user_id=user_id,
-        id=uuid.uuid4(),
+        id=prompt_id,
         value=value,
-        img_url=img_url,
+        img_url=s3_img_url,
         version=version,
     )
 
