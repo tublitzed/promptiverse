@@ -6,7 +6,7 @@ import logging
 import random
 import os
 from api.prompt import prompt_views
-from api.models import models
+from api.models import create_tables
 from api.helpers import user
 from api.security import auth0_service
 
@@ -75,7 +75,7 @@ def health_check():
 
     return make_response("OK", 200)
 
-models.create_tables()
+create_tables()
 
 if __name__ == '__app__':
     port = int(os.environ.get('PORT', 3001))
