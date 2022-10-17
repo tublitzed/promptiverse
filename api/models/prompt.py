@@ -1,4 +1,6 @@
 import datetime, uuid
+
+# https://docs.peewee-orm.com/en/latest/peewee/models.html?highlight=table%20generation#field-types-table
 from peewee import DateTimeField,CharField,IntegerField
 
 from api.models.models import (
@@ -18,6 +20,7 @@ class Prompt(BaseModel):
     user_id = CharField(max_length=255)
     id = CharField(unique=True, primary_key=True)
     img_url = CharField(max_length=255)
+    seed = IntegerField(null=True)
     img_engine = CharField(default=ENGINE_SD_1, max_length=100)
     value = CharField(
         max_length=255
@@ -37,7 +40,7 @@ def create_prompt_version(value, user_id):
     return query.version + 1
 
 
-def save(user_id, value, img_url):
+def save(user_id, value, img_url, seed):
     version = create_prompt_version(value, user_id)
     prompt_id = uuid.uuid4()
     s3_img_url = copy_to_s3(
@@ -46,9 +49,10 @@ def save(user_id, value, img_url):
         filename=f"{prompt_id}/image.png",
     )
     return Prompt.create(
-        user_id=user_id,
         id=prompt_id,
-        value=value,
         img_url=s3_img_url,
+        seed=seed,
+        user_id=user_id,
+        value=value,
         version=version,
     )

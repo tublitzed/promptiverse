@@ -20,8 +20,17 @@ def public():
             return jsonify(error=f"Missing required request param: {value}"), 400
     prompt = request_data["prompt"]
 
+    if "seed" in request_data:
+        seed = request_data["seed"]
+    else:
+        seed = None
+
     user_id = user.get_user_id(user_info=user.get_user_info())
-    saved_prompt = generate(prompt, user_id)
+    saved_prompt = generate(
+        prompt=prompt,
+        user_id=user_id,
+        seed=seed
+    )
     prompt_response = jsonify(
         {
             "prompt": {
@@ -30,6 +39,7 @@ def public():
                 "value": saved_prompt.value,
                 "version": saved_prompt.version,
                 "engine": saved_prompt.img_engine,
+                "seed": saved_prompt.seed,
             }
         }
     )

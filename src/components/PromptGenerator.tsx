@@ -8,21 +8,22 @@ import Image from '@components/Image'
 import LocalStorage from '../utils/localStorage'
 
 // TODO: Fix imports!
-import { artistTags } from '../utils/tags'
+import { artistTags, descriptiveTags } from '../utils/tags'
 
 const PromptGenerator = () => {
   const { setPrompt, prompt, user } = React.useContext(AppContext)
-  const [promptString, setPromptString] = React.useState<string>(prompt?.value)
+  const [value, setValue] = React.useState<string>(prompt?.value)
+  const [seed, setSeed] = React.useState<number | undefined>(prompt?.seed)
 
   const submit = async () => {
-    if (typeof promptString !== 'string' || promptString.trim() === '') {
+    if (typeof value !== 'string' || value.trim() === '') {
       return
     }
     setPrompt({
       ...prompt,
       loading: true,
     })
-    const response = await Api.generateImage(promptString, user.access_token)
+    const response = await Api.generateImage(value, user.access_token, seed)
     if (!response.prompt) {
       console.error(`Unable to generate prompt`, response)
       setPrompt({
@@ -36,9 +37,10 @@ const PromptGenerator = () => {
     const newPromptVal = {
       id: promptResp.id,
       imgUrl: promptResp.img_url,
-      version: promptResp.version,
-      value: promptString,
       loading: false,
+      seed: promptResp.seed,
+      value,
+      version: promptResp.version,
     }
     setPrompt(newPromptVal)
     LocalStorage.setPrompt(newPromptVal)
@@ -53,7 +55,7 @@ const PromptGenerator = () => {
     control: (provided:any, state:any) => {
       return {
         ...provided,
-        backgroundColor: state.isFocused ? '#FFF' : 'rgb(229 231 235 / var(--tw-bg-opacity))',
+        // backgroundColor: state.isFocused ? '#FFF' : 'rgb(229 231 235 / var(--tw-bg-opacity))',
       }
     },
   }
@@ -76,11 +78,20 @@ const PromptGenerator = () => {
       <div className="flex flex-row gap-x-2">
         <Input
           value={prompt?.value || ''}
-          onChange={setPromptString}
+          onChange={setValue}
           className="grow"
           placeholder="enter a prompt, like 'cat dancing on the moon'"
           disabled={prompt.loading}
           autoFocus />
+        <Input
+          className="w-24"
+          placeholder="Seed?"
+          type="number"
+          onChange={(value: any) => {
+            setSeed(typeof value !== 'undefined' ? parseInt(value, 10) : undefined)
+          }}
+          disabled={prompt.loading}
+        />
         <Button
           onClick={submit}
           disabled={prompt.loading}
@@ -90,6 +101,18 @@ const PromptGenerator = () => {
         <Select
           placeholder="Add artists..."
           options={artistTags}
+          styles={selectStyles}
+          theme={customSelectTheme}
+          isMulti
+          onChange={(selectedValues:MultiValue<{}>) => {
+            console.log(selectedValues)
+          }}
+        />
+      </div>
+      <div className="mt-4 text-slate-600 text-sm">
+        <Select
+          placeholder="Add descriptive words..."
+          options={descriptiveTags}
           styles={selectStyles}
           theme={customSelectTheme}
           isMulti

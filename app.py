@@ -58,6 +58,10 @@ def sandbox():
         return make_response('error', 400)
     user_info = user.get_user_info()
     user_id = user.get_user_id(user_info=user_info)
+    seed = None
+    if seed is None:
+        seed = random.randint(1, 100000)
+    print(f"seed: {seed}")
     return jsonify(user_info=user_info, user_id=user_id,)
 
 

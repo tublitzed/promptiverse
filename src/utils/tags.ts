@@ -1,7 +1,4 @@
-interface Tag {
-  label: string
-  value: string
-}
+import { Tag } from '@types'
 
 export const artistTags:Tag[] = [
   {

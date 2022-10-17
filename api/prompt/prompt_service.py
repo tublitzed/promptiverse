@@ -1,4 +1,4 @@
-import string, os, warnings
+import string, os, warnings, random
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 from api.models import prompt as prompt_model
@@ -18,14 +18,20 @@ stability_api = client.StabilityInference(
 )
 
 
-def save(prompt_str: string, img_url: string, user_id: string):
-    return prompt_model.save(user_id=user_id, value=prompt_str, img_url=img_url)
+def save(
+        prompt_str: string,
+        img_url: string,
+        seed: int,
+        user_id: string):
+    return prompt_model.save(user_id=user_id, value=prompt_str, img_url=img_url, seed=seed)
 
 
-def generate(prompt: string, user_id: string):
+def generate(prompt=string, user_id=string, seed=None):
+    if seed is None:
+        seed = random.randint(1, 10000)
     answers = stability_api.generate(
         prompt=prompt,
-        # seed=34567, # if provided, specifying a random seed makes results deterministic
+        seed=seed, # if provided, specifying a random seed makes results deterministic
         # steps=30, # defaults to 50 if not specified
     )
     for resp in answers:
@@ -45,8 +51,9 @@ def generate(prompt: string, user_id: string):
                 outfile.flush()  # Optional but a good idea
                 outfile.close()
                 saved_prompt = save(
-                    prompt=prompt,
+                    prompt_str=prompt,
                     img_url=file_meta["public_path"],
+                    seed=seed,
                     user_id=user_id,
                 )
     return saved_prompt

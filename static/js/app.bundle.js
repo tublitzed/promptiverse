@@ -148,11 +148,14 @@ const ApiService = {
         }
         return window.promptiverse.vars[name];
     },
-    generateImage: (prompt, accessToken) => {
+    generateImage: (prompt, accessToken, seed) => {
         const apiUrl = ApiService.getVar('API_SERVER_URL');
         return (0, fetch_1.default)(`${apiUrl}/api/prompt`, {
             method: 'POST',
-            postBody: { prompt },
+            postBody: {
+                prompt,
+                seed,
+            },
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
             },
@@ -352,13 +355,14 @@ const localStorage_1 = __importDefault(__webpack_require__(/*! ../utils/localSto
 const tags_1 = __webpack_require__(/*! ../utils/tags */ "./src/utils/tags.ts");
 const PromptGenerator = () => {
     const { setPrompt, prompt, user } = react_1.default.useContext(appContext_1.default);
-    const [promptString, setPromptString] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.value);
+    const [value, setValue] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.value);
+    const [seed, setSeed] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.seed);
     const submit = () => __awaiter(void 0, void 0, void 0, function* () {
-        if (typeof promptString !== 'string' || promptString.trim() === '') {
+        if (typeof value !== 'string' || value.trim() === '') {
             return;
         }
         setPrompt(Object.assign(Object.assign({}, prompt), { loading: true }));
-        const response = yield api_1.default.generateImage(promptString, user.access_token);
+        const response = yield api_1.default.generateImage(value, user.access_token, seed);
         if (!response.prompt) {
             console.error(`Unable to generate prompt`, response);
             setPrompt(Object.assign(Object.assign({}, prompt), { loading: false }));
@@ -368,9 +372,10 @@ const PromptGenerator = () => {
         const newPromptVal = {
             id: promptResp.id,
             imgUrl: promptResp.img_url,
-            version: promptResp.version,
-            value: promptString,
             loading: false,
+            seed: promptResp.seed,
+            value,
+            version: promptResp.version,
         };
         setPrompt(newPromptVal);
         localStorage_1.default.setPrompt(newPromptVal);
@@ -382,7 +387,7 @@ const PromptGenerator = () => {
         //   return provided
         // },
         control: (provided, state) => {
-            return Object.assign(Object.assign({}, provided), { backgroundColor: state.isFocused ? '#FFF' : 'rgb(229 231 235 / var(--tw-bg-opacity))' });
+            return Object.assign({}, provided);
         },
     };
     const customSelectTheme = (provided) => {
@@ -391,10 +396,17 @@ const PromptGenerator = () => {
     };
     return (react_1.default.createElement("div", null,
         react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
-            react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.value) || '', onChange: setPromptString, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", disabled: prompt.loading, autoFocus: true }),
+            react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.value) || '', onChange: setValue, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", disabled: prompt.loading, autoFocus: true }),
+            react_1.default.createElement(Input_1.default, { className: "w-24", placeholder: "Seed?", type: "number", onChange: (value) => {
+                    setSeed(typeof value !== 'undefined' ? parseInt(value, 10) : undefined);
+                }, disabled: prompt.loading }),
             react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt.loading }, "Go!")),
         react_1.default.createElement("div", { className: "mt-4 text-slate-600 text-sm" },
             react_1.default.createElement(react_select_1.default, { placeholder: "Add artists...", options: tags_1.artistTags, styles: selectStyles, theme: customSelectTheme, isMulti: true, onChange: (selectedValues) => {
+                    console.log(selectedValues);
+                } })),
+        react_1.default.createElement("div", { className: "mt-4 text-slate-600 text-sm" },
+            react_1.default.createElement(react_select_1.default, { placeholder: "Add descriptive words...", options: tags_1.descriptiveTags, styles: selectStyles, theme: customSelectTheme, isMulti: true, onChange: (selectedValues) => {
                     console.log(selectedValues);
                 } })),
         react_1.default.createElement("div", null,

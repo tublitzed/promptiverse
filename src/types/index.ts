@@ -11,10 +11,28 @@ export interface User {
 }
 
 export interface Prompt {
+  seed?: number
   value?: string
   imgUrl?: string
   id?: string
   engine?: string
   version?: number
   loading: boolean
+}
+
+export const tagCategoriesWithMeta = {
+  ARTIST: {
+    label: 'Artists',
+  },
+  DESCRIPTIVE: {
+    label: 'Descriptive words',
+  },
+} as const
+
+export type TagCategory = keyof typeof tagCategoriesWithMeta
+export const tagCategories = Object.keys(tagCategoriesWithMeta) as TagCategory[]
+
+export interface Tag {
+  label: string
+  value: string
 }
