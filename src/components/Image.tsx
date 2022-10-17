@@ -4,7 +4,7 @@ import AppContext from '@src/appContext'
 
 const Image = () => {
   const { prompt } = React.useContext(AppContext)
-  if (!prompt) {
+  if (!prompt || !prompt.imgUrl) {
     return null
   }
 

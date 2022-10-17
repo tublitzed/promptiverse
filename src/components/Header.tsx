@@ -2,7 +2,7 @@ import React from 'react'
 import clsx from 'clsx'
 import { useAuth0 } from '@auth0/auth0-react'
 import { Fragment } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useHistory } from 'react-router-dom'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Avatar from '@components/base/Avatar'
@@ -20,6 +20,20 @@ const Header = () => {
     logout({
       returnTo: window.location.origin,
     })
+  }
+
+  const routerHistory = useHistory()
+
+  const goToAboutPage = () => {
+    routerHistory.push('/about')
+  }
+
+  const goToDashboard = () => {
+    routerHistory.push('/')
+  }
+
+  const goToProfile = () => {
+    routerHistory.push('/profile')
   }
 
   const { user } = React.useContext(AppContext)
@@ -40,19 +54,19 @@ const Header = () => {
               <div className="flex h-16 items-center justify-between">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <a href="/"><Logo /></a>
+                    <a onClick={goToDashboard}><Logo /></a>
                   </div>
                   <div className="hidden sm:ml-6 sm:block">
                     <div className="flex space-x-4">
                       {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
-                      <a href="/" className={clsx(
-                        'rounded-md px-3 py-2 text-sm font-medium',
+                      <a onClick={goToDashboard} className={clsx(
+                        'rounded-md px-3 py-2 text-sm font-medium cursor-pointer',
                         location.pathname === '/' ? activeNavLinkClassname : navLinkClassname,
                       )}>
                       Dashboard
                       </a>
-                      <a href="/about" className={clsx(
-                        'rounded-md px-3 py-2 text-sm font-medium',
+                      <a onClick={goToAboutPage} className={clsx(
+                        'rounded-md px-3 py-2 text-sm font-medium cursor-pointer',
                         location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname,
                       )}>
                       About
@@ -66,7 +80,7 @@ const Header = () => {
                     <Menu as="div" className="relative ml-3">
                       <div>
                         <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                          <span className="sr-only">Open user menu</span>
+                          <span className="sr-only">Profile</span>
                           <Avatar />
                         </Menu.Button>
                       </div>
@@ -83,10 +97,10 @@ const Header = () => {
                           <Menu.Item>
                             {({ active }) => (
                               <a
-                                href="/profile"
+                                onClick={goToProfile}
                                 className={classNames(
                                   active ? 'bg-gray-100' : '',
-                                  'block px-4 py-2 text-sm text-gray-700',
+                                  'block px-4 py-2 text-sm text-gray-700 cursor-pointer',
                                 )}
                               >
                               Your Profile
@@ -99,7 +113,7 @@ const Header = () => {
                                 onClick={handleLogout}
                                 className={classNames(
                                   active ? 'bg-gray-100' : '',
-                                  'block px-4 py-2 text-sm text-gray-700',
+                                  'block px-4 py-2 text-sm text-gray-700 cursor-pointer',
                                 )}
                               >
                               Sign Out
@@ -132,9 +146,9 @@ const Header = () => {
                 {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
                 <Disclosure.Button
                   as="a"
-                  href="/"
+                  onClick={goToDashboard}
                   className={clsx(
-                    'block rounded-md px-3 py-2 text-base font-medium',
+                    'block rounded-md px-3 py-2 text-base font-medium cursor-pointer',
                     location.pathname === '/' ? activeNavLinkClassname : navLinkClassname,
                   )}
                 >
@@ -142,9 +156,9 @@ const Header = () => {
                 </Disclosure.Button>
                 <Disclosure.Button
                   as="a"
-                  href="/about"
+                  onClick={goToAboutPage}
                   className={clsx(
-                    'block rounded-md px-3 py-2 text-base font-medium',
+                    'block rounded-md px-3 py-2 text-base font-medium cursor-pointer',
                     location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname,
                   )}
                 >
@@ -164,15 +178,15 @@ const Header = () => {
                 <div className="mt-3 space-y-1 px-2">
                   <Disclosure.Button
                     as="a"
-                    href="/profile"
-                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                    onClick={goToProfile}
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer"
                   >
                   Your Profile
                   </Disclosure.Button>
                   <Disclosure.Button
                     as="a"
                     onClick={handleLogout}
-                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer"
                   >
                   Sign Out
                   </Disclosure.Button>

@@ -10,6 +10,11 @@ from api.models import create_tables
 from api.helpers import user
 from api.security import auth0_service
 
+from api.models.tag import (
+    seed_tag_categories
+)
+
+
 def is_dev():
     return True if os.getenv("FLASK_ENV") == "development" else False
 
@@ -56,13 +61,8 @@ def index():
 def sandbox():
     if (is_dev() is False):
         return make_response('error', 400)
-    user_info = user.get_user_info()
-    user_id = user.get_user_id(user_info=user_info)
-    seed = None
-    if seed is None:
-        seed = random.randint(1, 100000)
-    print(f"seed: {seed}")
-    return jsonify(user_info=user_info, user_id=user_id,)
+    seed_tag_categories()
+    return jsonify({"ta": "da"})
 
 
 @app.route("/callback", methods=["GET", "POST"])

@@ -82,7 +82,8 @@ const PromptGenerator = () => {
           className="grow"
           placeholder="enter a prompt, like 'cat dancing on the moon'"
           disabled={prompt.loading}
-          autoFocus />
+          autoFocus
+        />
         <Input
           className="w-24"
           placeholder="Seed?"
@@ -95,6 +96,7 @@ const PromptGenerator = () => {
         <Button
           onClick={submit}
           disabled={prompt.loading}
+          className="min-w-[150px]"
         >Go!</Button>
       </div>
       <div className="mt-4 text-slate-600 text-sm">

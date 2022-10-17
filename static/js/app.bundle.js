@@ -235,6 +235,16 @@ const Header = () => {
             returnTo: window.location.origin,
         });
     };
+    const routerHistory = (0, react_router_dom_1.useHistory)();
+    const goToAboutPage = () => {
+        routerHistory.push('/about');
+    };
+    const goToDashboard = () => {
+        routerHistory.push('/');
+    };
+    const goToProfile = () => {
+        routerHistory.push('/profile');
+    };
     const { user } = react_1.default.useContext(appContext_1.default);
     const activeNavLinkClassname = 'bg-gray-900 text-white';
     const navLinkClassname = 'text-gray-300 hover:bg-gray-700 hover:text-white';
@@ -248,23 +258,23 @@ const Header = () => {
                 react_1.default.createElement("div", { className: "flex h-16 items-center justify-between" },
                     react_1.default.createElement("div", { className: "flex items-center" },
                         react_1.default.createElement("div", { className: "flex-shrink-0" },
-                            react_1.default.createElement("a", { href: "/" },
+                            react_1.default.createElement("a", { onClick: goToDashboard },
                                 react_1.default.createElement(Logo_1.default, null))),
                         react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
                             react_1.default.createElement("div", { className: "flex space-x-4" },
-                                react_1.default.createElement("a", { href: "/", className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
-                                react_1.default.createElement("a", { href: "/about", className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")))),
+                                react_1.default.createElement("a", { onClick: goToDashboard, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
+                                react_1.default.createElement("a", { onClick: goToAboutPage, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")))),
                     react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
                         react_1.default.createElement("div", { className: "flex items-center" },
                             react_1.default.createElement(react_3.Menu, { as: "div", className: "relative ml-3" },
                                 react_1.default.createElement("div", null,
                                     react_1.default.createElement(react_3.Menu.Button, { className: "flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" },
-                                        react_1.default.createElement("span", { className: "sr-only" }, "Open user menu"),
+                                        react_1.default.createElement("span", { className: "sr-only" }, "Profile"),
                                         react_1.default.createElement(Avatar_1.default, null))),
                                 react_1.default.createElement(react_3.Transition, { as: react_2.Fragment, enter: "transition ease-out duration-100", enterFrom: "transform opacity-0 scale-95", enterTo: "transform opacity-100 scale-100", leave: "transition ease-in duration-75", leaveFrom: "transform opacity-100 scale-100", leaveTo: "transform opacity-0 scale-95" },
                                     react_1.default.createElement(react_3.Menu.Items, { className: "absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" },
-                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { href: "/profile", className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700') }, "Your Profile"))),
-                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: handleLogout, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700') }, "Sign Out")))))))),
+                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: goToProfile, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "Your Profile"))),
+                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: handleLogout, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "Sign Out")))))))),
                     react_1.default.createElement("div", { className: "-mr-2 flex sm:hidden" },
                         react_1.default.createElement(react_3.Disclosure.Button, { className: "inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" },
                             react_1.default.createElement("span", { className: "sr-only" }, "Open main menu"),
@@ -273,8 +283,8 @@ const Header = () => {
                                 : (react_1.default.createElement(outline_1.Bars3Icon, { className: "block h-6 w-6", "aria-hidden": "true" })))))),
             react_1.default.createElement(react_3.Disclosure.Panel, { className: "sm:hidden" },
                 react_1.default.createElement("div", { className: "space-y-1 px-2 pt-2 pb-3" },
-                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", href: "/", className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
-                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", href: "/about", className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")),
+                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToDashboard, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
+                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToAboutPage, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")),
                 react_1.default.createElement("div", { className: "border-t border-gray-700 pt-4 pb-3" },
                     react_1.default.createElement("div", { className: "flex items-center px-5" },
                         react_1.default.createElement("div", { className: "flex-shrink-0" },
@@ -283,8 +293,8 @@ const Header = () => {
                             react_1.default.createElement("div", { className: "text-base font-medium text-white" }, user.nickname),
                             react_1.default.createElement("div", { className: "text-sm font-medium text-gray-400" }, user.name))),
                     react_1.default.createElement("div", { className: "mt-3 space-y-1 px-2" },
-                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", href: "/profile", className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white" }, "Your Profile"),
-                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: handleLogout, className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white" }, "Sign Out")))))))));
+                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToProfile, className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer" }, "Your Profile"),
+                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: handleLogout, className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer" }, "Sign Out")))))))));
 };
 exports["default"] = Header;
 
@@ -307,7 +317,7 @@ const Loader_1 = __importDefault(__webpack_require__(/*! @components/base/Loader
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const Image = () => {
     const { prompt } = react_1.default.useContext(appContext_1.default);
-    if (!prompt) {
+    if (!prompt || !prompt.imgUrl) {
         return null;
     }
     if (prompt.loading) {
@@ -400,7 +410,7 @@ const PromptGenerator = () => {
             react_1.default.createElement(Input_1.default, { className: "w-24", placeholder: "Seed?", type: "number", onChange: (value) => {
                     setSeed(typeof value !== 'undefined' ? parseInt(value, 10) : undefined);
                 }, disabled: prompt.loading }),
-            react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt.loading }, "Go!")),
+            react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt.loading, className: "min-w-[150px]" }, "Go!")),
         react_1.default.createElement("div", { className: "mt-4 text-slate-600 text-sm" },
             react_1.default.createElement(react_select_1.default, { placeholder: "Add artists...", options: tags_1.artistTags, styles: selectStyles, theme: customSelectTheme, isMulti: true, onChange: (selectedValues) => {
                     console.log(selectedValues);
