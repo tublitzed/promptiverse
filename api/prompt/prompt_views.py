@@ -26,11 +26,7 @@ def public():
         seed = None
 
     user_id = user.get_user_id(user_info=user.get_user_info())
-    saved_prompt = generate(
-        prompt=prompt,
-        user_id=user_id,
-        seed=seed
-    )
+    saved_prompt = generate(prompt=prompt, user_id=user_id, seed=seed)
     prompt_response = jsonify(
         {
             "prompt": {

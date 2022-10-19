@@ -18,12 +18,10 @@ stability_api = client.StabilityInference(
 )
 
 
-def save(
-        prompt_str: string,
-        img_url: string,
-        seed: int,
-        user_id: string):
-    return prompt_model.save(user_id=user_id, value=prompt_str, img_url=img_url, seed=seed)
+def save(prompt_str: string, img_url: string, seed: int, user_id: string):
+    return prompt_model.save(
+        user_id=user_id, value=prompt_str, img_url=img_url, seed=seed
+    )
 
 
 def generate(prompt=string, user_id=string, seed=None):
@@ -31,7 +29,7 @@ def generate(prompt=string, user_id=string, seed=None):
         seed = random.randint(1, 10000)
     answers = stability_api.generate(
         prompt=prompt,
-        seed=seed, # if provided, specifying a random seed makes results deterministic
+        seed=seed,  # if provided, specifying a random seed makes results deterministic
         # steps=30, # defaults to 50 if not specified
     )
     for resp in answers:

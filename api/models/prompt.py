@@ -1,11 +1,9 @@
 import datetime, uuid
 
 # https://docs.peewee-orm.com/en/latest/peewee/models.html?highlight=table%20generation#field-types-table
-from peewee import DateTimeField,CharField,IntegerField
+from peewee import DateTimeField, CharField, IntegerField, UUIDField
 
-from api.models.models import (
-    BaseModel,
-)
+from api.models.models import BaseModel
 
 from api.helpers.aws import (
     copy_to_s3,
@@ -13,12 +11,13 @@ from api.helpers.aws import (
 
 ENGINE_SD_1 = "stable-diffusion-v1-5"  # 1
 
+
 class Prompt(BaseModel):
     db_table = "Prompt"
     created_at = DateTimeField(default=datetime.datetime.now)
     # linked to Auth0
     user_id = CharField(max_length=255)
-    id = CharField(unique=True, primary_key=True)
+    id = UUIDField(unique=True, primary_key=True)
     img_url = CharField(max_length=255)
     seed = IntegerField(null=True)
     img_engine = CharField(default=ENGINE_SD_1, max_length=100)

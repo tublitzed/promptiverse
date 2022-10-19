@@ -11,7 +11,8 @@ from api.helpers import user
 from api.security import auth0_service
 
 from api.models.tag import (
-    seed_tag_categories
+    seed_tag_categories,
+    seed_tags
 )
 
 
@@ -62,6 +63,7 @@ def sandbox():
     if (is_dev() is False):
         return make_response('error', 400)
     seed_tag_categories()
+    seed_tags()
     return jsonify({"ta": "da"})
 
 
