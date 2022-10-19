@@ -3,7 +3,7 @@ import datetime, uuid
 # https://docs.peewee-orm.com/en/latest/peewee/models.html?highlight=table%20generation#field-types-table
 from peewee import DateTimeField, CharField, IntegerField, UUIDField
 
-from api.models.models import BaseModel
+from api.models.base import BaseModel
 
 from api.helpers.aws import (
     copy_to_s3,

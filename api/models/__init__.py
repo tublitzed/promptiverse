@@ -2,7 +2,7 @@ from api.models.prompt import Prompt
 
 from api.models.tag import Tag, Tag_Category
 
-from api.models.models import psql_db
+from api.models.base import psql_db
 
 
 def create_tables():

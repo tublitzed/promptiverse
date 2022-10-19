@@ -10,7 +10,6 @@ from api.routes import (
     base as base_routes,
 )
 
-from api.models import create_tables
 from api.helpers import app as app_helper
 
 csrf = CSRFProtect()

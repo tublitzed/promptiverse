@@ -1,21 +1,14 @@
-import json
 from flask import (
-    Flask,
     Blueprint,
     render_template,
     make_response,
-    redirect,
     jsonify,
-    request,
-    got_request_exception,
 )
 import random
 import os
 
-from api.models import create_tables
 from api.helpers import app
-
-from api.models.tag import seed_tag_categories, seed_tags
+from api.helpers.seeder import seed_tag_categories, seed_tags
 
 bp_name = "base"
 bp_url_prefix = "/"
