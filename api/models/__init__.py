@@ -14,3 +14,6 @@ def create_tables():
                 Tag_Category,
             ]
         )
+
+
+create_tables()

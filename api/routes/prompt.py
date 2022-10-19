@@ -1,8 +1,8 @@
 import os
 from flask import Blueprint, jsonify, request
 
-from api.security.auth0_service import requires_auth
-from api.prompt.prompt_service import generate
+from api.services.auth0 import requires_auth
+from api.services.prompt import generate
 
 from api.helpers import user
 
