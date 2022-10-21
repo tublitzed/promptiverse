@@ -12,6 +12,10 @@ from peewee import (
 from api.models.base import BaseModel, psql_db
 from api.models.tag_category import Tag_Category
 
+# user -> many prompts. each prompt -> many tags
+# prompt has uid, and multiple tag ids.
+# for now, maybe tags array?
+
 
 class Tag(BaseModel):
     db_table = "Tag"
@@ -40,3 +44,12 @@ def create(value: str, label: str, category_id: int):
         # `label` and `value` are indexed to be unique, so this Tag already exists,
         # making it safe to call .get().
         return Tag.get(value=value, tag_category_id=category_id)
+
+
+def get_all():
+    return Tag.select(
+        Tag.tag_category,
+        Tag.id,
+        Tag.label,
+        Tag.value,
+    )

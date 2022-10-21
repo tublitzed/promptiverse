@@ -14,6 +14,7 @@ const PromptGenerator = () => {
   const { setPrompt, prompt, user } = React.useContext(AppContext)
   const [value, setValue] = React.useState<string>(prompt?.value)
   const [seed, setSeed] = React.useState<number | undefined>(prompt?.seed)
+  const [tags, setTags] = React.useState<any>()
 
   const submit = async () => {
     if (typeof value !== 'string' || value.trim() === '') {
@@ -73,6 +74,17 @@ const PromptGenerator = () => {
       },
     }
   }
+
+  const getTags = async () => {
+    const resp = await Api.getTags(user.access_token)
+    console.log(resp)
+  }
+
+  React.useEffect(() => {
+    if (user.access_token && !tags) {
+      getTags()
+    }
+  }, [user.access_token])
   return (
     <div>
       <div className="flex flex-row gap-x-2">

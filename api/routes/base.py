@@ -6,7 +6,7 @@ from flask import (
 )
 import random
 import os
-
+from api.services.auth0 import requires_auth
 from api.helpers import app
 from api.helpers.seeder import seed_tag_categories, seed_tags
 
@@ -45,9 +45,17 @@ def index():
 def sandbox():
     if app.is_dev() is False:
         return make_response("error", 400)
+    return jsonify({"ta": "da"})
+
+
+@bp.route("/seed", methods=["GET"])
+def seed():
+    can_seed = os.environ.get("ENABLE_SEEDER", False)
+    if can_seed is False:
+        return make_response("error", 400)
     seed_tag_categories()
     seed_tags()
-    return jsonify({"ta": "da"})
+    return ("OK", 201)
 
 
 @bp.route("/callback", methods=["GET", "POST"])

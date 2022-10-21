@@ -161,6 +161,15 @@ const ApiService = {
             },
         });
     },
+    getTags: (accessToken) => {
+        const apiUrl = ApiService.getVar('API_SERVER_URL');
+        return (0, fetch_1.default)(`${apiUrl}/api/tag`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        });
+    },
     sandboxTest: (accessToken) => {
         const apiUrl = ApiService.getVar('API_SERVER_URL');
         return (0, fetch_1.default)(`${apiUrl}/sandbox`, {
@@ -367,6 +376,7 @@ const PromptGenerator = () => {
     const { setPrompt, prompt, user } = react_1.default.useContext(appContext_1.default);
     const [value, setValue] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.value);
     const [seed, setSeed] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.seed);
+    const [tags, setTags] = react_1.default.useState();
     const submit = () => __awaiter(void 0, void 0, void 0, function* () {
         if (typeof value !== 'string' || value.trim() === '') {
             return;
@@ -404,6 +414,15 @@ const PromptGenerator = () => {
         // console.log(provided)
         return Object.assign(Object.assign({}, provided), { colors: Object.assign({}, provided.colors) });
     };
+    const getTags = () => __awaiter(void 0, void 0, void 0, function* () {
+        const resp = yield api_1.default.getTags(user.access_token);
+        console.log(resp);
+    });
+    react_1.default.useEffect(() => {
+        if (user.access_token && !tags) {
+            getTags();
+        }
+    }, [user.access_token]);
     return (react_1.default.createElement("div", null,
         react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
             react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.value) || '', onChange: setValue, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", disabled: prompt.loading, autoFocus: true }),

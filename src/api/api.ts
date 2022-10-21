@@ -27,6 +27,15 @@ const ApiService = {
       },
     })
   },
+  getTags: (accessToken: string) => {
+    const apiUrl = ApiService.getVar('API_SERVER_URL')
+    return fetcher(`${apiUrl}/api/tag`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    })
+  },
   sandboxTest: (accessToken: string) => {
     const apiUrl = ApiService.getVar('API_SERVER_URL')
     return fetcher(`${apiUrl}/sandbox`, {

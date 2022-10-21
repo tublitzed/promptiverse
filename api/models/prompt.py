@@ -1,8 +1,9 @@
+from array import array
 import datetime, uuid
 
 # https://docs.peewee-orm.com/en/latest/peewee/models.html?highlight=table%20generation#field-types-table
 from peewee import DateTimeField, CharField, IntegerField, UUIDField
-
+from playhouse.postgres_ext import ArrayField
 from api.models.base import BaseModel
 
 from api.helpers.aws import (
@@ -21,10 +22,14 @@ class Prompt(BaseModel):
     img_url = CharField(max_length=255)
     seed = IntegerField(null=True)
     img_engine = CharField(default=ENGINE_SD_1, max_length=100)
+    user_value = CharField(
+        max_length=255
+    )  # value submitted by the user which may not be the ultimate 'value' we submit
     value = CharField(
         max_length=255
     )  # 77 tokens is not characters -- TODO: is there a limit here?
     version = IntegerField(default=1)
+    tag_ids = ArrayField(UUIDField, null=True)
 
 
 def create_prompt_version(value, user_id):
@@ -39,7 +44,14 @@ def create_prompt_version(value, user_id):
     return query.version + 1
 
 
-def save(user_id, value, img_url, seed):
+def save(
+    img_url=str,
+    seed=int,
+    tag_ids=[],
+    user_id=str,
+    user_value="",
+    value=str,
+):
     version = create_prompt_version(value, user_id)
     prompt_id = uuid.uuid4()
     s3_img_url = copy_to_s3(
@@ -53,5 +65,7 @@ def save(user_id, value, img_url, seed):
         seed=seed,
         user_id=user_id,
         value=value,
+        user_value=user_value,
         version=version,
+        tag_ids=tag_ids,
     )

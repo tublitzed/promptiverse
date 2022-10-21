@@ -24,7 +24,7 @@ def save(prompt_str: string, img_url: string, seed: int, user_id: string):
     )
 
 
-def generate(prompt=string, user_id=string, seed=None):
+def generate(prompt=string, user_id=string, seed=None, tags=[], user_value=""):
     if seed is None:
         seed = random.randint(1, 10000)
     answers = stability_api.generate(
@@ -48,10 +48,12 @@ def generate(prompt=string, user_id=string, seed=None):
                 outfile.write(artifact.binary)
                 outfile.flush()  # Optional but a good idea
                 outfile.close()
-                saved_prompt = save(
-                    prompt_str=prompt,
+                saved_prompt = prompt_model.save(
+                    user_id=user_id,
+                    value=prompt,
                     img_url=file_meta["public_path"],
                     seed=seed,
-                    user_id=user_id,
+                    tag_ids=tags,
+                    user_value=user_value,
                 )
     return saved_prompt
