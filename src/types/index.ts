@@ -20,19 +20,13 @@ export interface Prompt {
   loading: boolean
 }
 
-export const tagCategoriesWithMeta = {
-  ARTIST: {
-    label: 'Artists',
-  },
-  DESCRIPTIVE: {
-    label: 'Descriptive words',
-  },
-} as const
-
-export type TagCategory = keyof typeof tagCategoriesWithMeta
-export const tagCategories = Object.keys(tagCategoriesWithMeta) as TagCategory[]
+export interface Tag_Category {
+  id: number
+  label: string
+}
 
 export interface Tag {
   label: string
-  value: string
+  id: string
+  tag_category: number
 }

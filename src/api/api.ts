@@ -1,4 +1,5 @@
-import fetcher from '../utils/fetch'
+import fetcher from '@utils/fetch'
+import { Tag, Tag_Category } from '@types'
 declare global {
   interface Window {
     promptiverse: any;
@@ -27,7 +28,7 @@ const ApiService = {
       },
     })
   },
-  getTags: (accessToken: string) => {
+  getTags: (accessToken: string):Promise<{ tags: Tag[], categories: Tag_Category[]}> => {
     const apiUrl = ApiService.getVar('API_SERVER_URL')
     return fetcher(`${apiUrl}/api/tag`, {
       method: 'GET',

@@ -23,7 +23,7 @@
       "@types": ["src/types/index"],
       "@src/*": ["src/*"],
       "@src": ["src/index"],
-      "@utils/*": ["utils/*"],
+      "@utils/*": ["src/utils/*"],
       "@utils": ["src/utils/index"],
     }
   },

@@ -51,5 +51,4 @@ def get_all():
         Tag.tag_category,
         Tag.id,
         Tag.label,
-        Tag.value,
     )

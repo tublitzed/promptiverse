@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 import { User, Prompt } from '@types'
-import LocalStorage from './utils/localStorage'
+import LocalStorage from '@utils/localStorage'
 
 export interface AppContextProps {
   isLoading: boolean
