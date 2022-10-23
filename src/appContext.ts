@@ -13,7 +13,7 @@ export interface AppContextProps {
 
 export const defaultContext = {
   isLoading: true,
-  prompt: LocalStorage.getPrompt() || { loading: false },
+  prompt: LocalStorage.getPrompt(),
   setIsLoading: () => {},
   setPrompt: (prompt?:Prompt) => {},
   setUser: (user?:User) => {},

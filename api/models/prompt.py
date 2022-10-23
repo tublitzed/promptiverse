@@ -22,20 +22,20 @@ class Prompt(BaseModel):
     img_url = CharField(max_length=255)
     seed = IntegerField(null=True)
     img_engine = CharField(default=ENGINE_SD_1, max_length=100)
-    user_value = CharField(
+    prompt_raw = CharField(
         max_length=255
     )  # value submitted by the user which may not be the ultimate 'value' we submit
-    value = CharField(
+    prompt = CharField(
         max_length=255
     )  # 77 tokens is not characters -- TODO: is there a limit here?
     version = IntegerField(default=1)
     tag_ids = ArrayField(UUIDField, null=True)
 
 
-def create_prompt_version(value, user_id):
+def create_prompt_version(prompt, user_id):
     query = (
         Prompt.select()
-        .where(Prompt.value == value, Prompt.user_id == user_id)
+        .where(Prompt.prompt == prompt, Prompt.user_id == user_id)
         .order_by(Prompt.version.desc())
         .first()
     )
@@ -46,26 +46,26 @@ def create_prompt_version(value, user_id):
 
 def save(
     img_url=str,
+    prompt_raw=str,
+    prompt=str,
     seed=int,
     tag_ids=[],
     user_id=str,
-    user_value="",
-    value=str,
 ):
-    version = create_prompt_version(value, user_id)
+    version = create_prompt_version(prompt, user_id)
     prompt_id = uuid.uuid4()
     s3_img_url = copy_to_s3(
-        user_id=user_id,
-        src_filepath=img_url,
         filename=f"{prompt_id}/image.png",
+        src_filepath=img_url,
+        user_id=user_id,
     )
     return Prompt.create(
         id=prompt_id,
         img_url=s3_img_url,
+        prompt_raw=prompt_raw,
+        prompt=prompt,
         seed=seed,
-        user_id=user_id,
-        value=value,
-        user_value=user_value,
-        version=version,
         tag_ids=tag_ids,
+        user_id=user_id,
+        version=version,
     )

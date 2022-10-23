@@ -17,19 +17,27 @@ export type SelectedTagCategories = {
 
 const PromptGenerator = () => {
   const { setPrompt, prompt, user } = React.useContext(AppContext)
-  const [value, setValue] = React.useState<string>(prompt?.value)
+  const [promptRaw, setPromptRaw] = React.useState<string>(prompt?.promptRaw)
   const [seed, setSeed] = React.useState<number | undefined>(prompt?.seed)
   const [tags, setTags] = React.useState<SelectedTagCategories>({})
 
   const submit = async () => {
-    if (typeof value !== 'string' || value.trim() === '') {
+    if (typeof promptRaw !== 'string' || promptRaw.trim() === '') {
       return
     }
     setPrompt({
       ...prompt,
       loading: true,
     })
-    const response = await Api.generateImage(value, user.access_token, seed)
+    const response = await Api.generateImage({
+      prompt: promptRaw,
+      promptRaw,
+      accessToken: user.access_token,
+      seed,
+      tagIds: [],
+    })
+
+    console.log(response)
     if (!response.prompt) {
       console.error(`Unable to generate prompt`, response)
       setPrompt({
@@ -39,17 +47,13 @@ const PromptGenerator = () => {
       return
     }
 
-    const { prompt: promptResp } = response
     const newPromptVal = {
-      id: promptResp.id,
-      imgUrl: promptResp.img_url,
+      ...response.prompt,
       loading: false,
-      seed: promptResp.seed,
-      value,
-      version: promptResp.version,
     }
     setPrompt(newPromptVal)
     LocalStorage.setPrompt(newPromptVal)
+    // setSeed(newPromptVal.seed)
   }
 
   const onTagChange = (changedTags:Tag[], categoryId: Tag_Category['id']) => {
@@ -63,8 +67,8 @@ const PromptGenerator = () => {
     <div>
       <div className="flex flex-row gap-x-2">
         <Input
-          value={prompt?.value || ''}
-          onChange={setValue}
+          value={prompt?.promptRaw || ''}
+          onChange={setPromptRaw}
           className="grow"
           placeholder="enter a prompt, like 'cat dancing on the moon'"
           disabled={prompt.loading}
@@ -73,6 +77,7 @@ const PromptGenerator = () => {
         <Input
           className="w-24"
           placeholder="Seed?"
+          value={prompt?.seed || undefined}
           type="number"
           onChange={(value: any) => {
             setSeed(typeof value !== 'undefined' ? parseInt(value, 10) : undefined)

@@ -20,8 +20,8 @@ const Image = () => {
     <div className="p-6 bg-white rounded mt-6">
       <img
         src={prompt?.imgUrl}
-        title={prompt?.value}
-        alt={`Image for prompt ${prompt?.value ? prompt.value : ''}`}
+        title={prompt?.prompt}
+        alt={`Image for prompt ${prompt?.prompt ? prompt.prompt : ''}`}
         width={512}
         height={512}
         className="border m-auto rounded shadow p-2 bg-slate-400"

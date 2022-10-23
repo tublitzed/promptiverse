@@ -15,10 +15,12 @@ bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
 @requires_auth
 def public():
     request_data = request.get_json()
-    for value in ["prompt"]:
+    for value in ["prompt", "prompt_raw", "tag_ids"]:
         if value not in request_data:
             return jsonify(error=f"Missing required request param: {value}"), 400
     prompt = request_data["prompt"]
+    prompt_raw = request_data["prompt_raw"]
+    tag_ids = request_data["tag_ids"]
 
     if "seed" in request_data:
         seed = request_data["seed"]
@@ -26,16 +28,18 @@ def public():
         seed = None
 
     user_id = user.get_user_id(user_info=user.get_user_info())
-    saved_prompt = generate(prompt=prompt, user_id=user_id, seed=seed)
+    saved_prompt = generate(prompt=prompt, prompt_raw=prompt_raw, user_id=user_id, seed=seed, tag_ids=tag_ids)
     prompt_response = jsonify(
         {
             "prompt": {
-                "id": saved_prompt.id,
-                "img_url": saved_prompt.img_url,
-                "value": saved_prompt.value,
-                "version": saved_prompt.version,
                 "engine": saved_prompt.img_engine,
+                "id": saved_prompt.id,
+                "imgUrl": saved_prompt.img_url,
+                "promptRaw": saved_prompt.prompt_raw,
+                "prompt": saved_prompt.prompt,
                 "seed": saved_prompt.seed,
+                "tagIds": saved_prompt.tag_ids,
+                "version": saved_prompt.version,
             }
         }
     )

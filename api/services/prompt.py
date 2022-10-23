@@ -8,7 +8,6 @@ from api.helpers.file import (
     create_img_file,
 )
 
-
 # https://github.com/Stability-AI/stability-sdk
 stability_api = client.StabilityInference(
     key=os.environ["STABILITY_KEY"],
@@ -17,16 +16,10 @@ stability_api = client.StabilityInference(
     engine=ENGINE_SD_1,
 )
 
-
-def save(prompt_str: string, img_url: string, seed: int, user_id: string):
-    return prompt_model.save(
-        user_id=user_id, value=prompt_str, img_url=img_url, seed=seed
-    )
-
-
-def generate(prompt=string, user_id=string, seed=None, tags=[], user_value=""):
+def generate(prompt=string, prompt_raw=string, user_id=string, seed=None, tag_ids=[]):
     if seed is None:
         seed = random.randint(1, 10000)
+
     answers = stability_api.generate(
         prompt=prompt,
         seed=seed,  # if provided, specifying a random seed makes results deterministic
@@ -50,10 +43,10 @@ def generate(prompt=string, user_id=string, seed=None, tags=[], user_value=""):
                 outfile.close()
                 saved_prompt = prompt_model.save(
                     user_id=user_id,
-                    value=prompt,
+                    prompt=prompt,
                     img_url=file_meta["public_path"],
                     seed=seed,
-                    tag_ids=tags,
-                    user_value=user_value,
+                    tag_ids=tag_ids,
+                    prompt_raw=prompt_raw,
                 )
     return saved_prompt

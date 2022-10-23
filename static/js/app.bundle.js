@@ -148,13 +148,15 @@ const ApiService = {
         }
         return window.promptiverse.vars[name];
     },
-    generateImage: (prompt, accessToken, seed) => {
+    generateImage: ({ accessToken, prompt, promptRaw, seed, tagIds = [], }) => {
         const apiUrl = ApiService.getVar('API_SERVER_URL');
         return (0, fetch_1.default)(`${apiUrl}/api/prompt`, {
             method: 'POST',
             postBody: {
+                prompt_raw: promptRaw || prompt,
                 prompt,
                 seed,
+                tag_ids: tagIds,
             },
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -201,7 +203,7 @@ const react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js"
 const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
 exports.defaultContext = {
     isLoading: true,
-    prompt: localStorage_1.default.getPrompt() || { loading: false },
+    prompt: localStorage_1.default.getPrompt(),
     setIsLoading: () => { },
     setPrompt: (prompt) => { },
     setUser: (user) => { },
@@ -335,7 +337,7 @@ const Image = () => {
             react_1.default.createElement("h2", { className: "text-slate-50 font-thin text-lg mt-4" }, "Loading...")));
     }
     return (react_1.default.createElement("div", { className: "p-6 bg-white rounded mt-6" },
-        react_1.default.createElement("img", { src: prompt === null || prompt === void 0 ? void 0 : prompt.imgUrl, title: prompt === null || prompt === void 0 ? void 0 : prompt.value, alt: `Image for prompt ${(prompt === null || prompt === void 0 ? void 0 : prompt.value) ? prompt.value : ''}`, width: 512, height: 512, className: "border m-auto rounded shadow p-2 bg-slate-400" })));
+        react_1.default.createElement("img", { src: prompt === null || prompt === void 0 ? void 0 : prompt.imgUrl, title: prompt === null || prompt === void 0 ? void 0 : prompt.prompt, alt: `Image for prompt ${(prompt === null || prompt === void 0 ? void 0 : prompt.prompt) ? prompt.prompt : ''}`, width: 512, height: 512, className: "border m-auto rounded shadow p-2 bg-slate-400" })));
 };
 exports["default"] = Image;
 
@@ -372,39 +374,39 @@ const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ 
 const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
 const PromptGenerator = () => {
     const { setPrompt, prompt, user } = react_1.default.useContext(appContext_1.default);
-    const [value, setValue] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.value);
+    const [promptRaw, setPromptRaw] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw);
     const [seed, setSeed] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.seed);
     const [tags, setTags] = react_1.default.useState({});
     const submit = () => __awaiter(void 0, void 0, void 0, function* () {
-        if (typeof value !== 'string' || value.trim() === '') {
+        if (typeof promptRaw !== 'string' || promptRaw.trim() === '') {
             return;
         }
         setPrompt(Object.assign(Object.assign({}, prompt), { loading: true }));
-        const response = yield api_1.default.generateImage(value, user.access_token, seed);
+        const response = yield api_1.default.generateImage({
+            prompt: promptRaw,
+            promptRaw,
+            accessToken: user.access_token,
+            seed,
+            tagIds: [],
+        });
+        console.log(response);
         if (!response.prompt) {
             console.error(`Unable to generate prompt`, response);
             setPrompt(Object.assign(Object.assign({}, prompt), { loading: false }));
             return;
         }
-        const { prompt: promptResp } = response;
-        const newPromptVal = {
-            id: promptResp.id,
-            imgUrl: promptResp.img_url,
-            loading: false,
-            seed: promptResp.seed,
-            value,
-            version: promptResp.version,
-        };
+        const newPromptVal = Object.assign(Object.assign({}, response.prompt), { loading: false });
         setPrompt(newPromptVal);
         localStorage_1.default.setPrompt(newPromptVal);
+        // setSeed(newPromptVal.seed)
     });
     const onTagChange = (changedTags, categoryId) => {
         setTags(Object.assign(Object.assign({}, tags), { [categoryId]: changedTags }));
     };
     return (react_1.default.createElement("div", null,
         react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
-            react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.value) || '', onChange: setValue, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", disabled: prompt.loading, autoFocus: true }),
-            react_1.default.createElement(Input_1.default, { className: "w-24", placeholder: "Seed?", type: "number", onChange: (value) => {
+            react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw) || '', onChange: setPromptRaw, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", disabled: prompt.loading, autoFocus: true }),
+            react_1.default.createElement(Input_1.default, { className: "w-24", placeholder: "Seed?", value: (prompt === null || prompt === void 0 ? void 0 : prompt.seed) || undefined, type: "number", onChange: (value) => {
                     setSeed(typeof value !== 'undefined' ? parseInt(value, 10) : undefined);
                 }, disabled: prompt.loading }),
             react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt.loading, className: "min-w-[150px]" }, "Go!")),
