@@ -964,7 +964,9 @@ const Tags = ({}) => {
     const onChange = (changedTags, category) => {
         const newTags = tags.map(tagCollection => {
             if (tagCollection.category.id === category.id) {
-                return Object.assign(Object.assign({}, tagCollection), { selectedTags: changedTags.map(tag => ({
+                return Object.assign(Object.assign({}, tagCollection), { 
+                    // map back from SelectOption format to Tag
+                    selectedTags: changedTags.map(tag => ({
                         id: tag.value,
                         label: tag.label,
                         tag_category: tagCollection.category.id,
@@ -1005,9 +1007,7 @@ const Tags = ({}) => {
     }
     return (react_1.default.createElement(react_1.default.Fragment, null, tags.map((tagCollection) => {
         return (react_1.default.createElement("div", { key: `tagCategory_${tagCollection.category.id}`, className: "mt-4 text-slate-600 text-sm" },
-            react_1.default.createElement(react_select_1.default, { defaultValue: tagsToSelectOptions(tagCollection.selectedTags), placeholder: `Add ${tagCollection.category.label.toLowerCase()}`, options: tagsToSelectOptions(tagCollection.allTags), styles: selectStyles, theme: customSelectTheme, isMulti: true, 
-                // TODO: fix type
-                onChange: (selectedValues) => {
+            react_1.default.createElement(react_select_1.default, { defaultValue: tagsToSelectOptions(tagCollection.selectedTags), placeholder: `Add ${tagCollection.category.label.toLowerCase()}`, options: tagsToSelectOptions(tagCollection.allTags), styles: selectStyles, theme: customSelectTheme, isMulti: true, onChange: (selectedValues) => {
                     onChange(selectedValues, tagCollection.category);
                 } })));
     })));

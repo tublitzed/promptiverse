@@ -2,7 +2,6 @@ import React from 'react'
 import Select from 'react-select'
 import Api from '@api/api'
 import AppContext from '@src/appContext'
-import LocalStorage from '@utils/localStorage'
 
 import { Tag, TagCategory, TagCollection } from '@types'
 
@@ -41,22 +40,30 @@ export const getSelectedTagIds = (tagCollections: TagCollection[]):string[] => {
   return tagCollections.flatMap(collection => (collection.selectedTags.map(tag => tag.id)))
 }
 
-const tagsToSelectOptions = (tags: Tag[]) => {
+interface SelectOption {
+  value: string
+  label: string
+}
+
+const tagsToSelectOptions = (tags: Tag[]):SelectOption[] => {
   return tags.map((tag:Tag) => ({
     value: tag.id,
     label: tag.label,
   }))
 }
+
 const Tags = ({}) => {
   const { user, setTags, tags } = React.useContext(AppContext)
   const [error, setError] = React.useState<string | undefined>()
 
 
-  const onChange = (changedTags: {value: string, label: string }[], category: TagCategory) => {
-    const newTags = tags.map(tagCollection => {
+  const onChange = (changedTags: SelectOption[], category: TagCategory) => {
+    const newTags:TagCollection[] = tags.map(tagCollection => {
       if (tagCollection.category.id === category.id) {
         return {
           ...tagCollection,
+
+          // map back from SelectOption format to Tag
           selectedTags: changedTags.map(tag => ({
             id: tag.value,
             label: tag.label,
@@ -114,8 +121,7 @@ const Tags = ({}) => {
               styles={selectStyles}
               theme={customSelectTheme}
               isMulti
-              // TODO: fix type
-              onChange={(selectedValues:any) => {
+              onChange={(selectedValues:SelectOption[]) => {
                 onChange(selectedValues, tagCollection.category)
               }}
             />
