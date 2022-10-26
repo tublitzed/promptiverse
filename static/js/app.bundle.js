@@ -211,7 +211,7 @@ exports.defaultContext = {
     setPrompt: (prompt) => { },
     setTags: (tags) => { },
     setUser: (user) => { },
-    tags: undefined,
+    tags: localStorage_1.default.getTags(),
     user: undefined,
 };
 const AppContext = (0, react_1.createContext)(exports.defaultContext);
@@ -410,9 +410,6 @@ const PromptComponent = () => {
     const { setPrompt, prompt, user, tags } = react_1.default.useContext(appContext_1.default);
     const [seed, setSeed] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.seed);
     const submit = () => __awaiter(void 0, void 0, void 0, function* () {
-        // if (typeof promptRaw !== 'string' || promptRaw.trim() === '') {
-        //   return
-        // }
         setPrompt(Object.assign(Object.assign({}, prompt), { loading: true }));
         const promptWithTags = buildPrompt(prompt.promptRaw, tags);
         const response = yield api_1.default.generateImage({
@@ -431,10 +428,10 @@ const PromptComponent = () => {
         const newPromptVal = Object.assign(Object.assign({}, response.prompt), { loading: false });
         setPrompt(newPromptVal);
         localStorage_1.default.setPrompt(newPromptVal);
+        localStorage_1.default.setTags(tags);
         setSeed(newPromptVal.seed);
     });
     const setPromptRaw = (newVal) => {
-        console.log(newVal);
         setPrompt(Object.assign(Object.assign({}, prompt), { promptRaw: newVal }));
     };
     return (react_1.default.createElement("div", null,
@@ -955,6 +952,12 @@ const getSelectedTagIds = (tagCollections) => {
     return tagCollections.flatMap(collection => (collection.selectedTags.map(tag => tag.id)));
 };
 exports.getSelectedTagIds = getSelectedTagIds;
+const tagsToSelectOptions = (tags) => {
+    return tags.map((tag) => ({
+        value: tag.id,
+        label: tag.label,
+    }));
+};
 const Tags = ({}) => {
     const { user, setTags, tags } = react_1.default.useContext(appContext_1.default);
     const [error, setError] = react_1.default.useState();
@@ -979,10 +982,12 @@ const Tags = ({}) => {
         }
         const tagCollections = [];
         resp.categories.forEach((category) => {
+            var _a;
+            const selectedTags = tags && tags.length ? (_a = tags[category.id]) === null || _a === void 0 ? void 0 : _a.selectedTags : [];
             tagCollections.push({
                 category,
                 allTags: resp.tags.filter(tag => tag.tag_category === category.id),
-                selectedTags: [],
+                selectedTags,
             });
         });
         setTags(tagCollections);
@@ -999,12 +1004,8 @@ const Tags = ({}) => {
         return null;
     }
     return (react_1.default.createElement(react_1.default.Fragment, null, tags.map((tagCollection) => {
-        console.log('rendering collection: ', tagCollection);
         return (react_1.default.createElement("div", { key: `tagCategory_${tagCollection.category.id}`, className: "mt-4 text-slate-600 text-sm" },
-            react_1.default.createElement(react_select_1.default, { placeholder: `Add ${tagCollection.category.label.toLowerCase()}`, options: tagCollection.allTags.map((tag) => ({
-                    value: tag.id,
-                    label: tag.label,
-                })), styles: selectStyles, theme: customSelectTheme, isMulti: true, 
+            react_1.default.createElement(react_select_1.default, { defaultValue: tagsToSelectOptions(tagCollection.selectedTags), placeholder: `Add ${tagCollection.category.label.toLowerCase()}`, options: tagsToSelectOptions(tagCollection.allTags), styles: selectStyles, theme: customSelectTheme, isMulti: true, 
                 // TODO: fix type
                 onChange: (selectedValues) => {
                     onChange(selectedValues, tagCollection.category);
@@ -1127,21 +1128,33 @@ const LocalStorage = {
     localStorageExists: () => {
         return typeof window !== 'undefined' && typeof (window === null || window === void 0 ? void 0 : window.localStorage) !== 'undefined';
     },
-    setPrompt: (prompt) => {
-        if (!LocalStorage.localStorageExists() || !prompt) {
+    setItem: (item, itemStr) => {
+        if (!LocalStorage.localStorageExists() || !item) {
             return;
         }
-        localStorage.setItem(`${localStorageNamespace}.prompt`, JSON.stringify(prompt));
+        localStorage.setItem(`${localStorageNamespace}.${itemStr}`, JSON.stringify(item));
     },
-    getPrompt: () => {
+    getItem: (itemStr) => {
         if (!LocalStorage.localStorageExists()) {
             return;
         }
-        const val = localStorage.getItem(`${localStorageNamespace}.prompt`);
+        const val = localStorage.getItem(`${localStorageNamespace}.${itemStr}`);
         if (!val) {
             return;
         }
         return JSON.parse(val);
+    },
+    setPrompt: (prompt) => {
+        return LocalStorage.setItem(prompt, 'prompt');
+    },
+    getPrompt: () => {
+        return LocalStorage.getItem('prompt');
+    },
+    setTags: (tagCollections) => {
+        return LocalStorage.setItem(tagCollections, 'tags');
+    },
+    getTags: () => {
+        return LocalStorage.getItem('tags');
     },
 };
 exports["default"] = LocalStorage;

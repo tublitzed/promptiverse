@@ -1,7 +1,8 @@
 import React from 'react'
-import Select, { MultiValue, Options } from 'react-select'
+import Select from 'react-select'
 import Api from '@api/api'
 import AppContext from '@src/appContext'
+import LocalStorage from '@utils/localStorage'
 
 import { Tag, TagCategory, TagCollection } from '@types'
 
@@ -39,6 +40,13 @@ export const getSelectedTagIds = (tagCollections: TagCollection[]):string[] => {
   }
   return tagCollections.flatMap(collection => (collection.selectedTags.map(tag => tag.id)))
 }
+
+const tagsToSelectOptions = (tags: Tag[]) => {
+  return tags.map((tag:Tag) => ({
+    value: tag.id,
+    label: tag.label,
+  }))
+}
 const Tags = ({}) => {
   const { user, setTags, tags } = React.useContext(AppContext)
   const [error, setError] = React.useState<string | undefined>()
@@ -70,10 +78,11 @@ const Tags = ({}) => {
 
     const tagCollections:TagCollection[] = []
     resp.categories.forEach((category: TagCategory) => {
+      const selectedTags = tags && tags.length ? tags[category.id]?.selectedTags : []
       tagCollections.push({
         category,
         allTags: resp.tags.filter(tag => tag.tag_category === category.id),
-        selectedTags: [],
+        selectedTags,
       })
     })
     setTags(tagCollections)
@@ -94,17 +103,14 @@ const Tags = ({}) => {
   return (
     <>
       {tags.map((tagCollection: TagCollection) => {
-        console.log('rendering collection: ', tagCollection)
         return (
           <div
             key={`tagCategory_${tagCollection.category.id}`}
             className="mt-4 text-slate-600 text-sm">
             <Select
+              defaultValue={tagsToSelectOptions(tagCollection.selectedTags)}
               placeholder={`Add ${tagCollection.category.label.toLowerCase()}`}
-              options={tagCollection.allTags.map((tag:Tag) => ({
-                value: tag.id,
-                label: tag.label,
-              }))}
+              options={tagsToSelectOptions(tagCollection.allTags)}
               styles={selectStyles}
               theme={customSelectTheme}
               isMulti

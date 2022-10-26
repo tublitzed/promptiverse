@@ -20,7 +20,7 @@ export const defaultContext = {
   setPrompt: (prompt?:Prompt) => {},
   setTags: (tags?: TagCollection[]) => {},
   setUser: (user?:User) => {},
-  tags: undefined,
+  tags: LocalStorage.getTags(),
   user: undefined,
 }
 

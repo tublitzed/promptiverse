@@ -1,4 +1,4 @@
-import { Prompt } from '@types'
+import { Prompt, TagCollection } from '@types'
 const localStorageNamespace = 'promptiverse'
 
 const LocalStorage = {
@@ -6,22 +6,38 @@ const LocalStorage = {
     return typeof window !== 'undefined' && typeof window?.localStorage !== 'undefined'
   },
 
-  setPrompt: (prompt?: Prompt) => {
-    if (!LocalStorage.localStorageExists() || !prompt) {
+  setItem: (item:any, itemStr: string) => {
+    if (!LocalStorage.localStorageExists() || !item) {
       return
     }
-    localStorage.setItem(`${localStorageNamespace}.prompt`, JSON.stringify(prompt))
+    localStorage.setItem(`${localStorageNamespace}.${itemStr}`, JSON.stringify(item))
   },
 
-  getPrompt: ():Prompt | undefined => {
+  getItem: (itemStr: string) => {
     if (!LocalStorage.localStorageExists()) {
       return
     }
-    const val = localStorage.getItem(`${localStorageNamespace}.prompt`)
+    const val = localStorage.getItem(`${localStorageNamespace}.${itemStr}`)
     if (!val) {
       return
     }
     return JSON.parse(val)
+  },
+
+  setPrompt: (prompt?: Prompt) => {
+    return LocalStorage.setItem(prompt, 'prompt')
+  },
+
+  getPrompt: ():Prompt | undefined => {
+    return LocalStorage.getItem('prompt')
+  },
+
+  setTags: (tagCollections?: TagCollection[]) => {
+    return LocalStorage.setItem(tagCollections, 'tags')
+  },
+
+  getTags: ():TagCollection[] | undefined => {
+    return LocalStorage.getItem('tags')
   },
 }
 

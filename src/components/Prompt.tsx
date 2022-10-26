@@ -22,9 +22,6 @@ const PromptComponent = () => {
   const [seed, setSeed] = React.useState<number | undefined>(prompt?.seed)
 
   const submit = async () => {
-    // if (typeof promptRaw !== 'string' || promptRaw.trim() === '') {
-    //   return
-    // }
     setPrompt({
       ...prompt,
       loading: true,
@@ -54,12 +51,12 @@ const PromptComponent = () => {
     }
     setPrompt(newPromptVal)
     LocalStorage.setPrompt(newPromptVal)
+    LocalStorage.setTags(tags)
     setSeed(newPromptVal.seed)
   }
 
 
   const setPromptRaw = (newVal:string) => {
-    console.log(newVal)
     setPrompt({
       ...prompt,
       promptRaw: newVal,
