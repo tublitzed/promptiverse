@@ -28,20 +28,7 @@ class Prompt(BaseModel):
     prompt = CharField(
         max_length=255
     )  # 77 tokens is not characters -- TODO: is there a limit here?
-    version = IntegerField(default=1)
     tag_ids = ArrayField(UUIDField, null=True)
-
-
-def create_prompt_version(prompt, user_id):
-    query = (
-        Prompt.select()
-        .where(Prompt.prompt == prompt, Prompt.user_id == user_id)
-        .order_by(Prompt.version.desc())
-        .first()
-    )
-    if query is None:
-        return 1
-    return query.version + 1
 
 
 def save(
@@ -52,7 +39,6 @@ def save(
     tag_ids=[],
     user_id=str,
 ):
-    version = create_prompt_version(prompt, user_id)
     prompt_id = uuid.uuid4()
     s3_img_url = copy_to_s3(
         filename=f"{prompt_id}/image.png",
@@ -67,5 +53,4 @@ def save(
         seed=seed,
         tag_ids=tag_ids,
         user_id=user_id,
-        version=version,
     )

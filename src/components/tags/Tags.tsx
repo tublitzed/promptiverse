@@ -1,97 +1,110 @@
 import React from 'react'
-import Select, { MultiValue } from 'react-select'
+import Select, { MultiValue, Options } from 'react-select'
 import Api from '@api/api'
-import Button from '@components/base/Button'
 import AppContext from '@src/appContext'
-import Input from '@components/base/Input'
-import Image from '@components/Image'
-import LocalStorage from '@utils/localStorage'
 
-import { Tag, Tag_Category } from '@types'
+import { Tag, TagCategory, TagCollection } from '@types'
 
-interface TagProps {
-  onChange: (tags:Tag[], categoryId: Tag_Category['id']) => void
-}
-const Tags = ({
-  onChange,
-}:TagProps) => {
-  const { setPrompt, prompt, user } = React.useContext(AppContext)
-  const [tags, setTags] = React.useState<Tag[] | undefined>()
-  const [categories, setCategories] = React.useState<Tag_Category[] | undefined>()
-  const [error, setError] = React.useState<string | undefined>()
-  const selectStyles = {
-    // https://react-select.com/styles#style-object
-    // option: (provided:any, state:any) => {
-    //   console.log(provided, state)
-    //   return provided
-    // },
-    control: (provided:any, state:any) => {
-      return {
-        ...provided,
-        // backgroundColor: state.isFocused ? '#FFF' : 'rgb(229 231 235 / var(--tw-bg-opacity))',
-      }
-    },
-  }
-
-  const customSelectTheme = (provided:any) => {
-    // console.log(provided)
+const selectStyles = {
+  // https://react-select.com/styles#style-object
+  // option: (provided:any, state:any) => {
+  //   console.log(provided, state)
+  //   return provided
+  // },
+  control: (provided:any, state:any) => {
     return {
       ...provided,
-      colors: {
-        ...provided.colors,
-        // primary: '#3b82f6',
-        // primary25: '#dbeafe',
-        // primary50: '#93c5fd',
-        // primary75: '#60a5fa',
-      },
+      // backgroundColor: state.isFocused ? '#FFF' : 'rgb(229 231 235 / var(--tw-bg-opacity))',
     }
+  },
+}
+
+const customSelectTheme = (provided:any) => {
+  // console.log(provided)
+  return {
+    ...provided,
+    colors: {
+      ...provided.colors,
+      // primary: '#3b82f6',
+      // primary25: '#dbeafe',
+      // primary50: '#93c5fd',
+      // primary75: '#60a5fa',
+    },
+  }
+}
+
+const Tags = ({}) => {
+  const { user, setTags, tags } = React.useContext(AppContext)
+  const [error, setError] = React.useState<string | undefined>()
+
+
+  const onChange = (changedTags: {value: string, label: string }[], category: TagCategory) => {
+    const newTags = tags.map(tagCollection => {
+      if (tagCollection.category.id === category.id) {
+        return {
+          ...tagCollection,
+          selectedTags: changedTags.map(tag => ({
+            id: tag.value,
+            label: tag.label,
+            tag_category: tagCollection.category.id,
+          })),
+        }
+      }
+      return tagCollection
+    })
+    setTags(newTags)
   }
 
-  const getTags = async () => {
+  const loadTags = async () => {
     const resp = await Api.getTags(user.access_token)
     if (!resp.tags || !resp.categories) {
       setError('Unable to load tags')
       return
     }
 
-    setTags(resp.tags)
-    setCategories(resp.categories)
+    const tagCollections:TagCollection[] = []
+    resp.categories.forEach((category: TagCategory) => {
+      tagCollections.push({
+        category,
+        allTags: resp.tags.filter(tag => tag.tag_category === category.id),
+        selectedTags: [],
+      })
+    })
+    setTags(tagCollections)
   }
 
   React.useEffect(() => {
     if (user.access_token && !tags) {
-      getTags()
+      loadTags()
     }
   }, [user.access_token])
 
   if (error) {
     return <div>{error}</div>
   }
-  if (!tags || !categories) {
+  if (!tags) {
     return null
   }
   return (
     <>
-      {categories.map((category: Tag_Category) => {
-        const tagsForCategory =
-          tags
-            .filter((tag: Tag) => tag.tag_category === category.id)
-            .map((tag: Tag) => ({
-              value: tag.id,
-              label: tag.label,
-            }))
+      {tags.map((tagCollection: TagCollection) => {
+        console.log('rendering collection: ', tagCollection)
         return (
           <div
-            key={`tagCategory_${category.id}`}
+            key={`tagCategory_${tagCollection.category.id}`}
             className="mt-4 text-slate-600 text-sm">
             <Select
-              placeholder={`Add ${category.label.toLowerCase()}`}
-              options={tagsForCategory}
+              placeholder={`Add ${tagCollection.category.label.toLowerCase()}`}
+              options={tagCollection.allTags.map((tag:Tag) => ({
+                value: tag.id,
+                label: tag.label,
+              }))}
               styles={selectStyles}
               theme={customSelectTheme}
               isMulti
-              onChange={(selectedValues:MultiValue<{}>) => {
-                onChange(selectedValues as Tag[], category.id)
+              // TODO: fix type
+              onChange={(selectedValues:any) => {
+                onChange(selectedValues, tagCollection.category)
               }}
             />
           </div>

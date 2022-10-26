@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import { User, Prompt } from '@types'
+import { User, Prompt, TagCollection } from '@types'
 import LocalStorage from '@utils/localStorage'
 
 export interface AppContextProps {
@@ -7,7 +7,9 @@ export interface AppContextProps {
   prompt?:Prompt
   setIsLoading: (isLoading: boolean) => void
   setPrompt: (prompt?:Prompt) => void
+  setTags: (tags?: TagCollection[]) => void
   setUser: (user?: any) => void
+  tags?: TagCollection[]
   user?: User
 }
 
@@ -16,7 +18,9 @@ export const defaultContext = {
   prompt: LocalStorage.getPrompt(),
   setIsLoading: () => {},
   setPrompt: (prompt?:Prompt) => {},
+  setTags: (tags?: TagCollection[]) => {},
   setUser: (user?:User) => {},
+  tags: undefined,
   user: undefined,
 }
 

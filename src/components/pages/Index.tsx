@@ -1,11 +1,11 @@
 import React from 'react'
 import Layout from '@components/layouts/Layout'
-import PromptGenerator from '@components/PromptGenerator'
+import Prompt from '@components/Prompt'
 
 const Page: React.FC<{}> = () => {
   return (
     <Layout>
-      <PromptGenerator />
+      <Prompt />
     </Layout>
   )
 }

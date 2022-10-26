@@ -62,6 +62,7 @@ const App = () => {
     const [user, setUser] = react_1.default.useState(userViaAuth0);
     const [isLoading, setIsLoading] = react_1.default.useState(isLoadingViaAuth0);
     const [prompt, setPrompt] = react_1.default.useState(appContext_1.defaultContext.prompt);
+    const [tags, setTags] = react_1.default.useState(appContext_1.defaultContext.tags);
     react_1.default.useEffect(() => {
         setIsLoading(isLoadingViaAuth0);
     }, [isLoadingViaAuth0]);
@@ -83,12 +84,14 @@ const App = () => {
                     react_1.default.createElement("div", { className: "text-center py-24 text-xl font-thin" }, "Loading...")))));
     }
     const defaultCtx = {
-        user,
         isLoading,
-        setUser,
-        setIsLoading,
         prompt,
+        setIsLoading,
         setPrompt,
+        setTags,
+        setUser,
+        tags,
+        user,
     };
     return (react_1.default.createElement(appContext_1.default.Provider, { value: defaultCtx },
         react_1.default.createElement(react_router_dom_1.Switch, null,
@@ -206,7 +209,9 @@ exports.defaultContext = {
     prompt: localStorage_1.default.getPrompt(),
     setIsLoading: () => { },
     setPrompt: (prompt) => { },
+    setTags: (tags) => { },
     setUser: (user) => { },
+    tags: undefined,
     user: undefined,
 };
 const AppContext = (0, react_1.createContext)(exports.defaultContext);
@@ -344,10 +349,10 @@ exports["default"] = Image;
 
 /***/ }),
 
-/***/ "./src/components/PromptGenerator.tsx":
-/*!********************************************!*\
-  !*** ./src/components/PromptGenerator.tsx ***!
-  \********************************************/
+/***/ "./src/components/Prompt.tsx":
+/*!***********************************!*\
+  !*** ./src/components/Prompt.tsx ***!
+  \***********************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -365,43 +370,58 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 const Input_1 = __importDefault(__webpack_require__(/*! ./base/Input */ "./src/components/base/Input.tsx"));
 const Tags_1 = __importDefault(__webpack_require__(/*! ./tags/Tags */ "./src/components/tags/Tags.tsx"));
 const Image_1 = __importDefault(__webpack_require__(/*! ./Image */ "./src/components/Image.tsx"));
 const Button_1 = __importDefault(__webpack_require__(/*! ./base/Button */ "./src/components/base/Button.tsx"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
-const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
-const PromptGenerator = () => {
-    const { setPrompt, prompt, user } = react_1.default.useContext(appContext_1.default);
-    const [promptRaw, setPromptRaw] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw);
+const buildPrompt = (rawPrompt, tags) => {
+    console.log(tags);
+    if (!tags.length) {
+        return rawPrompt;
+    }
+    return rawPrompt;
+};
+const PromptComponent = () => {
+    const { setPrompt, prompt, user, tags } = react_1.default.useContext(appContext_1.default);
     const [seed, setSeed] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.seed);
-    const [tags, setTags] = react_1.default.useState({});
     const submit = () => __awaiter(void 0, void 0, void 0, function* () {
-        if (typeof promptRaw !== 'string' || promptRaw.trim() === '') {
-            return;
-        }
-        setPrompt(Object.assign(Object.assign({}, prompt), { loading: true }));
-        const response = yield api_1.default.generateImage({
-            prompt: promptRaw,
-            promptRaw,
-            accessToken: user.access_token,
-            seed,
-            tagIds: [],
-        });
-        console.log(response);
-        if (!response.prompt) {
-            console.error(`Unable to generate prompt`, response);
-            setPrompt(Object.assign(Object.assign({}, prompt), { loading: false }));
-            return;
-        }
-        const newPromptVal = Object.assign(Object.assign({}, response.prompt), { loading: false });
-        setPrompt(newPromptVal);
-        localStorage_1.default.setPrompt(newPromptVal);
+        console.log('submit', prompt, tags);
+        // if (typeof promptRaw !== 'string' || promptRaw.trim() === '') {
+        //   return
+        // }
+        // // setPrompt({
+        // //   ...prompt,
+        // //   loading: true,
+        // // })
+        // const prompt = buildPrompt(promptRaw, tags)
+        // const response = await Api.generateImage({
+        //   prompt,
+        //   promptRaw,
+        //   accessToken: user.access_token,
+        //   seed,
+        //   tagIds: [],
+        // })
+        // console.log(response)
+        // if (!response.prompt) {
+        //   console.error(`Unable to generate prompt`, response)
+        //   // setPrompt({
+        //   //   ...prompt,
+        //   //   loading: false,
+        //   // })
+        //   return
+        // }
+        // const newPromptVal = {
+        //   ...response.prompt,
+        //   loading: false,
+        // }
+        // setPrompt(newPromptVal)
+        // LocalStorage.setPrompt(newPromptVal)
         // setSeed(newPromptVal.seed)
     });
-    const onTagChange = (changedTags, categoryId) => {
-        setTags(Object.assign(Object.assign({}, tags), { [categoryId]: changedTags }));
+    const setPromptRaw = (newVal) => {
+        console.log(newVal);
+        setPrompt(Object.assign(Object.assign({}, prompt), { promptRaw: newVal }));
     };
     return (react_1.default.createElement("div", null,
         react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
@@ -410,11 +430,11 @@ const PromptGenerator = () => {
                     setSeed(typeof value !== 'undefined' ? parseInt(value, 10) : undefined);
                 }, disabled: prompt.loading }),
             react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt.loading, className: "min-w-[150px]" }, "Go!")),
-        react_1.default.createElement(Tags_1.default, { onChange: onTagChange }),
+        react_1.default.createElement(Tags_1.default, null),
         react_1.default.createElement("div", null,
             react_1.default.createElement(Image_1.default, null))));
 };
-exports["default"] = PromptGenerator;
+exports["default"] = PromptComponent;
 
 
 /***/ }),
@@ -792,10 +812,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
-const PromptGenerator_1 = __importDefault(__webpack_require__(/*! @components/PromptGenerator */ "./src/components/PromptGenerator.tsx"));
+const Prompt_1 = __importDefault(__webpack_require__(/*! @components/Prompt */ "./src/components/Prompt.tsx"));
 const Page = () => {
     return (react_1.default.createElement(Layout_1.default, null,
-        react_1.default.createElement(PromptGenerator_1.default, null)));
+        react_1.default.createElement(Prompt_1.default, null)));
 };
 exports["default"] = Page;
 
@@ -899,55 +919,73 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const react_select_1 = __importDefault(__webpack_require__(/*! react-select */ "./node_modules/react-select/dist/react-select.esm.js"));
 const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
-const Tags = ({ onChange, }) => {
-    const { setPrompt, prompt, user } = react_1.default.useContext(appContext_1.default);
-    const [tags, setTags] = react_1.default.useState();
-    const [categories, setCategories] = react_1.default.useState();
+const selectStyles = {
+    // https://react-select.com/styles#style-object
+    // option: (provided:any, state:any) => {
+    //   console.log(provided, state)
+    //   return provided
+    // },
+    control: (provided, state) => {
+        return Object.assign({}, provided);
+    },
+};
+const customSelectTheme = (provided) => {
+    // console.log(provided)
+    return Object.assign(Object.assign({}, provided), { colors: Object.assign({}, provided.colors) });
+};
+const Tags = ({}) => {
+    const { user, setTags, tags } = react_1.default.useContext(appContext_1.default);
     const [error, setError] = react_1.default.useState();
-    const selectStyles = {
-        // https://react-select.com/styles#style-object
-        // option: (provided:any, state:any) => {
-        //   console.log(provided, state)
-        //   return provided
-        // },
-        control: (provided, state) => {
-            return Object.assign({}, provided);
-        },
+    const onChange = (changedTags, category) => {
+        const newTags = tags.map(tagCollection => {
+            if (tagCollection.category.id === category.id) {
+                return Object.assign(Object.assign({}, tagCollection), { selectedTags: changedTags.map(tag => ({
+                        id: tag.value,
+                        label: tag.label,
+                        tag_category: tagCollection.category.id,
+                    })) });
+            }
+            return tagCollection;
+        });
+        setTags(newTags);
     };
-    const customSelectTheme = (provided) => {
-        // console.log(provided)
-        return Object.assign(Object.assign({}, provided), { colors: Object.assign({}, provided.colors) });
-    };
-    const getTags = () => __awaiter(void 0, void 0, void 0, function* () {
+    const loadTags = () => __awaiter(void 0, void 0, void 0, function* () {
         const resp = yield api_1.default.getTags(user.access_token);
         if (!resp.tags || !resp.categories) {
             setError('Unable to load tags');
             return;
         }
-        setTags(resp.tags);
-        setCategories(resp.categories);
+        const tagCollections = [];
+        resp.categories.forEach((category) => {
+            tagCollections.push({
+                category,
+                allTags: resp.tags.filter(tag => tag.tag_category === category.id),
+                selectedTags: [],
+            });
+        });
+        setTags(tagCollections);
     });
     react_1.default.useEffect(() => {
         if (user.access_token && !tags) {
-            getTags();
+            loadTags();
         }
     }, [user.access_token]);
     if (error) {
         return react_1.default.createElement("div", null, error);
     }
-    if (!tags || !categories) {
+    if (!tags) {
         return null;
     }
-    return (react_1.default.createElement(react_1.default.Fragment, null, categories.map((category) => {
-        const tagsForCategory = tags
-            .filter((tag) => tag.tag_category === category.id)
-            .map((tag) => ({
-            value: tag.id,
-            label: tag.label,
-        }));
-        return (react_1.default.createElement("div", { key: `tagCategory_${category.id}`, className: "mt-4 text-slate-600 text-sm" },
-            react_1.default.createElement(react_select_1.default, { placeholder: `Add ${category.label.toLowerCase()}`, options: tagsForCategory, styles: selectStyles, theme: customSelectTheme, isMulti: true, onChange: (selectedValues) => {
-                    onChange(selectedValues, category.id);
+    return (react_1.default.createElement(react_1.default.Fragment, null, tags.map((tagCollection) => {
+        console.log('rendering collection: ', tagCollection);
+        return (react_1.default.createElement("div", { key: `tagCategory_${tagCollection.category.id}`, className: "mt-4 text-slate-600 text-sm" },
+            react_1.default.createElement(react_select_1.default, { placeholder: `Add ${tagCollection.category.label.toLowerCase()}`, options: tagCollection.allTags.map((tag) => ({
+                    value: tag.id,
+                    label: tag.label,
+                })), styles: selectStyles, theme: customSelectTheme, isMulti: true, 
+                // TODO: fix type
+                onChange: (selectedValues) => {
+                    onChange(selectedValues, tagCollection.category);
                 } })));
     })));
 };

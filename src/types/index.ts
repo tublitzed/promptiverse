@@ -18,14 +18,13 @@ export interface PromptApiResponse {
   promptRaw?:string
   seed?: number
   tagIds?: string[]
-  version?: number
 }
 
 export interface Prompt extends PromptApiResponse {
   loading: boolean
 }
 
-export interface Tag_Category {
+export interface TagCategory {
   id: number
   label: string
 }
@@ -36,3 +35,14 @@ export interface Tag {
   // # TODO: find a performant way to transform them out of snake case before hitting the client
   tag_category: number
 }
+
+export interface TagCollection {
+  category: TagCategory
+  allTags: Tag[]
+  selectedTags: Tag[]
+}
+// export type SelectedTagCategories = {
+//   [k:string]: {
+//     tagId: string,
+//   }
+// }
