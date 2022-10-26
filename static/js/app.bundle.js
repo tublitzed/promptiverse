@@ -356,6 +356,29 @@ exports["default"] = Image;
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -370,13 +393,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 const Input_1 = __importDefault(__webpack_require__(/*! ./base/Input */ "./src/components/base/Input.tsx"));
-const Tags_1 = __importDefault(__webpack_require__(/*! ./tags/Tags */ "./src/components/tags/Tags.tsx"));
+const Tags_1 = __importStar(__webpack_require__(/*! ./tags/Tags */ "./src/components/tags/Tags.tsx"));
 const Image_1 = __importDefault(__webpack_require__(/*! ./Image */ "./src/components/Image.tsx"));
 const Button_1 = __importDefault(__webpack_require__(/*! ./base/Button */ "./src/components/base/Button.tsx"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
 const buildPrompt = (rawPrompt, tags) => {
-    console.log(tags);
     if (!tags.length) {
         return rawPrompt;
     }
@@ -386,38 +410,28 @@ const PromptComponent = () => {
     const { setPrompt, prompt, user, tags } = react_1.default.useContext(appContext_1.default);
     const [seed, setSeed] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.seed);
     const submit = () => __awaiter(void 0, void 0, void 0, function* () {
-        console.log('submit', prompt, tags);
         // if (typeof promptRaw !== 'string' || promptRaw.trim() === '') {
         //   return
         // }
-        // // setPrompt({
-        // //   ...prompt,
-        // //   loading: true,
-        // // })
-        // const prompt = buildPrompt(promptRaw, tags)
-        // const response = await Api.generateImage({
-        //   prompt,
-        //   promptRaw,
-        //   accessToken: user.access_token,
-        //   seed,
-        //   tagIds: [],
-        // })
-        // console.log(response)
-        // if (!response.prompt) {
-        //   console.error(`Unable to generate prompt`, response)
-        //   // setPrompt({
-        //   //   ...prompt,
-        //   //   loading: false,
-        //   // })
-        //   return
-        // }
-        // const newPromptVal = {
-        //   ...response.prompt,
-        //   loading: false,
-        // }
-        // setPrompt(newPromptVal)
-        // LocalStorage.setPrompt(newPromptVal)
-        // setSeed(newPromptVal.seed)
+        setPrompt(Object.assign(Object.assign({}, prompt), { loading: true }));
+        const promptWithTags = buildPrompt(prompt.promptRaw, tags);
+        const response = yield api_1.default.generateImage({
+            prompt: promptWithTags,
+            promptRaw: prompt.promptRaw,
+            accessToken: user.access_token,
+            seed,
+            tagIds: (0, Tags_1.getSelectedTagIds)(tags),
+        });
+        console.log(response);
+        if (!response.prompt) {
+            console.error(`Unable to generate prompt`, response);
+            setPrompt(Object.assign(Object.assign({}, prompt), { loading: false }));
+            return;
+        }
+        const newPromptVal = Object.assign(Object.assign({}, response.prompt), { loading: false });
+        setPrompt(newPromptVal);
+        localStorage_1.default.setPrompt(newPromptVal);
+        setSeed(newPromptVal.seed);
     });
     const setPromptRaw = (newVal) => {
         console.log(newVal);
@@ -915,6 +929,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getSelectedTagIds = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_select_1 = __importDefault(__webpack_require__(/*! react-select */ "./node_modules/react-select/dist/react-select.esm.js"));
 const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
@@ -933,6 +948,13 @@ const customSelectTheme = (provided) => {
     // console.log(provided)
     return Object.assign(Object.assign({}, provided), { colors: Object.assign({}, provided.colors) });
 };
+const getSelectedTagIds = (tagCollections) => {
+    if (!tagCollections.length) {
+        return [];
+    }
+    return tagCollections.flatMap(collection => (collection.selectedTags.map(tag => tag.id)));
+};
+exports.getSelectedTagIds = getSelectedTagIds;
 const Tags = ({}) => {
     const { user, setTags, tags } = react_1.default.useContext(appContext_1.default);
     const [error, setError] = react_1.default.useState();

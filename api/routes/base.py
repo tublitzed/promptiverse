@@ -4,8 +4,7 @@ from flask import (
     make_response,
     jsonify,
 )
-import random
-import os
+import random, os
 from api.services.auth0 import requires_auth
 from api.helpers import app
 from api.helpers.seeder import seed_tag_categories, seed_tags

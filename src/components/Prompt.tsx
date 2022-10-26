@@ -2,7 +2,7 @@ import React from 'react'
 import Select, { MultiValue } from 'react-select'
 import Api from '@api/api'
 import Input from './base/Input'
-import Tags from './tags/Tags'
+import Tags, { getSelectedTagIds } from './tags/Tags'
 import Image from './Image'
 import Button from './base/Button'
 import AppContext from '@src/appContext'
@@ -11,7 +11,6 @@ import LocalStorage from '@utils/localStorage'
 
 
 const buildPrompt = (rawPrompt: string, tags: TagCollection[]):string => {
-  console.log(tags)
   if (!tags.length) {
     return rawPrompt
   }
@@ -23,40 +22,39 @@ const PromptComponent = () => {
   const [seed, setSeed] = React.useState<number | undefined>(prompt?.seed)
 
   const submit = async () => {
-    console.log('submit', prompt, tags)
     // if (typeof promptRaw !== 'string' || promptRaw.trim() === '') {
     //   return
     // }
-    // // setPrompt({
-    // //   ...prompt,
-    // //   loading: true,
-    // // })
-    // const prompt = buildPrompt(promptRaw, tags)
-    // const response = await Api.generateImage({
-    //   prompt,
-    //   promptRaw,
-    //   accessToken: user.access_token,
-    //   seed,
-    //   tagIds: [],
-    // })
+    setPrompt({
+      ...prompt,
+      loading: true,
+    })
+    const promptWithTags = buildPrompt(prompt.promptRaw, tags)
+    const response = await Api.generateImage({
+      prompt: promptWithTags,
+      promptRaw: prompt.promptRaw,
+      accessToken: user.access_token,
+      seed,
+      tagIds: getSelectedTagIds(tags),
+    })
 
-    // console.log(response)
-    // if (!response.prompt) {
-    //   console.error(`Unable to generate prompt`, response)
-    //   // setPrompt({
-    //   //   ...prompt,
-    //   //   loading: false,
-    //   // })
-    //   return
-    // }
+    console.log(response)
+    if (!response.prompt) {
+      console.error(`Unable to generate prompt`, response)
+      setPrompt({
+        ...prompt,
+        loading: false,
+      })
+      return
+    }
 
-    // const newPromptVal = {
-    //   ...response.prompt,
-    //   loading: false,
-    // }
-    // setPrompt(newPromptVal)
-    // LocalStorage.setPrompt(newPromptVal)
-    // setSeed(newPromptVal.seed)
+    const newPromptVal = {
+      ...response.prompt,
+      loading: false,
+    }
+    setPrompt(newPromptVal)
+    LocalStorage.setPrompt(newPromptVal)
+    setSeed(newPromptVal.seed)
   }
 
 

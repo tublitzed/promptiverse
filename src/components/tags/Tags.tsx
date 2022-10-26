@@ -33,6 +33,12 @@ const customSelectTheme = (provided:any) => {
   }
 }
 
+export const getSelectedTagIds = (tagCollections: TagCollection[]):string[] => {
+  if (!tagCollections.length) {
+    return []
+  }
+  return tagCollections.flatMap(collection => (collection.selectedTags.map(tag => tag.id)))
+}
 const Tags = ({}) => {
   const { user, setTags, tags } = React.useContext(AppContext)
   const [error, setError] = React.useState<string | undefined>()

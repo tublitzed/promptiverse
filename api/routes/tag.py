@@ -16,7 +16,9 @@ bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
 def all_tags():
     tag_categories = get_all_tag_categories()
     tags = get_all_tags()
-    return jsonify({
-        "categories": list(tag_categories.dicts()),
-        "tags": list(tags.dicts()),
-    })
+    return jsonify(
+        {
+            "categories": list(tag_categories.dicts()),
+            "tags": list(tags.dicts()),
+        }
+    )

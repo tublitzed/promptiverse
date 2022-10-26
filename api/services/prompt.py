@@ -16,6 +16,7 @@ stability_api = client.StabilityInference(
     engine=ENGINE_SD_1,
 )
 
+
 def generate(prompt=string, prompt_raw=string, user_id=string, seed=None, tag_ids=[]):
     if seed is None:
         seed = random.randint(1, 10000)

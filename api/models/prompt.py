@@ -1,4 +1,3 @@
-from array import array
 import datetime, uuid
 
 # https://docs.peewee-orm.com/en/latest/peewee/models.html?highlight=table%20generation#field-types-table
@@ -28,7 +27,7 @@ class Prompt(BaseModel):
     prompt = CharField(
         max_length=255
     )  # 77 tokens is not characters -- TODO: is there a limit here?
-    tag_ids = ArrayField(UUIDField, null=True)
+    tag_ids = ArrayField(CharField, null=True)
 
 
 def save(
@@ -45,6 +44,7 @@ def save(
         src_filepath=img_url,
         user_id=user_id,
     )
+    # fixed_tag_ids = map_tag_id_string_to_uuids(tag_ids)
     return Prompt.create(
         id=prompt_id,
         img_url=s3_img_url,
