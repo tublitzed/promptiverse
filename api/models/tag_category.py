@@ -22,7 +22,4 @@ def create(value: str, label: str):
 
 
 def get_all():
-    return Tag_Category.select(
-        Tag_Category.id,
-        Tag_Category.label,
-    )
+    return Tag_Category.select()
