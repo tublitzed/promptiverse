@@ -6,6 +6,8 @@ FLASK_ENV=development
 # Replace username,password,dbname
 DATABASE_URL=postgres://tublitzed:tublitzed@localhost:5432/promptiverse
 
+ENABLE_SEEDER=false
+
 # https://docs.python.org/3/library/logging.html#logging-levels
 LOG_LEVEL=DEBUG
 

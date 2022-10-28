@@ -1,4 +1,5 @@
-import fetcher from '../utils/fetch'
+import fetcher from '@utils/fetch'
+import { Tag, TagCategory, PromptApiResponse } from '@types'
 declare global {
   interface Window {
     promptiverse: any;
@@ -7,6 +8,13 @@ declare global {
 
 window.promptiverse = window.promptiverse || {}
 
+interface GenerateImageArgs {
+  promptRaw: string
+  accessToken: string
+  seed?: number
+  tagIds?: string[]
+}
+
 const ApiService = {
   getVar: (name: any) => {
     if (!window.promptiverse || !window.promptiverse.vars) {
@@ -14,11 +22,29 @@ const ApiService = {
     }
     return window.promptiverse.vars[name]
   },
-  generateImage: (prompt: string, accessToken: string) => {
+  generateImage: ({
+    accessToken,
+    promptRaw,
+    seed,
+    tagIds = [],
+  }:GenerateImageArgs):Promise<{ prompt: PromptApiResponse }> => {
     const apiUrl = ApiService.getVar('API_SERVER_URL')
     return fetcher(`${apiUrl}/api/prompt`, {
       method: 'POST',
-      postBody: { prompt },
+      postBody: {
+        prompt_raw: promptRaw,
+        seed,
+        tag_ids: tagIds,
+      },
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    })
+  },
+  getTags: (accessToken: string):Promise<{ tags: Tag[], categories: TagCategory[]}> => {
+    const apiUrl = ApiService.getVar('API_SERVER_URL')
+    return fetcher(`${apiUrl}/api/tag`, {
+      method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
       },

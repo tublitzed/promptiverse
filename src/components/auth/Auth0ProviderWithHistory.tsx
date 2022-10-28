@@ -1,7 +1,7 @@
 import { AppState, Auth0Provider } from '@auth0/auth0-react'
 import React, { PropsWithChildren } from 'react'
 import { useHistory } from 'react-router-dom'
-import Api from '../../api/api'
+import Api from '@api/api'
 
 interface Auth0ProviderWithConfigProps {
   children: React.ReactNode;

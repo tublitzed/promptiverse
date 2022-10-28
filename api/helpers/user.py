@@ -1,5 +1,5 @@
 import requests, os
-from api.security import auth0_service
+from api.services import auth0
 
 AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
 
@@ -15,7 +15,7 @@ AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
 #  "email_verified": "boolean"
 # }
 def get_user_info():
-    auth_token = auth0_service.get_token_auth_header()
+    auth_token = auth0.get_token_auth_header()
     if auth_token is None:
         return {}
 

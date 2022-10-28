@@ -1,0 +1,72 @@
+{
+  "tags": {
+    "ARTISTS": [
+      {
+        "label": "Miro",
+        "value": "Joan Miro"
+      },
+      {
+        "label": "Picasso",
+        "value": "Pablo Picasso"
+      },
+      {
+        "label": "Klimpt",
+        "value": "Gustav Klimpt"
+      },
+      {
+        "label": "Tanguy",
+        "value": "Yves Tanguy"
+      },
+      {
+        "label": "Dali",
+        "value": "Salvador Dali"
+      },
+      {
+        "label": "Van Gogh",
+        "value": "Vincent Van Gogh"
+      },
+      {
+        "label": "Hopper",
+        "value": "Edward Hopper"
+      },
+      {
+        "label": "Braque",
+        "value": "Georges Braque"
+      }
+    ],
+    "DESCRIPTIVE": [
+      {
+        "label": "Loud",
+        "value": "loud"
+      },
+      {
+        "label": "Vibrant",
+        "value": "vibrant"
+      },
+      {
+        "label": "Brilliant",
+        "value": "brilliant"
+      },
+      {
+        "label": "Exquisite",
+        "value": "exquisite"
+      },
+      {
+        "label": "Shiny",
+        "value": "shiny"
+      },
+      {
+        "label": "Rough",
+        "value": "rough"
+      },
+      {
+        "label": "Colorful",
+        "value": "colorful"
+      },
+      {
+        "label": "Detailed",
+        "value": "detailed"
+      }
+    ]
+  }
+}

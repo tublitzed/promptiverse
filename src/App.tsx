@@ -9,7 +9,7 @@ import CallbackPage from '@components/pages/Callback'
 import NotFoundPage from '@components/pages/404'
 import AboutPage from '@components/pages/About'
 import AppContext, { defaultContext } from '@src/appContext'
-import { Prompt } from '@types'
+import { Prompt, TagCollection } from '@types'
 
 export const App: React.FC = () => {
   const {
@@ -21,6 +21,7 @@ export const App: React.FC = () => {
   const [user, setUser] = React.useState<any | undefined>(userViaAuth0)
   const [isLoading, setIsLoading] = React.useState<boolean>(isLoadingViaAuth0)
   const [prompt, setPrompt] = React.useState<Prompt | undefined>(defaultContext.prompt)
+  const [tags, setTags] = React.useState<TagCollection[] | undefined>(defaultContext.tags)
 
   React.useEffect(() => {
     setIsLoading(isLoadingViaAuth0)
@@ -54,12 +55,14 @@ export const App: React.FC = () => {
   }
 
   const defaultCtx = {
-    user,
     isLoading,
-    setUser,
-    setIsLoading,
     prompt,
+    setIsLoading,
     setPrompt,
+    setTags,
+    setUser,
+    tags,
+    user,
   }
 
   return (

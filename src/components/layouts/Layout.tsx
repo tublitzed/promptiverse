@@ -1,10 +1,7 @@
 import React from 'react'
 import Header from '@components/Header'
 import { useAuth0 } from '@auth0/auth0-react'
-import { Prompt, User } from '@types'
 import Button from '@components/base/Button'
-import Api from '../../api/api'
-const API_SERVER_URL = Api.getVar('API_SERVER_URL')
 
 export interface Props {
   children: React.ReactNode
