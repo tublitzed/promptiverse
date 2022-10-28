@@ -2,14 +2,11 @@ import string, os, warnings, random
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 from api.models import prompt as prompt_model
-from api.models import tag_category
 from api.models.prompt import ENGINE_SD_1
 
 from api.helpers.file import (
     create_img_file,
 )
-from api.models.tag import Tag
-from api.models.tag_category import get_all
 
 # https://github.com/Stability-AI/stability-sdk
 stability_api = client.StabilityInference(

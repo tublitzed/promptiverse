@@ -12,10 +12,6 @@ from peewee import (
 from api.models.base import BaseModel, psql_db
 from api.models.tag_category import Tag_Category
 
-# user -> many prompts. each prompt -> many tags
-# prompt has uid, and multiple tag ids.
-# for now, maybe tags array?
-
 
 class Tag(BaseModel):
     db_table = "Tag"

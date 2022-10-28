@@ -44,7 +44,7 @@ def save(
         src_filepath=img_url,
         user_id=user_id,
     )
-    # fixed_tag_ids = map_tag_id_string_to_uuids(tag_ids)
+
     return Prompt.create(
         id=prompt_id,
         img_url=s3_img_url,
