@@ -33,7 +33,7 @@ class Tag(BaseModel):
         )
 
 
-def create(value: str, label: str, category_id: int):
+def get_or_create(value: str, label: str, category_id: int):
     try:
         with psql_db.atomic():
             new_tag_id = uuid.uuid4()

@@ -1,14 +1,14 @@
 import json
 from flask import current_app
 
-from api.models.tag import create as create_tag
+from api.models.tag import get_or_create as create_tag
 
-from api.models.tag_category import create as create_tag_category, Tag_Category
+from api.models.tag_category import get_or_create as create_tag_category, Tag_Category
 
 
 def seed_tag_categories():
     with open(
-        f"{current_app.root_path}/api/helpers/tags/tag_categories.json"
+        f"{current_app.root_path}/api/helpers/seeds/tag_categories.json"
     ) as seed_file:
         parsed_json = json.load(seed_file)
     categories = parsed_json["categories"]
@@ -17,7 +17,7 @@ def seed_tag_categories():
 
 
 def seed_tags():
-    with open(f"{current_app.root_path}/api/helpers/tags/tags.json") as tag_seeds:
+    with open(f"{current_app.root_path}/api/helpers/seeds/tags.json") as tag_seeds:
         tag_json = json.load(tag_seeds)
     tags = tag_json["tags"]
     for category_collection in tags:
