@@ -4,7 +4,7 @@ import LocalStorage from '@utils/localStorage'
 
 export interface AppContextProps {
   isLoading: boolean
-  prompt?:Prompt
+  prompt?: Prompt
   setIsLoading: (isLoading: boolean) => void
   setPrompt: (prompt?:Prompt) => void
   setTags: (tags?: TagCollection[]) => void

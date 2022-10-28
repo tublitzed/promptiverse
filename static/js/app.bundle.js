@@ -151,13 +151,12 @@ const ApiService = {
         }
         return window.promptiverse.vars[name];
     },
-    generateImage: ({ accessToken, prompt, promptRaw, seed, tagIds = [], }) => {
+    generateImage: ({ accessToken, promptRaw, seed, tagIds = [], }) => {
         const apiUrl = ApiService.getVar('API_SERVER_URL');
         return (0, fetch_1.default)(`${apiUrl}/api/prompt`, {
             method: 'POST',
             postBody: {
-                prompt_raw: promptRaw || prompt,
-                prompt,
+                prompt_raw: promptRaw,
                 seed,
                 tag_ids: tagIds,
             },
@@ -400,26 +399,17 @@ const Image_1 = __importDefault(__webpack_require__(/*! ./Image */ "./src/compon
 const Button_1 = __importDefault(__webpack_require__(/*! ./base/Button */ "./src/components/base/Button.tsx"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
-const buildPrompt = (rawPrompt, tags) => {
-    if (!tags.length) {
-        return rawPrompt;
-    }
-    return rawPrompt;
-};
 const PromptComponent = () => {
     const { setPrompt, prompt, user, tags } = react_1.default.useContext(appContext_1.default);
     const [seed, setSeed] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.seed);
     const submit = () => __awaiter(void 0, void 0, void 0, function* () {
         setPrompt(Object.assign(Object.assign({}, prompt), { loading: true }));
-        const promptWithTags = buildPrompt(prompt.promptRaw, tags);
         const response = yield api_1.default.generateImage({
-            prompt: promptWithTags,
             promptRaw: prompt.promptRaw,
             accessToken: user.access_token,
             seed,
             tagIds: (0, Tags_1.getSelectedTagIds)(tags),
         });
-        console.log(response);
         if (!response.prompt) {
             console.error(`Unable to generate prompt`, response);
             setPrompt(Object.assign(Object.assign({}, prompt), { loading: false }));
@@ -427,20 +417,24 @@ const PromptComponent = () => {
         }
         const newPromptVal = Object.assign(Object.assign({}, response.prompt), { loading: false });
         setPrompt(newPromptVal);
+        setSeed(newPromptVal.seed);
         localStorage_1.default.setPrompt(newPromptVal);
         localStorage_1.default.setTags(tags);
-        setSeed(newPromptVal.seed);
     });
     const setPromptRaw = (newVal) => {
         setPrompt(Object.assign(Object.assign({}, prompt), { promptRaw: newVal }));
     };
     return (react_1.default.createElement("div", null,
         react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
-            react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw) || '', onChange: setPromptRaw, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", disabled: prompt.loading, autoFocus: true }),
-            react_1.default.createElement(Input_1.default, { className: "w-24", placeholder: "Seed?", value: (prompt === null || prompt === void 0 ? void 0 : prompt.seed) || undefined, type: "number", onChange: (value) => {
-                    setSeed(typeof value !== 'undefined' ? parseInt(value, 10) : undefined);
-                }, disabled: prompt.loading }),
-            react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt.loading, className: "min-w-[150px]" }, "Go!")),
+            react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw) || '', onChange: setPromptRaw, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading, autoFocus: true }),
+            react_1.default.createElement(Input_1.default, { className: "w-24", placeholder: "Seed?", value: seed, type: "number", onChange: (value) => {
+                    const possibleNumber = typeof value === 'string' ? parseInt(value.trim(), 10) : undefined;
+                    if (typeof possibleNumber === 'number' && !isNaN(possibleNumber)) {
+                        return setSeed(possibleNumber);
+                    }
+                    setSeed(undefined);
+                }, disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading }),
+            react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading, className: "min-w-[150px]" }, "Go!")),
         react_1.default.createElement(Tags_1.default, null),
         react_1.default.createElement("div", null,
             react_1.default.createElement(Image_1.default, null))));
@@ -600,12 +594,18 @@ const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/c
 const Input = (_a) => {
     var { className, type, value: valueViaProps, autoFocus, onChange, disabled } = _a, otherProps = __rest(_a, ["className", "type", "value", "autoFocus", "onChange", "disabled"]);
     const inputRef = react_1.default.useRef(null);
-    const [value, setValue] = react_1.default.useState(valueViaProps);
+    const [value, setValue] = react_1.default.useState(valueViaProps || '');
     react_1.default.useEffect(() => {
         if (autoFocus && (inputRef === null || inputRef === void 0 ? void 0 : inputRef.current)) {
             inputRef.current.focus();
         }
-    }, [autoFocus]);
+        if (valueViaProps !== value) {
+            setValue(valueViaProps || '');
+        }
+    }, [
+        autoFocus,
+        valueViaProps,
+    ]);
     return (react_1.default.createElement("input", Object.assign({ value: value, ref: inputRef, disabled: disabled, type: type || 'string', onChange: (e) => {
             setValue(e.target.value);
             if (onChange) {

@@ -10,11 +10,12 @@ bp_name = "api-prompt"
 bp_url_prefix = "/api/prompt"
 bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
 
+
 @bp.route("", methods=["POST", "OPTIONS"])
 @requires_auth
 def public():
     request_data = request.get_json()
-    for value in ["prompt", "prompt_raw", "tag_ids"]:
+    for value in ["prompt_raw", "tag_ids"]:
         if value not in request_data:
             return jsonify(error=f"Missing required request param: {value}"), 400
     tag_ids = request_data["tag_ids"]
@@ -22,14 +23,12 @@ def public():
     if len(tag_ids) != tags.count():
         return jsonify(error="Invalid tags"), 400
 
-    prompt = request_data["prompt"]
-    prompt_raw = request_data["prompt_raw"]
-
     if "seed" in request_data:
         seed = request_data["seed"]
     else:
         seed = None
 
+    prompt_raw = request_data["prompt_raw"]
     saved_prompt = generate(
         prompt=build(prompt_raw=prompt_raw, tags=tags),
         prompt_raw=prompt_raw,

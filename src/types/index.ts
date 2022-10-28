@@ -41,8 +41,4 @@ export interface TagCollection {
   allTags: Tag[]
   selectedTags: Tag[]
 }
-// export type SelectedTagCategories = {
-//   [k:string]: {
-//     tagId: string,
-//   }
-// }
+

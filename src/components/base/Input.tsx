@@ -18,19 +18,26 @@ const Input = ({
   ...otherProps
 }:Props) => {
   const inputRef = React.useRef<HTMLInputElement>(null)
-  const [value, setValue] = React.useState<any>(valueViaProps)
+  const [value, setValue] = React.useState<any>(valueViaProps || '')
   React.useEffect(() => {
     if (autoFocus && inputRef?.current) {
       inputRef.current.focus()
     }
-  }, [autoFocus])
+
+    if (valueViaProps !== value) {
+      setValue(valueViaProps || '')
+    }
+  }, [
+    autoFocus,
+    valueViaProps,
+  ])
   return (
     <input
       value={value}
       ref={inputRef}
       disabled={disabled}
       type={type || 'string'}
-      onChange={(e:any) => {
+      onChange={(e:React.ChangeEvent<HTMLInputElement>) => {
         setValue(e.target.value)
         if (onChange) {
           onChange(e.target.value)

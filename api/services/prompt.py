@@ -19,7 +19,8 @@ stability_api = client.StabilityInference(
     engine=ENGINE_SD_1,
 )
 
-def add_to_suffix(tag_suffix=str,prepend=str,items=[],has_started_tag_list=bool):
+
+def add_to_suffix(tag_suffix=str, prepend=str, items=[], has_started_tag_list=bool):
 
     if len(items) > 0:
         # prefix with comma if first item to separate from raw value:
@@ -35,6 +36,7 @@ def add_to_suffix(tag_suffix=str,prepend=str,items=[],has_started_tag_list=bool)
         "has_started_tag_list": has_started_tag_list,
     }
 
+
 def build(prompt_raw, tags):
 
     tag_suffix = ""
@@ -42,20 +44,18 @@ def build(prompt_raw, tags):
     artists = []
     descriptive_words = []
 
-
     for tag in tags:
         if tag.tag_category.value == "ARTISTS":
             artists.append(tag.value)
         if tag.tag_category.value == "DESCRIPTIVE":
             descriptive_words.append(tag.value)
 
-
     # TODO: just loop through categories
     metadata = add_to_suffix(
         tag_suffix=tag_suffix,
         prepend="in the style of ",
         items=artists,
-        has_started_tag_list=has_started_tag_list
+        has_started_tag_list=has_started_tag_list,
     )
 
     tag_suffix = metadata["tag_suffix"]
@@ -65,12 +65,13 @@ def build(prompt_raw, tags):
         tag_suffix=tag_suffix,
         prepend=", ",
         items=descriptive_words,
-        has_started_tag_list=has_started_tag_list
+        has_started_tag_list=has_started_tag_list,
     )
 
     tag_suffix = metadata["tag_suffix"]
 
     return f"{prompt_raw}{tag_suffix}"
+
 
 def generate(prompt=string, prompt_raw=string, user_id=string, seed=None, tag_ids=[]):
     if seed is None:

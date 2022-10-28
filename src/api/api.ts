@@ -9,8 +9,7 @@ declare global {
 window.promptiverse = window.promptiverse || {}
 
 interface GenerateImageArgs {
-  prompt: string
-  promptRaw?: string
+  promptRaw: string
   accessToken: string
   seed?: number
   tagIds?: string[]
@@ -25,7 +24,6 @@ const ApiService = {
   },
   generateImage: ({
     accessToken,
-    prompt,
     promptRaw,
     seed,
     tagIds = [],
@@ -34,8 +32,7 @@ const ApiService = {
     return fetcher(`${apiUrl}/api/prompt`, {
       method: 'POST',
       postBody: {
-        prompt_raw: promptRaw || prompt,
-        prompt,
+        prompt_raw: promptRaw,
         seed,
         tag_ids: tagIds,
       },

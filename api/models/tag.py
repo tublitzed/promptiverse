@@ -53,10 +53,10 @@ def get_all():
         Tag.label,
     )
 
+
 def get_by_ids(tag_ids):
     return Tag.select().where(Tag.id.in_(tag_ids))
 
+
 def valid_tag_ids(tag_ids):
     return get_by_ids(tag_ids).count() == len(tag_ids)
-
-

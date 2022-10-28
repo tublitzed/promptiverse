@@ -9,14 +9,6 @@ import AppContext from '@src/appContext'
 import { Tag, TagCollection, TagCategory } from '@types'
 import LocalStorage from '@utils/localStorage'
 
-
-const buildPrompt = (rawPrompt: string, tags: TagCollection[]):string => {
-  if (!tags.length) {
-    return rawPrompt
-  }
-  return rawPrompt
-}
-
 const PromptComponent = () => {
   const { setPrompt, prompt, user, tags } = React.useContext(AppContext)
   const [seed, setSeed] = React.useState<number | undefined>(prompt?.seed)
@@ -26,16 +18,13 @@ const PromptComponent = () => {
       ...prompt,
       loading: true,
     })
-    const promptWithTags = buildPrompt(prompt.promptRaw, tags)
     const response = await Api.generateImage({
-      prompt: promptWithTags,
       promptRaw: prompt.promptRaw,
       accessToken: user.access_token,
       seed,
       tagIds: getSelectedTagIds(tags),
     })
 
-    console.log(response)
     if (!response.prompt) {
       console.error(`Unable to generate prompt`, response)
       setPrompt({
@@ -50,9 +39,9 @@ const PromptComponent = () => {
       loading: false,
     }
     setPrompt(newPromptVal)
+    setSeed(newPromptVal.seed)
     LocalStorage.setPrompt(newPromptVal)
     LocalStorage.setTags(tags)
-    setSeed(newPromptVal.seed)
   }
 
 
@@ -71,22 +60,26 @@ const PromptComponent = () => {
           onChange={setPromptRaw}
           className="grow"
           placeholder="enter a prompt, like 'cat dancing on the moon'"
-          disabled={prompt.loading}
+          disabled={prompt?.loading}
           autoFocus
         />
         <Input
           className="w-24"
           placeholder="Seed?"
-          value={prompt?.seed || undefined}
+          value={seed}
           type="number"
-          onChange={(value: any) => {
-            setSeed(typeof value !== 'undefined' ? parseInt(value, 10) : undefined)
+          onChange={(value: string) => {
+            const possibleNumber = typeof value === 'string' ? parseInt(value.trim(), 10) : undefined
+            if (typeof possibleNumber === 'number' && !isNaN(possibleNumber)) {
+              return setSeed(possibleNumber)
+            }
+            setSeed(undefined)
           }}
-          disabled={prompt.loading}
+          disabled={prompt?.loading}
         />
         <Button
           onClick={submit}
-          disabled={prompt.loading}
+          disabled={prompt?.loading}
           className="min-w-[150px]"
         >Go!</Button>
       </div>
