@@ -1073,10 +1073,6 @@ video {
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 }
 
-.\[k\:string\] {
-  k: string;
-}
-
 /* stylelint-enable  */
 
 .after\:absolute::after {
