@@ -21,6 +21,11 @@ def seed_tag_categories():
             row_count = row_count + 1
 
 
+def get_label(row):
+    if row[0] is '':
+        return row[1]
+    return row[0]
+
 def seed_by_category(category_value, category_file_name):
     category = Tag_Category.get(value=category_value)
     with open(
@@ -30,10 +35,9 @@ def seed_by_category(category_value, category_file_name):
         row_count = 0
         for row in csv_file:
             if row_count != 0:  # skip header row
-                print(row)
                 create_tag(
                     value=row[1],
-                    label=row[0],
+                    label=get_label(row),
                     category_id=category.id,
                 )
             row_count = row_count + 1
