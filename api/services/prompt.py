@@ -50,7 +50,7 @@ def build(prompt_raw, tags):
     # TODO: just loop through categories
     metadata = add_to_suffix(
         tag_suffix=tag_suffix,
-        prepend="in the style of ",
+        prepend="by ",
         items=artists,
         has_started_tag_list=has_started_tag_list,
     )
