@@ -22,9 +22,10 @@ def seed_tag_categories():
 
 
 def get_label(row):
-    if row[0] is '':
+    if row[0] is "":
         return row[1]
     return row[0]
+
 
 def seed_by_category(category_value, category_file_name):
     category = Tag_Category.get(value=category_value)
