@@ -53,8 +53,8 @@ def sandbox():
 # Currently will seed tags and categories
 @bp.route("/seed", methods=["GET"])
 def seed():
-    can_seed = os.environ.get("ENABLE_SEEDER", False)
-    if can_seed is False:
+    can_seed = os.environ.get("ENABLE_SEEDER", "False").lower() == "true"
+    if can_seed == False:
         return make_response("error", 400)
     seed_tag_categories()
     seed_tags()

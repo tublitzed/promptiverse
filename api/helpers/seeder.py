@@ -13,7 +13,6 @@ def seed_tag_categories():
         row_count = 0
         for row in csv_file:
             if row_count != 0:  # skip header row
-                print(row)
                 create_tag_category(
                     value=row[1],
                     label=row[0],
