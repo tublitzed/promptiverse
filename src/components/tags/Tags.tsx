@@ -67,7 +67,7 @@ const Tags = ({}) => {
           selectedTags: changedTags.map(tag => ({
             id: tag.value,
             label: tag.label,
-            tag_category: tagCollection.category.id,
+            tagCategory: tagCollection.category.id,
           })),
         }
       }
@@ -88,7 +88,7 @@ const Tags = ({}) => {
       const selectedTags = tags && tags.length ? tags[category.id]?.selectedTags : []
       tagCollections.push({
         category,
-        allTags: resp.tags.filter(tag => tag.tag_category === category.id),
+        allTags: resp.tags.filter(tag => tag.tagCategory === category.id),
         selectedTags,
       })
     })

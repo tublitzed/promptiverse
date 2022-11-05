@@ -36,6 +36,10 @@ const Header = () => {
     routerHistory.push('/profile')
   }
 
+  const goToImages = () => {
+    routerHistory.push('/images')
+  }
+
   const { user } = React.useContext(AppContext)
   const activeNavLinkClassname = 'bg-gray-900 text-white'
   const navLinkClassname = 'text-gray-300 hover:bg-gray-700 hover:text-white'
@@ -64,6 +68,12 @@ const Header = () => {
                         location.pathname === '/' ? activeNavLinkClassname : navLinkClassname,
                       )}>
                       Dashboard
+                      </a>
+                      <a onClick={goToImages} className={clsx(
+                        'rounded-md px-3 py-2 text-sm font-medium cursor-pointer',
+                        location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname,
+                      )}>
+                      Images
                       </a>
                       <a onClick={goToAboutPage} className={clsx(
                         'rounded-md px-3 py-2 text-sm font-medium cursor-pointer',
@@ -103,7 +113,7 @@ const Header = () => {
                                   'block px-4 py-2 text-sm text-gray-700 cursor-pointer',
                                 )}
                               >
-                              Your Profile
+                              My Profile
                               </a>
                             )}
                           </Menu.Item>
@@ -153,6 +163,16 @@ const Header = () => {
                   )}
                 >
                 Dashboard
+                </Disclosure.Button>
+                <Disclosure.Button
+                  as="a"
+                  onClick={goToImages}
+                  className={clsx(
+                    'block rounded-md px-3 py-2 text-base font-medium cursor-pointer',
+                    location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname,
+                  )}
+                >
+                Images
                 </Disclosure.Button>
                 <Disclosure.Button
                   as="a"

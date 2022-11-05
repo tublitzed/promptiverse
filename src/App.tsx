@@ -8,6 +8,7 @@ import SandboxPage from '@components/pages/Sandbox'
 import CallbackPage from '@components/pages/Callback'
 import NotFoundPage from '@components/pages/404'
 import AboutPage from '@components/pages/About'
+import ImagesPage from '@components/pages/Images'
 import AppContext, { defaultContext } from '@src/appContext'
 import { Prompt, TagCollection } from '@types'
 
@@ -71,6 +72,7 @@ export const App: React.FC = () => {
         <Route path="/" exact component={IndexPage} />
         <ProtectedRoute path="/profile" component={ProfilePage} />
         <ProtectedRoute path="/about" component={AboutPage} />
+        <ProtectedRoute path="/images" component={ImagesPage} />
         <ProtectedRoute path="/sandbox" component={SandboxPage} />
         <Route path="/callback" component={CallbackPage} />
         <Route path="*" component={NotFoundPage} />

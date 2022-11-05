@@ -4,6 +4,7 @@ from flask import Blueprint, jsonify, request
 from api.services.auth0 import requires_auth
 from api.services.prompt import generate, build
 from api.models.tag import get_by_ids
+from api.models.prompt import get_by_user
 from api.helpers import user
 
 bp_name = "api-prompt"
@@ -13,7 +14,7 @@ bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
 
 @bp.route("", methods=["POST", "OPTIONS"])
 @requires_auth
-def public():
+def post():
     request_data = request.get_json()
     for value in ["prompt_raw", "tag_ids"]:
         if value not in request_data:
@@ -51,6 +52,12 @@ def public():
     )
     return (prompt_response, 201)
 
+@bp.route("", methods=["GET"])
+@requires_auth
+def get():
+    user_id=user.get_user_id(user_info=user.get_user_info())
+    prompts = list(get_by_user(user_id).dicts())
+    return (jsonify({"prompts": prompts}), 200)
 
 # http://localhost:5002/api/prompt/authtest
 @bp.route("/authtest", methods=["POST", "GET"])
