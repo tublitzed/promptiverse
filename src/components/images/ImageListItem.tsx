@@ -1,12 +1,16 @@
 import React from 'react'
 import { Prompt } from '@types'
 
+interface ImageListItemProps extends Prompt {
+  className?: string
+}
 const ImageListItem = ({
   imgUrl,
   prompt,
-}:Prompt) => {
+  className,
+}:ImageListItemProps) => {
   return (
-    <div>
+    <div className={className}>
       <img
         src={imgUrl}
         title={prompt}

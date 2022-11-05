@@ -21,14 +21,19 @@ const ImageList = () => {
       setImages(resp.prompts)
     }
     if (user.access_token) {
-      console.log('ok, go')
       loadImages()
     }
   }, [user])
   return (
     <div className="p-6 bg-white rounded mt-6">
       {images
-        ? images.map(img => <ImageListItem {...img} key={`imageListItem_${img.id}`}/>)
+        ? <div className="grid grid-cols-2 md:grid-cols-4">{
+            images.map(img =>
+              <ImageListItem
+                {...img}
+                key={`imageListItem_${img.id}`}
+              />)}
+          </div>
         : <Loader />}
     </div>
   )

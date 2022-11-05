@@ -758,12 +758,11 @@ const ImageList = () => {
             setImages(resp.prompts);
         });
         if (user.access_token) {
-            console.log('ok, go');
             loadImages();
         }
     }, [user]);
     return (react_1.default.createElement("div", { className: "p-6 bg-white rounded mt-6" }, images
-        ? images.map(img => react_1.default.createElement(ImageListItem_1.default, Object.assign({}, img, { key: `imageListItem_${img.id}` })))
+        ? react_1.default.createElement("div", { className: "grid grid-cols-2 md:grid-cols-4" }, images.map(img => react_1.default.createElement(ImageListItem_1.default, Object.assign({}, img, { key: `imageListItem_${img.id}` }))))
         : react_1.default.createElement(Loader_1.default, null)));
 };
 exports["default"] = ImageList;
@@ -783,8 +782,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const ImageListItem = ({ imgUrl, prompt, }) => {
-    return (react_1.default.createElement("div", null,
+const ImageListItem = ({ imgUrl, prompt, className, }) => {
+    return (react_1.default.createElement("div", { className: className },
         react_1.default.createElement("img", { src: imgUrl, title: prompt, alt: prompt })));
 };
 exports["default"] = ImageListItem;
