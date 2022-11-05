@@ -56,6 +56,7 @@ const Sandbox_1 = __importDefault(__webpack_require__(/*! @components/pages/Sand
 const Callback_1 = __importDefault(__webpack_require__(/*! @components/pages/Callback */ "./src/components/pages/Callback.tsx"));
 const _404_1 = __importDefault(__webpack_require__(/*! @components/pages/404 */ "./src/components/pages/404.tsx"));
 const About_1 = __importDefault(__webpack_require__(/*! @components/pages/About */ "./src/components/pages/About.tsx"));
+const Images_1 = __importDefault(__webpack_require__(/*! @components/pages/Images */ "./src/components/pages/Images.tsx"));
 const appContext_1 = __importStar(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const App = () => {
     const { user: userViaAuth0, loginWithRedirect, isLoading: isLoadingViaAuth0, getAccessTokenSilently, } = (0, auth0_react_1.useAuth0)();
@@ -98,6 +99,7 @@ const App = () => {
             react_1.default.createElement(react_router_dom_1.Route, { path: "/", exact: true, component: Index_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/profile", component: Profile_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/about", component: About_1.default }),
+            react_1.default.createElement(ProtectedRoute_1.default, { path: "/images", component: Images_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/sandbox", component: Sandbox_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/callback", component: Callback_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "*", component: _404_1.default }))));
@@ -138,13 +140,33 @@ react_dom_1.default.render(react_1.default.createElement(react_1.default.StrictM
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const fetch_1 = __importDefault(__webpack_require__(/*! @utils/fetch */ "./src/utils/fetch.ts"));
+const mappings_1 = __webpack_require__(/*! ./mappings */ "./src/api/mappings.ts");
 window.promptiverse = window.promptiverse || {};
 const ApiService = {
+    request: ({ accessToken, method = 'GET', path, postBody, }) => {
+        const apiUrl = `${ApiService.getVar('API_SERVER_URL')}/api`;
+        return (0, fetch_1.default)(`${apiUrl}${path}`, {
+            method,
+            postBody,
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        });
+    },
     getVar: (name) => {
         if (!window.promptiverse || !window.promptiverse.vars) {
             return undefined;
@@ -152,39 +174,71 @@ const ApiService = {
         return window.promptiverse.vars[name];
     },
     generateImage: ({ accessToken, promptRaw, seed, tagIds = [], }) => {
-        const apiUrl = ApiService.getVar('API_SERVER_URL');
-        return (0, fetch_1.default)(`${apiUrl}/api/prompt`, {
+        return ApiService.request({
+            accessToken,
+            path: '/prompt',
             method: 'POST',
             postBody: {
                 prompt_raw: promptRaw,
                 seed,
                 tag_ids: tagIds,
             },
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-            },
         });
     },
-    getTags: (accessToken) => {
-        const apiUrl = ApiService.getVar('API_SERVER_URL');
-        return (0, fetch_1.default)(`${apiUrl}/api/tag`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-            },
-        });
-    },
+    getImages: (accessToken) => __awaiter(void 0, void 0, void 0, function* () {
+        return ApiService.request({
+            accessToken,
+            path: '/prompt',
+        }).then(resp => ({ prompts: (0, mappings_1.mapPromptListToTypes)(resp.prompts) }));
+    }),
+    getTags: (accessToken) => __awaiter(void 0, void 0, void 0, function* () {
+        return ApiService.request({
+            accessToken,
+            path: '/tag',
+        }).then(resp => ({
+            tags: (0, mappings_1.mapTagListToTypes)(resp.tags),
+            categories: resp.categories,
+        }));
+    }),
     sandboxTest: (accessToken) => {
-        const apiUrl = ApiService.getVar('API_SERVER_URL');
-        return (0, fetch_1.default)(`${apiUrl}/sandbox`, {
+        return ApiService.request({
+            accessToken,
+            path: '/sandbox',
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-            },
         });
     },
 };
 exports["default"] = ApiService;
+
+
+/***/ }),
+
+/***/ "./src/api/mappings.ts":
+/*!*****************************!*\
+  !*** ./src/api/mappings.ts ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.mapTagListToTypes = exports.mapTagToTypes = exports.mapPromptListToTypes = exports.mapPromptToTypes = void 0;
+// TODO: this should happen server side at query time, or else probably not at all for large lists.
+const mapPromptToTypes = (prompt) => {
+    return Object.assign(Object.assign({}, prompt), { imgUrl: prompt.img_url, promptRaw: prompt.prompt_raw, loading: false });
+};
+exports.mapPromptToTypes = mapPromptToTypes;
+const mapPromptListToTypes = (prompts) => {
+    return prompts.map(p => (0, exports.mapPromptToTypes)(p));
+};
+exports.mapPromptListToTypes = mapPromptListToTypes;
+const mapTagToTypes = (tag) => {
+    return Object.assign(Object.assign({}, tag), { tagCategory: tag.tag_category });
+};
+exports.mapTagToTypes = mapTagToTypes;
+const mapTagListToTypes = (tags) => {
+    return tags.map(t => (0, exports.mapTagToTypes)(t));
+};
+exports.mapTagListToTypes = mapTagListToTypes;
 
 
 /***/ }),
@@ -260,6 +314,9 @@ const Header = () => {
     const goToProfile = () => {
         routerHistory.push('/profile');
     };
+    const goToImages = () => {
+        routerHistory.push('/images');
+    };
     const { user } = react_1.default.useContext(appContext_1.default);
     const activeNavLinkClassname = 'bg-gray-900 text-white';
     const navLinkClassname = 'text-gray-300 hover:bg-gray-700 hover:text-white';
@@ -278,6 +335,7 @@ const Header = () => {
                         react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
                             react_1.default.createElement("div", { className: "flex space-x-4" },
                                 react_1.default.createElement("a", { onClick: goToDashboard, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
+                                react_1.default.createElement("a", { onClick: goToImages, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname) }, "Images"),
                                 react_1.default.createElement("a", { onClick: goToAboutPage, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")))),
                     react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
                         react_1.default.createElement("div", { className: "flex items-center" },
@@ -288,7 +346,7 @@ const Header = () => {
                                         react_1.default.createElement(Avatar_1.default, null))),
                                 react_1.default.createElement(react_3.Transition, { as: react_2.Fragment, enter: "transition ease-out duration-100", enterFrom: "transform opacity-0 scale-95", enterTo: "transform opacity-100 scale-100", leave: "transition ease-in duration-75", leaveFrom: "transform opacity-100 scale-100", leaveTo: "transform opacity-0 scale-95" },
                                     react_1.default.createElement(react_3.Menu.Items, { className: "absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" },
-                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: goToProfile, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "Your Profile"))),
+                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: goToProfile, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "My Profile"))),
                                         react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: handleLogout, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "Sign Out")))))))),
                     react_1.default.createElement("div", { className: "-mr-2 flex sm:hidden" },
                         react_1.default.createElement(react_3.Disclosure.Button, { className: "inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" },
@@ -299,6 +357,7 @@ const Header = () => {
             react_1.default.createElement(react_3.Disclosure.Panel, { className: "sm:hidden" },
                 react_1.default.createElement("div", { className: "space-y-1 px-2 pt-2 pb-3" },
                     react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToDashboard, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
+                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToImages, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname) }, "Images"),
                     react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToAboutPage, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")),
                 react_1.default.createElement("div", { className: "border-t border-gray-700 pt-4 pb-3" },
                     react_1.default.createElement("div", { className: "flex items-center px-5" },
@@ -312,38 +371,6 @@ const Header = () => {
                         react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: handleLogout, className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer" }, "Sign Out")))))))));
 };
 exports["default"] = Header;
-
-
-/***/ }),
-
-/***/ "./src/components/Image.tsx":
-/*!**********************************!*\
-  !*** ./src/components/Image.tsx ***!
-  \**********************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const Loader_1 = __importDefault(__webpack_require__(/*! @components/base/Loader */ "./src/components/base/Loader.tsx"));
-const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
-const Image = () => {
-    const { prompt } = react_1.default.useContext(appContext_1.default);
-    if (!prompt || !prompt.imgUrl) {
-        return null;
-    }
-    if (prompt.loading) {
-        return (react_1.default.createElement("div", { className: "mt-4 text-center" },
-            react_1.default.createElement(Loader_1.default, null),
-            react_1.default.createElement("h2", { className: "text-slate-50 font-thin text-lg mt-4" }, "Loading...")));
-    }
-    return (react_1.default.createElement("div", { className: "p-6 bg-white rounded mt-6" },
-        react_1.default.createElement("img", { src: prompt === null || prompt === void 0 ? void 0 : prompt.imgUrl, title: prompt === null || prompt === void 0 ? void 0 : prompt.prompt, alt: `Image for prompt ${(prompt === null || prompt === void 0 ? void 0 : prompt.prompt) ? prompt.prompt : ''}`, width: 512, height: 512, className: "border m-auto rounded shadow p-2 bg-slate-400" })));
-};
-exports["default"] = Image;
 
 
 /***/ }),
@@ -395,7 +422,7 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 const Input_1 = __importDefault(__webpack_require__(/*! ./base/Input */ "./src/components/base/Input.tsx"));
 const Tags_1 = __importStar(__webpack_require__(/*! ./tags/Tags */ "./src/components/tags/Tags.tsx"));
-const Image_1 = __importDefault(__webpack_require__(/*! ./Image */ "./src/components/Image.tsx"));
+const PromptImage_1 = __importDefault(__webpack_require__(/*! ./PromptImage */ "./src/components/PromptImage.tsx"));
 const Button_1 = __importDefault(__webpack_require__(/*! ./base/Button */ "./src/components/base/Button.tsx"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
@@ -437,9 +464,41 @@ const PromptComponent = () => {
             react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading, className: "min-w-[150px]" }, "Go!")),
         react_1.default.createElement(Tags_1.default, null),
         react_1.default.createElement("div", null,
-            react_1.default.createElement(Image_1.default, null))));
+            react_1.default.createElement(PromptImage_1.default, null))));
 };
 exports["default"] = PromptComponent;
+
+
+/***/ }),
+
+/***/ "./src/components/PromptImage.tsx":
+/*!****************************************!*\
+  !*** ./src/components/PromptImage.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Loader_1 = __importDefault(__webpack_require__(/*! @components/base/Loader */ "./src/components/base/Loader.tsx"));
+const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const PromptImage = () => {
+    const { prompt } = react_1.default.useContext(appContext_1.default);
+    if (!prompt || !prompt.imgUrl) {
+        return null;
+    }
+    if (prompt.loading) {
+        return (react_1.default.createElement("div", { className: "mt-4 text-center" },
+            react_1.default.createElement(Loader_1.default, null),
+            react_1.default.createElement("h2", { className: "text-slate-50 font-thin text-lg mt-4" }, "Loading...")));
+    }
+    return (react_1.default.createElement("div", { className: "p-6 bg-white rounded mt-6" },
+        react_1.default.createElement("img", { src: prompt === null || prompt === void 0 ? void 0 : prompt.imgUrl, title: prompt === null || prompt === void 0 ? void 0 : prompt.prompt, alt: `Image for prompt ${(prompt === null || prompt === void 0 ? void 0 : prompt.prompt) ? prompt.prompt : ''}`, width: 512, height: 512, className: "border m-auto rounded shadow p-2 bg-slate-400" })));
+};
+exports["default"] = PromptImage;
 
 
 /***/ }),
@@ -660,6 +719,78 @@ exports["default"] = Logo;
 
 /***/ }),
 
+/***/ "./src/components/images/ImageList.tsx":
+/*!*********************************************!*\
+  !*** ./src/components/images/ImageList.tsx ***!
+  \*********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Loader_1 = __importDefault(__webpack_require__(/*! @components/base/Loader */ "./src/components/base/Loader.tsx"));
+const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
+const ImageListItem_1 = __importDefault(__webpack_require__(/*! ./ImageListItem */ "./src/components/images/ImageListItem.tsx"));
+const ImageList = () => {
+    const { user } = react_1.default.useContext(appContext_1.default);
+    const [images, setImages] = react_1.default.useState();
+    react_1.default.useEffect(() => {
+        const loadImages = () => __awaiter(void 0, void 0, void 0, function* () {
+            // Images are really just prompt objects.
+            const resp = yield api_1.default.getImages(user.access_token);
+            if (!(resp === null || resp === void 0 ? void 0 : resp.prompts)) {
+                console.log('TODO: errors');
+                return;
+            }
+            setImages(resp.prompts);
+        });
+        if (user.access_token) {
+            loadImages();
+        }
+    }, [user]);
+    return (react_1.default.createElement("div", { className: "p-6 bg-white rounded mt-6" }, images
+        ? react_1.default.createElement("div", { className: "grid grid-cols-2 md:grid-cols-4" }, images.map(img => react_1.default.createElement(ImageListItem_1.default, Object.assign({}, img, { key: `imageListItem_${img.id}` }))))
+        : react_1.default.createElement(Loader_1.default, null)));
+};
+exports["default"] = ImageList;
+
+
+/***/ }),
+
+/***/ "./src/components/images/ImageListItem.tsx":
+/*!*************************************************!*\
+  !*** ./src/components/images/ImageListItem.tsx ***!
+  \*************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const ImageListItem = ({ imgUrl, prompt, className, }) => {
+    return (react_1.default.createElement("div", { className: className },
+        react_1.default.createElement("img", { src: imgUrl, title: prompt, alt: prompt })));
+};
+exports["default"] = ImageListItem;
+
+
+/***/ }),
+
 /***/ "./src/components/layouts/ErrorLayout.tsx":
 /*!************************************************!*\
   !*** ./src/components/layouts/ErrorLayout.tsx ***!
@@ -804,6 +935,29 @@ const Page = () => {
         return (react_1.default.createElement(ErrorLayout_1.default, { errorMessage: "Unable to login." }));
     }
     return (react_1.default.createElement(Layout_1.default, null));
+};
+exports["default"] = Page;
+
+
+/***/ }),
+
+/***/ "./src/components/pages/Images.tsx":
+/*!*****************************************!*\
+  !*** ./src/components/pages/Images.tsx ***!
+  \*****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
+const ImageList_1 = __importDefault(__webpack_require__(/*! @components/images/ImageList */ "./src/components/images/ImageList.tsx"));
+const Page = () => {
+    return (react_1.default.createElement(Layout_1.default, null,
+        react_1.default.createElement(ImageList_1.default, null)));
 };
 exports["default"] = Page;
 
@@ -969,7 +1123,7 @@ const Tags = ({}) => {
                     selectedTags: changedTags.map(tag => ({
                         id: tag.value,
                         label: tag.label,
-                        tag_category: tagCollection.category.id,
+                        tagCategory: tagCollection.category.id,
                     })) });
             }
             return tagCollection;
@@ -988,7 +1142,7 @@ const Tags = ({}) => {
             const selectedTags = tags && tags.length ? (_a = tags[category.id]) === null || _a === void 0 ? void 0 : _a.selectedTags : [];
             tagCollections.push({
                 category,
-                allTags: resp.tags.filter(tag => tag.tag_category === category.id),
+                allTags: resp.tags.filter(tag => tag.tagCategory === category.id),
                 selectedTags,
             });
         });

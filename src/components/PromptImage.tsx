@@ -2,7 +2,7 @@ import React from 'react'
 import Loader from '@components/base/Loader'
 import AppContext from '@src/appContext'
 
-const Image = () => {
+const PromptImage = () => {
   const { prompt } = React.useContext(AppContext)
   if (!prompt || !prompt.imgUrl) {
     return null
@@ -30,4 +30,4 @@ const Image = () => {
   )
 }
 
-export default Image
+export default PromptImage

@@ -1,12 +1,10 @@
 import React from 'react'
-import Select, { MultiValue } from 'react-select'
 import Api from '@api/api'
 import Input from './base/Input'
 import Tags, { getSelectedTagIds } from './tags/Tags'
-import Image from './Image'
+import PromptImage from './PromptImage'
 import Button from './base/Button'
 import AppContext from '@src/appContext'
-import { Tag, TagCollection, TagCategory } from '@types'
 import LocalStorage from '@utils/localStorage'
 
 const PromptComponent = () => {
@@ -85,7 +83,7 @@ const PromptComponent = () => {
       </div>
       <Tags />
       <div>
-        <Image />
+        <PromptImage />
       </div>
     </div>
   )

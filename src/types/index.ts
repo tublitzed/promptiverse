@@ -13,15 +13,22 @@ export interface User {
 export interface PromptApiResponse {
   engine?: string
   id: string
+  img_url?: string
+  prompt: string
+  prompt_raw?:string
+  seed?: number
+  tagIds?: string[]
+}
+
+export interface Prompt extends Omit<PromptApiResponse, 'img_url' | 'prompt_raw'> {
+  engine?: string
+  id: string
   imgUrl?: string
   prompt: string
   promptRaw?:string
   seed?: number
   tagIds?: string[]
-}
-
-export interface Prompt extends PromptApiResponse {
-  loading: boolean
+  loading?: boolean
 }
 
 export interface TagCategory {
@@ -29,11 +36,14 @@ export interface TagCategory {
   label: string
 }
 
-export interface Tag {
+export interface TagApiResponse {
   label: string
   id: string
-  // # TODO: find a performant way to transform them out of snake case before hitting the client
   tag_category: number
+}
+
+export interface Tag extends Omit<TagApiResponse, 'tag_category'> {
+  tagCategory: number
 }
 
 export interface TagCollection {
