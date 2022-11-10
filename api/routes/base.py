@@ -27,7 +27,8 @@ def render_static():
         "CLIENT_APP_AUTH0_CALLBACK_URL": os.environ.get(
             "CLIENT_APP_AUTH0_CALLBACK_URL"
         ),
-        "IS_DEV": app.is_dev(),
+        "ENV": os.environ.get("FLASK_ENV"),
+        "SENTRY_CLIENT_DSN": os.environ.get("SENTRY_CLIENT_DSN"),
     }
     return render_template("index.html", app_vars=app_vars, cache_buster=cache_buster)
 
