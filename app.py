@@ -12,6 +12,17 @@ from api.routes import (
 
 from api.helpers import app as app_helper
 
+import sentry_sdk
+sentry_sdk.init(
+    dsn=os.environ.get('SENTRY_API_DSN', ''),
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
+    environment=os.environ.get('FLASK_ENV', 'production')
+)
+
 csrf = CSRFProtect()
 app = Flask(__name__)
 csrf.init_app(app)
