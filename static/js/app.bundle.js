@@ -861,15 +861,6 @@ exports["default"] = ErrorLayout;
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -877,22 +868,10 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Header_1 = __importDefault(__webpack_require__(/*! @components/Header */ "./src/components/Header.tsx"));
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
 const Layout = ({ children }) => {
-    const { loginWithRedirect, user } = (0, auth0_react_1.useAuth0)();
-    const handleLogin = () => __awaiter(void 0, void 0, void 0, function* () {
-        yield loginWithRedirect({
-            prompt: 'login',
-            appState: {
-                returnTo: '/',
-            },
-        });
-    });
+    const { user } = (0, auth0_react_1.useAuth0)();
     if (!user) {
-        return (react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
-            react_1.default.createElement("div", { className: "container mx-auto h-full" },
-                react_1.default.createElement("div", { className: "mx-auto text-center p-12 text-white" },
-                    react_1.default.createElement(Button_1.default, { onClick: handleLogin }, "Sign In")))));
+        return (react_1.default.createElement("main", null, children));
     }
     return (react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
         react_1.default.createElement(Header_1.default, null),
@@ -1016,10 +995,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
 const Prompt_1 = __importDefault(__webpack_require__(/*! @components/Prompt */ "./src/components/Prompt.tsx"));
+const Index_1 = __importDefault(__webpack_require__(/*! @components/pages/public/Index */ "./src/components/pages/public/Index.tsx"));
 const Page = () => {
-    return (react_1.default.createElement(Layout_1.default, null,
-        react_1.default.createElement(Prompt_1.default, null)));
+    const { user } = (0, auth0_react_1.useAuth0)();
+    return (react_1.default.createElement(Layout_1.default, null, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Index_1.default, null)));
 };
 exports["default"] = Page;
 
@@ -1093,6 +1074,52 @@ const Page = () => {
     }
     return (react_1.default.createElement(Layout_1.default, null,
         react_1.default.createElement(react_1.default.Fragment, null, "sandbox")));
+};
+exports["default"] = Page;
+
+
+/***/ }),
+
+/***/ "./src/components/pages/public/Index.tsx":
+/*!***********************************************!*\
+  !*** ./src/components/pages/public/Index.tsx ***!
+  \***********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
+const Page = () => {
+    const { loginWithRedirect, user } = (0, auth0_react_1.useAuth0)();
+    const handleLogin = () => __awaiter(void 0, void 0, void 0, function* () {
+        yield loginWithRedirect({
+            prompt: "login",
+            appState: {
+                returnTo: "/",
+            },
+        });
+    });
+    const style = {
+        background: 'url("/static/img/bgs/cover.png") no-repeat 0 -200px',
+        backgroundSize: 'cover',
+    };
+    return (react_1.default.createElement("div", { style: style, className: "h-screen bg-black flex align-center place-content-center pt-16" },
+        react_1.default.createElement("div", null,
+            react_1.default.createElement(Button_1.default, { className: "text-lg py-2 px-12 ring-4 ring-white/50", onClick: handleLogin }, "Sign In"))));
 };
 exports["default"] = Page;
 
