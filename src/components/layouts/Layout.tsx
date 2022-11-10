@@ -8,29 +8,13 @@ export interface Props {
 }
 
 const Layout = ({ children }:Props): JSX.Element => {
-  const { loginWithRedirect, user } = useAuth0()
+  const { user } = useAuth0()
 
-  const handleLogin = async () => {
-    await loginWithRedirect({
-      prompt: 'login',
-      appState: {
-        returnTo: '/',
-      },
-    })
-  }
 
   if (!user) {
     return (
-      <main className="bg-slate-600 w-full min-h-screen">
-        <div className="container mx-auto h-full">
-          <div className="mx-auto text-center p-12 text-white">
-            <Button
-              onClick={handleLogin}
-            >
-              Sign In
-            </Button>
-          </div>
-        </div>
+      <main>
+        {children}
       </main>
     )
   }
