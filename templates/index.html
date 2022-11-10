@@ -10,7 +10,7 @@
   <link href="{{ url_for('static', filename='css/base.bundle.css') }}?{{cache_buster}}" type="text/css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="{{ url_for('static', filename='favicon.ico') }}" rel="icon" type="image/x-icon">
-  {% if app_vars.is_dev == False %}
+  {% if app_vars.ENV == 'production' %}
     {% include 'partials/trackers.html' %}
   {% endif %}
 </head>

@@ -151,6 +151,8 @@ const Auth0ProviderWithHistory_1 = __webpack_require__(/*! @components/auth/Auth
 const Sentry = __importStar(__webpack_require__(/*! @sentry/react */ "./node_modules/@sentry/react/esm/index.js"));
 const tracing_1 = __webpack_require__(/*! @sentry/tracing */ "./node_modules/@sentry/tracing/esm/index.js");
 const api_1 = __importDefault(__webpack_require__(/*! ./api/api */ "./src/api/api.ts"));
+const logrocket_1 = __importDefault(__webpack_require__(/*! logrocket */ "./node_modules/logrocket/dist/build.umd.js"));
+logrocket_1.default.init('wivfcj/promptiverse');
 const sentryDsn = api_1.default.getVar('SENTRY_CLIENT_DSN');
 if (sentryDsn) {
     Sentry.init({

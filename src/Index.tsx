@@ -6,6 +6,8 @@ import { Auth0ProviderWithHistory } from '@components/auth/Auth0ProviderWithHist
 import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
 import ApiService from './api/api'
+import LogRocket from 'logrocket'
+LogRocket.init('wivfcj/promptiverse')
 
 const sentryDsn = ApiService.getVar('SENTRY_CLIENT_DSN')
 if (sentryDsn) {
