@@ -62,4 +62,4 @@ def get_by_user(user_id):
         Prompt.img_url,
         Prompt.prompt,
         Prompt.seed,
-    ).where(Prompt.user_id == user_id)
+    ).where(Prompt.user_id == user_id).order_by(Prompt.created_at.desc())
