@@ -13,23 +13,19 @@ const Page: React.FC<{}> = () => {
     });
   };
 
-  const style = {
-    background: 'url("/static/img/bgs/cover.png") no-repeat 0 -200px',
-    backgroundSize: 'cover',
-}
+//   const style = {
+//     background: 'url("/static/img/bgs/cover.png") no-repeat 0 -200px',
+//     backgroundSize: 'cover',
+// }
 
   return (
-    <div
-      style={style}
-      className="h-screen bg-black flex align-center place-content-center pt-16"
-    >
-      <div>
-      <Button
-        className="text-lg py-2 px-12 ring-4 ring-white/50"
-        onClick={handleLogin}>
-        Sign In
-      </Button>
+    <div>
+      <div className="-mx-4 bg-red-800 h-96 text-center">
+        (Hero here)
       </div>
+      <p className="mt-4">
+        And some other stuff here
+      </p>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import React from 'react'
-import Header from '@components/Header'
+import Header from '@components/headers/Header'
+import PublicHeader from '@components/headers/PublicHeader'
 import { useAuth0 } from '@auth0/auth0-react'
 import Button from '@components/base/Button'
 
@@ -14,7 +15,10 @@ const Layout = ({ children }:Props): JSX.Element => {
   if (!user) {
     return (
       <main>
-        {children}
+        <PublicHeader />
+        <section className="container mx-auto">
+          {children}
+        </section>
       </main>
     )
   }

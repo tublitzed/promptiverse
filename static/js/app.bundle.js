@@ -312,108 +312,6 @@ exports["default"] = AppContext;
 
 /***/ }),
 
-/***/ "./src/components/Header.tsx":
-/*!***********************************!*\
-  !*** ./src/components/Header.tsx ***!
-  \***********************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
-const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const react_2 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-const react_3 = __webpack_require__(/*! @headlessui/react */ "./node_modules/@headlessui/react/dist/index.cjs");
-const outline_1 = __webpack_require__(/*! @heroicons/react/24/outline */ "./node_modules/@heroicons/react/24/outline/esm/index.js");
-const Avatar_1 = __importDefault(__webpack_require__(/*! @components/base/Avatar */ "./src/components/base/Avatar.tsx"));
-const Logo_1 = __importDefault(__webpack_require__(/*! @components/base/Logo */ "./src/components/base/Logo.tsx"));
-const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
-function classNames(...classes) {
-    return classes.filter(Boolean).join(' ');
-}
-const Header = () => {
-    const { logout } = (0, auth0_react_1.useAuth0)();
-    const handleLogout = () => {
-        logout({
-            returnTo: window.location.origin,
-        });
-    };
-    const routerHistory = (0, react_router_dom_1.useHistory)();
-    const goToAboutPage = () => {
-        routerHistory.push('/about');
-    };
-    const goToDashboard = () => {
-        routerHistory.push('/');
-    };
-    const goToProfile = () => {
-        routerHistory.push('/profile');
-    };
-    const goToImages = () => {
-        routerHistory.push('/images');
-    };
-    const { user } = react_1.default.useContext(appContext_1.default);
-    const activeNavLinkClassname = 'bg-gray-900 text-white';
-    const navLinkClassname = 'text-gray-300 hover:bg-gray-700 hover:text-white';
-    const location = (0, react_router_dom_1.useLocation)();
-    if (!user) {
-        return null;
-    }
-    return (react_1.default.createElement("header", null,
-        react_1.default.createElement(react_3.Disclosure, { as: "nav", className: "bg-gray-800" }, ({ open }) => (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", { className: "container mx-auto px-8" },
-                react_1.default.createElement("div", { className: "flex h-16 items-center justify-between" },
-                    react_1.default.createElement("div", { className: "flex items-center" },
-                        react_1.default.createElement("div", { className: "flex-shrink-0" },
-                            react_1.default.createElement("a", { onClick: goToDashboard },
-                                react_1.default.createElement(Logo_1.default, null))),
-                        react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
-                            react_1.default.createElement("div", { className: "flex space-x-4" },
-                                react_1.default.createElement("a", { onClick: goToDashboard, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
-                                react_1.default.createElement("a", { onClick: goToImages, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname) }, "Images"),
-                                react_1.default.createElement("a", { onClick: goToAboutPage, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")))),
-                    react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
-                        react_1.default.createElement("div", { className: "flex items-center" },
-                            react_1.default.createElement(react_3.Menu, { as: "div", className: "relative ml-3" },
-                                react_1.default.createElement("div", null,
-                                    react_1.default.createElement(react_3.Menu.Button, { className: "flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" },
-                                        react_1.default.createElement("span", { className: "sr-only" }, "Profile"),
-                                        react_1.default.createElement(Avatar_1.default, null))),
-                                react_1.default.createElement(react_3.Transition, { as: react_2.Fragment, enter: "transition ease-out duration-100", enterFrom: "transform opacity-0 scale-95", enterTo: "transform opacity-100 scale-100", leave: "transition ease-in duration-75", leaveFrom: "transform opacity-100 scale-100", leaveTo: "transform opacity-0 scale-95" },
-                                    react_1.default.createElement(react_3.Menu.Items, { className: "absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" },
-                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: goToProfile, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "My Profile"))),
-                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: handleLogout, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "Sign Out")))))))),
-                    react_1.default.createElement("div", { className: "-mr-2 flex sm:hidden" },
-                        react_1.default.createElement(react_3.Disclosure.Button, { className: "inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" },
-                            react_1.default.createElement("span", { className: "sr-only" }, "Open main menu"),
-                            open
-                                ? (react_1.default.createElement(outline_1.XMarkIcon, { className: "block h-6 w-6", "aria-hidden": "true" }))
-                                : (react_1.default.createElement(outline_1.Bars3Icon, { className: "block h-6 w-6", "aria-hidden": "true" })))))),
-            react_1.default.createElement(react_3.Disclosure.Panel, { className: "sm:hidden" },
-                react_1.default.createElement("div", { className: "space-y-1 px-2 pt-2 pb-3" },
-                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToDashboard, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
-                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToImages, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname) }, "Images"),
-                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToAboutPage, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")),
-                react_1.default.createElement("div", { className: "border-t border-gray-700 pt-4 pb-3" },
-                    react_1.default.createElement("div", { className: "flex items-center px-5" },
-                        react_1.default.createElement("div", { className: "flex-shrink-0" },
-                            react_1.default.createElement(Avatar_1.default, null)),
-                        react_1.default.createElement("div", { className: "ml-3" },
-                            react_1.default.createElement("div", { className: "text-base font-medium text-white" }, user.nickname),
-                            react_1.default.createElement("div", { className: "text-sm font-medium text-gray-400" }, user.name))),
-                    react_1.default.createElement("div", { className: "mt-3 space-y-1 px-2" },
-                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToProfile, className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer" }, "Your Profile"),
-                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: handleLogout, className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer" }, "Sign Out")))))))));
-};
-exports["default"] = Header;
-
-
-/***/ }),
-
 /***/ "./src/components/Prompt.tsx":
 /*!***********************************!*\
   !*** ./src/components/Prompt.tsx ***!
@@ -651,10 +549,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
-const Button = ({ children, download, href, onClick, disabled, className }) => {
-    const cssClasses = (0, clsx_1.default)(className, 'py-2 px-6 border no-underline border-transparent text-sm font-medium rounded-md text-white', disabled
-        ? 'bg-slate-500'
-        : 'bg-slate-700 hover:bg-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500');
+const Button = ({ children, download, href, onClick, disabled, className, style = 'primary', variant = 'filled', size = 'med', }) => {
+    const cssClasses = (0, clsx_1.default)(className, variant === 'filled' && style === 'primary'
+        ? 'text-white bg-red-500 ring ring-offset-2 ring-transparent hover:ring-red-400 hover:bg-red-600 focus:ring-red-600 focus:bg-red-700'
+        : '', variant === 'unfilled' && style === 'primary'
+        ? 'text-red-600 hover:text-red-700 ring-offset-2 hover:ring hover:ring-red-700 focus:ring-red-800 focus:text-red-800'
+        : '', 'font-medium rounded-lg', size === 'med' ? '' : '', size === 'lg' ? 'text-lg py-2 px-10' : '');
     if (href) {
         return (react_1.default.createElement("a", { onClick: onClick, className: `${cssClasses} inline-block`, href: href, download: download }, children));
     }
@@ -749,11 +649,174 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const Logo = () => {
-    return (react_1.default.createElement("div", null,
-        react_1.default.createElement("span", { className: "font-light text-2xl text-white" }, "[ P ]")));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const Logo = (props) => {
+    const routerHistory = (0, react_router_dom_1.useHistory)();
+    const goToHome = () => {
+        routerHistory.push('/');
+    };
+    return (react_1.default.createElement("a", { onClick: goToHome, href: "#", className: props === null || props === void 0 ? void 0 : props.className },
+        react_1.default.createElement("img", { src: "/static/img/logo.svg", alt: "logo" })));
 };
 exports["default"] = Logo;
+
+
+/***/ }),
+
+/***/ "./src/components/headers/Header.tsx":
+/*!*******************************************!*\
+  !*** ./src/components/headers/Header.tsx ***!
+  \*******************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_2 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const react_3 = __webpack_require__(/*! @headlessui/react */ "./node_modules/@headlessui/react/dist/index.cjs");
+const outline_1 = __webpack_require__(/*! @heroicons/react/24/outline */ "./node_modules/@heroicons/react/24/outline/esm/index.js");
+const Avatar_1 = __importDefault(__webpack_require__(/*! @components/base/Avatar */ "./src/components/base/Avatar.tsx"));
+const Logo_1 = __importDefault(__webpack_require__(/*! @components/base/Logo */ "./src/components/base/Logo.tsx"));
+const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+function classNames(...classes) {
+    return classes.filter(Boolean).join(' ');
+}
+const Header = () => {
+    const { logout } = (0, auth0_react_1.useAuth0)();
+    const handleLogout = () => {
+        logout({
+            returnTo: window.location.origin,
+        });
+    };
+    const routerHistory = (0, react_router_dom_1.useHistory)();
+    const goToAboutPage = () => {
+        routerHistory.push('/about');
+    };
+    const goToDashboard = () => {
+        routerHistory.push('/');
+    };
+    const goToProfile = () => {
+        routerHistory.push('/profile');
+    };
+    const goToImages = () => {
+        routerHistory.push('/images');
+    };
+    const { user } = react_1.default.useContext(appContext_1.default);
+    const activeNavLinkClassname = 'bg-gray-900 text-white';
+    const navLinkClassname = 'text-gray-300 hover:bg-gray-700 hover:text-white';
+    const location = (0, react_router_dom_1.useLocation)();
+    if (!user) {
+        return null;
+    }
+    return (react_1.default.createElement("header", null,
+        react_1.default.createElement(react_3.Disclosure, { as: "nav", className: "bg-gray-800" }, ({ open }) => (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", { className: "container mx-auto px-8" },
+                react_1.default.createElement("div", { className: "flex h-16 items-center justify-between" },
+                    react_1.default.createElement("div", { className: "flex items-center" },
+                        react_1.default.createElement("div", { className: "flex-shrink-0" },
+                            react_1.default.createElement("a", { onClick: goToDashboard },
+                                react_1.default.createElement(Logo_1.default, null))),
+                        react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
+                            react_1.default.createElement("div", { className: "flex space-x-4" },
+                                react_1.default.createElement("a", { onClick: goToDashboard, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
+                                react_1.default.createElement("a", { onClick: goToImages, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname) }, "Images"),
+                                react_1.default.createElement("a", { onClick: goToAboutPage, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")))),
+                    react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
+                        react_1.default.createElement("div", { className: "flex items-center" },
+                            react_1.default.createElement(react_3.Menu, { as: "div", className: "relative ml-3" },
+                                react_1.default.createElement("div", null,
+                                    react_1.default.createElement(react_3.Menu.Button, { className: "flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" },
+                                        react_1.default.createElement("span", { className: "sr-only" }, "Profile"),
+                                        react_1.default.createElement(Avatar_1.default, null))),
+                                react_1.default.createElement(react_3.Transition, { as: react_2.Fragment, enter: "transition ease-out duration-100", enterFrom: "transform opacity-0 scale-95", enterTo: "transform opacity-100 scale-100", leave: "transition ease-in duration-75", leaveFrom: "transform opacity-100 scale-100", leaveTo: "transform opacity-0 scale-95" },
+                                    react_1.default.createElement(react_3.Menu.Items, { className: "absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" },
+                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: goToProfile, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "My Profile"))),
+                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: handleLogout, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "Sign Out")))))))),
+                    react_1.default.createElement("div", { className: "-mr-2 flex sm:hidden" },
+                        react_1.default.createElement(react_3.Disclosure.Button, { className: "inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" },
+                            react_1.default.createElement("span", { className: "sr-only" }, "Open main menu"),
+                            open
+                                ? (react_1.default.createElement(outline_1.XMarkIcon, { className: "block h-6 w-6", "aria-hidden": "true" }))
+                                : (react_1.default.createElement(outline_1.Bars3Icon, { className: "block h-6 w-6", "aria-hidden": "true" })))))),
+            react_1.default.createElement(react_3.Disclosure.Panel, { className: "sm:hidden" },
+                react_1.default.createElement("div", { className: "space-y-1 px-2 pt-2 pb-3" },
+                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToDashboard, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
+                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToImages, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname) }, "Images"),
+                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToAboutPage, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")),
+                react_1.default.createElement("div", { className: "border-t border-gray-700 pt-4 pb-3" },
+                    react_1.default.createElement("div", { className: "flex items-center px-5" },
+                        react_1.default.createElement("div", { className: "flex-shrink-0" },
+                            react_1.default.createElement(Avatar_1.default, null)),
+                        react_1.default.createElement("div", { className: "ml-3" },
+                            react_1.default.createElement("div", { className: "text-base font-medium text-white" }, user.nickname),
+                            react_1.default.createElement("div", { className: "text-sm font-medium text-gray-400" }, user.name))),
+                    react_1.default.createElement("div", { className: "mt-3 space-y-1 px-2" },
+                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToProfile, className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer" }, "Your Profile"),
+                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: handleLogout, className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer" }, "Sign Out")))))))));
+};
+exports["default"] = Header;
+
+
+/***/ }),
+
+/***/ "./src/components/headers/PublicHeader.tsx":
+/*!*************************************************!*\
+  !*** ./src/components/headers/PublicHeader.tsx ***!
+  \*************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const Logo_1 = __importDefault(__webpack_require__(/*! @components/base/Logo */ "./src/components/base/Logo.tsx"));
+const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
+function classNames(...classes) {
+    return classes.filter(Boolean).join(' ');
+}
+const PublicHeader = () => {
+    const routerHistory = (0, react_router_dom_1.useHistory)();
+    const { loginWithRedirect, user } = (0, auth0_react_1.useAuth0)();
+    const handleLogin = () => __awaiter(void 0, void 0, void 0, function* () {
+        yield loginWithRedirect({
+            prompt: 'login',
+            appState: {
+                returnTo: '/',
+            },
+        });
+    });
+    const goToAboutPage = () => {
+        routerHistory.push('/about');
+    };
+    return (react_1.default.createElement("header", { className: "bg-gray-100" },
+        react_1.default.createElement("div", { className: "flex container mx-auto py-2" },
+            react_1.default.createElement("div", { className: "grow" },
+                react_1.default.createElement(Logo_1.default, { className: "w-[135px] block" })),
+            react_1.default.createElement("div", null,
+                react_1.default.createElement("div", { className: "inline-flex gap-x-4 mt-2" },
+                    react_1.default.createElement(Button_1.default, { onClick: loginWithRedirect, size: "lg", variant: "unfilled" }, "Sign In"),
+                    react_1.default.createElement(Button_1.default, { size: "lg", variant: "filled", style: "primary" }, "Sign Up"))))));
+};
+exports["default"] = PublicHeader;
 
 
 /***/ }),
@@ -866,12 +929,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const Header_1 = __importDefault(__webpack_require__(/*! @components/Header */ "./src/components/Header.tsx"));
+const Header_1 = __importDefault(__webpack_require__(/*! @components/headers/Header */ "./src/components/headers/Header.tsx"));
+const PublicHeader_1 = __importDefault(__webpack_require__(/*! @components/headers/PublicHeader */ "./src/components/headers/PublicHeader.tsx"));
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
 const Layout = ({ children }) => {
     const { user } = (0, auth0_react_1.useAuth0)();
     if (!user) {
-        return (react_1.default.createElement("main", null, children));
+        return (react_1.default.createElement("main", null,
+            react_1.default.createElement(PublicHeader_1.default, null),
+            react_1.default.createElement("section", { className: "container mx-auto" }, children)));
     }
     return (react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
         react_1.default.createElement(Header_1.default, null),
@@ -1102,7 +1168,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
 const Page = () => {
     const { loginWithRedirect, user } = (0, auth0_react_1.useAuth0)();
     const handleLogin = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -1113,13 +1178,13 @@ const Page = () => {
             },
         });
     });
-    const style = {
-        background: 'url("/static/img/bgs/cover.png") no-repeat 0 -200px',
-        backgroundSize: 'cover',
-    };
-    return (react_1.default.createElement("div", { style: style, className: "h-screen bg-black flex align-center place-content-center pt-16" },
-        react_1.default.createElement("div", null,
-            react_1.default.createElement(Button_1.default, { className: "text-lg py-2 px-12 ring-4 ring-white/50", onClick: handleLogin }, "Sign In"))));
+    //   const style = {
+    //     background: 'url("/static/img/bgs/cover.png") no-repeat 0 -200px',
+    //     backgroundSize: 'cover',
+    // }
+    return (react_1.default.createElement("div", null,
+        react_1.default.createElement("div", { className: "-mx-4 bg-red-800 h-96 text-center" }, "(Hero here)"),
+        react_1.default.createElement("p", { className: "mt-4" }, "And some other stuff here")));
 };
 exports["default"] = Page;
 

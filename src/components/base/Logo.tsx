@@ -1,10 +1,19 @@
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 
-const Logo = (): JSX.Element => {
+interface LogoProps {
+  className?: string
+}
+const Logo = (props: LogoProps): JSX.Element => {
+  const routerHistory = useHistory()
+
+  const goToHome = () => {
+    routerHistory.push('/')
+  }
   return (
-    <div>
-      <span className="font-light text-2xl text-white">[ P ]</span>
-    </div>
+    <a onClick={goToHome} href="#" className={props?.className}>
+      <img src="/static/img/logo.svg" alt="logo" />
+    </a>
   )
 }
 

@@ -3,3 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 /* stylelint-enable  */
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: '#FFF'
+}
