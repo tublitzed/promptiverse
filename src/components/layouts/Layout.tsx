@@ -2,23 +2,31 @@ import React from 'react'
 import Header from '@components/headers/Header'
 import PublicHeader from '@components/headers/PublicHeader'
 import { useAuth0 } from '@auth0/auth0-react'
-import Button from '@components/base/Button'
+import Hero from '@components/Hero'
+import Footer from '@components/Footer'
 
 export interface Props {
   children: React.ReactNode
+  page?: 'INDEX'
 }
 
-const Layout = ({ children }:Props): JSX.Element => {
+const Layout = ({ children, page }:Props): JSX.Element => {
   const { user } = useAuth0()
 
 
   if (!user) {
     return (
-      <main>
-        <PublicHeader />
-        <section className="container mx-auto">
-          {children}
-        </section>
+      <main className="overflow-x-hidden">
+        <div className="min-h-screen">
+          <PublicHeader />
+          {page === 'INDEX' &&
+            <Hero />
+          }
+          <section className="container mx-auto px-6">
+            {children}
+          </section>
+        </div>
+        <Footer />
       </main>
     )
   }

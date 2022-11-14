@@ -31,24 +31,26 @@ const PublicHeader = () => {
     routerHistory.push('/about')
   }
   return (
-    <header className="bg-gray-100">
+    <header className="bg-gray-100 px-6">
       <div className="flex container mx-auto py-2">
         <div className="grow">
-          <Logo className="w-[135px] block" />
+          <Logo className="w-[100px] md:w-[135px] block" />
         </div>
         <div>
-          <div className="inline-flex gap-x-4 mt-2">
+          <div className="inline-flex mt-2">
             <Button
               onClick={loginWithRedirect}
-              size="lg"
+              size="med"
               variant="unfilled"
+              className="whitespace-nowrap md:mr-2 mr-4"
             >
               Sign In
             </Button>
             <Button
-              size="lg"
+              size="med"
               variant="filled"
               style="primary"
+              className="whitespace-nowrap"
             >Sign Up
             </Button>
           </div>

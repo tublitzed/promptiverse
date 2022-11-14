@@ -312,6 +312,69 @@ exports["default"] = AppContext;
 
 /***/ }),
 
+/***/ "./src/components/Footer.tsx":
+/*!***********************************!*\
+  !*** ./src/components/Footer.tsx ***!
+  \***********************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const Footer = () => {
+    const routerHistory = (0, react_router_dom_1.useHistory)();
+    const linkStyle = 'text-red-400 mx-4 hover:underline';
+    const goToPage = (path) => {
+        routerHistory.push(path);
+    };
+    return (react_1.default.createElement("footer", { className: "bg-red-50 p-6 mt-12 border-t border-red-100" },
+        react_1.default.createElement("div", { className: "flex container mx-auto justify-center" },
+            react_1.default.createElement("a", { href: "", className: linkStyle, onClick: () => goToPage('/about') }, "About"),
+            react_1.default.createElement("a", { href: "", className: linkStyle, onClick: () => goToPage('/about') }, "About"),
+            react_1.default.createElement("a", { href: "", className: linkStyle, onClick: () => goToPage('/about') }, "About"),
+            react_1.default.createElement("a", { href: "", className: linkStyle, onClick: () => goToPage('/about') }, "About"))));
+};
+exports["default"] = Footer;
+
+
+/***/ }),
+
+/***/ "./src/components/Hero.tsx":
+/*!*********************************!*\
+  !*** ./src/components/Hero.tsx ***!
+  \*********************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const Hero = () => {
+    const routerHistory = (0, react_router_dom_1.useHistory)();
+    const linkStyle = 'text-red-400 mx-4 hover:underline';
+    const goToPage = (path) => {
+        routerHistory.push(path);
+    };
+    return (react_1.default.createElement("div", { className: "h-[500px] bg-red-900 px-6" },
+        react_1.default.createElement("div", { className: "container mx-auto grid sm:grid-cols-3 text-white" },
+            react_1.default.createElement("div", { className: "col-span-1 mt-24 md:mt-36" },
+                react_1.default.createElement("h1", { className: "text-4xl font-bold" }, "The future of generative images starts here"),
+                react_1.default.createElement("h4", { className: "text-xl mt-2" }, "Use our builder to explore the magic of AI imagery for free."),
+                react_1.default.createElement(Button_1.default, { size: "lg", className: "mt-6" }, "Get Started")))));
+};
+exports["default"] = Hero;
+
+
+/***/ }),
+
 /***/ "./src/components/Prompt.tsx":
 /*!***********************************!*\
   !*** ./src/components/Prompt.tsx ***!
@@ -554,7 +617,7 @@ const Button = ({ children, download, href, onClick, disabled, className, style 
         ? 'text-white bg-red-500 ring ring-offset-2 ring-transparent hover:ring-red-400 hover:bg-red-600 focus:ring-red-600 focus:bg-red-700'
         : '', variant === 'unfilled' && style === 'primary'
         ? 'text-red-600 hover:text-red-700 ring-offset-2 hover:ring hover:ring-red-700 focus:ring-red-800 focus:text-red-800'
-        : '', 'font-medium rounded-lg', size === 'med' ? '' : '', size === 'lg' ? 'text-lg py-2 px-10' : '');
+        : '', 'font-medium rounded-lg', size === 'med' ? 'py-2 px-6' : '', size === 'lg' ? 'text-lg py-2 px-10' : '');
     if (href) {
         return (react_1.default.createElement("a", { onClick: onClick, className: `${cssClasses} inline-block`, href: href, download: download }, children));
     }
@@ -807,14 +870,14 @@ const PublicHeader = () => {
     const goToAboutPage = () => {
         routerHistory.push('/about');
     };
-    return (react_1.default.createElement("header", { className: "bg-gray-100" },
+    return (react_1.default.createElement("header", { className: "bg-gray-100 px-6" },
         react_1.default.createElement("div", { className: "flex container mx-auto py-2" },
             react_1.default.createElement("div", { className: "grow" },
-                react_1.default.createElement(Logo_1.default, { className: "w-[135px] block" })),
+                react_1.default.createElement(Logo_1.default, { className: "w-[100px] md:w-[135px] block" })),
             react_1.default.createElement("div", null,
-                react_1.default.createElement("div", { className: "inline-flex gap-x-4 mt-2" },
-                    react_1.default.createElement(Button_1.default, { onClick: loginWithRedirect, size: "lg", variant: "unfilled" }, "Sign In"),
-                    react_1.default.createElement(Button_1.default, { size: "lg", variant: "filled", style: "primary" }, "Sign Up"))))));
+                react_1.default.createElement("div", { className: "inline-flex mt-2" },
+                    react_1.default.createElement(Button_1.default, { onClick: loginWithRedirect, size: "med", variant: "unfilled", className: "whitespace-nowrap md:mr-2 mr-4" }, "Sign In"),
+                    react_1.default.createElement(Button_1.default, { size: "med", variant: "filled", style: "primary", className: "whitespace-nowrap" }, "Sign Up"))))));
 };
 exports["default"] = PublicHeader;
 
@@ -932,12 +995,18 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const Header_1 = __importDefault(__webpack_require__(/*! @components/headers/Header */ "./src/components/headers/Header.tsx"));
 const PublicHeader_1 = __importDefault(__webpack_require__(/*! @components/headers/PublicHeader */ "./src/components/headers/PublicHeader.tsx"));
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const Layout = ({ children }) => {
+const Hero_1 = __importDefault(__webpack_require__(/*! @components/Hero */ "./src/components/Hero.tsx"));
+const Footer_1 = __importDefault(__webpack_require__(/*! @components/Footer */ "./src/components/Footer.tsx"));
+const Layout = ({ children, page }) => {
     const { user } = (0, auth0_react_1.useAuth0)();
     if (!user) {
-        return (react_1.default.createElement("main", null,
-            react_1.default.createElement(PublicHeader_1.default, null),
-            react_1.default.createElement("section", { className: "container mx-auto" }, children)));
+        return (react_1.default.createElement("main", { className: "overflow-x-hidden" },
+            react_1.default.createElement("div", { className: "min-h-screen" },
+                react_1.default.createElement(PublicHeader_1.default, null),
+                page === 'INDEX' &&
+                    react_1.default.createElement(Hero_1.default, null),
+                react_1.default.createElement("section", { className: "container mx-auto px-6" }, children)),
+            react_1.default.createElement(Footer_1.default, null)));
     }
     return (react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
         react_1.default.createElement(Header_1.default, null),
@@ -1066,7 +1135,7 @@ const Prompt_1 = __importDefault(__webpack_require__(/*! @components/Prompt */ "
 const Index_1 = __importDefault(__webpack_require__(/*! @components/pages/public/Index */ "./src/components/pages/public/Index.tsx"));
 const Page = () => {
     const { user } = (0, auth0_react_1.useAuth0)();
-    return (react_1.default.createElement(Layout_1.default, null, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Index_1.default, null)));
+    return (react_1.default.createElement(Layout_1.default, { page: "INDEX" }, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Index_1.default, null)));
 };
 exports["default"] = Page;
 
@@ -1182,9 +1251,17 @@ const Page = () => {
     //     background: 'url("/static/img/bgs/cover.png") no-repeat 0 -200px',
     //     backgroundSize: 'cover',
     // }
+    const imgClassName = "border h-24 mt-4 md:mt-0";
     return (react_1.default.createElement("div", null,
-        react_1.default.createElement("div", { className: "-mx-4 bg-red-800 h-96 text-center" }, "(Hero here)"),
-        react_1.default.createElement("p", { className: "mt-4" }, "And some other stuff here")));
+        react_1.default.createElement("div", { className: "my-4 text-center" },
+            react_1.default.createElement("h2", { className: "text-xl" }, "Main heading")),
+        react_1.default.createElement("div", { className: "md:grid grid-cols-2 gap-4 mt-4" },
+            react_1.default.createElement("img", { src: "static/img/1.png", alt: "image 1", className: imgClassName }),
+            react_1.default.createElement("img", { src: "static/img/2.png", alt: "image 2", className: imgClassName }),
+            react_1.default.createElement("img", { src: "static/img/3.png", alt: "image 3", className: imgClassName }),
+            react_1.default.createElement("img", { src: "static/img/4.png", alt: "image 4", className: imgClassName }),
+            react_1.default.createElement("img", { src: "static/img/5.png", alt: "image 5", className: imgClassName }),
+            react_1.default.createElement("img", { src: "static/img/6.png", alt: "image 6", className: imgClassName }))));
 };
 exports["default"] = Page;
 
