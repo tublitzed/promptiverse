@@ -28,6 +28,7 @@ def render_static():
             "CLIENT_APP_AUTH0_CALLBACK_URL"
         ),
         "ENV": os.environ.get("FLASK_ENV"),
+        "ENABLE_SIGNUP": os.environ.get("ENABLE_SIGNUP", False),
         "SENTRY_CLIENT_DSN": os.environ.get("SENTRY_CLIENT_DSN"),
     }
     return render_template("index.html", app_vars=app_vars, cache_buster=cache_buster)

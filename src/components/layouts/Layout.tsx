@@ -7,12 +7,11 @@ import Footer from '@components/Footer'
 
 export interface Props {
   children: React.ReactNode
-  page?: 'INDEX'
+  page?: 'INDEX' | 'CUSTOM'
 }
 
 const Layout = ({ children, page }:Props): JSX.Element => {
   const { user } = useAuth0()
-
 
   if (!user) {
     return (

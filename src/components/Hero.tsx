@@ -22,6 +22,7 @@ const Hero: React.FC = () => {
           <Button
             size="lg"
             className="mt-6"
+            onClick={() => goToPage('/builder')}
           >Get Started</Button>
         </div>
       </div>

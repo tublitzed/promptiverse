@@ -3,17 +3,33 @@ import { useHistory } from 'react-router-dom'
 
 interface LogoProps {
   className?: string
+  iconOnly?: boolean
+  linkedToHome?: boolean
 }
-const Logo = (props: LogoProps): JSX.Element => {
+const Logo = ({
+  className,
+  iconOnly = false,
+  linkedToHome = true,
+}:LogoProps): JSX.Element => {
   const routerHistory = useHistory()
 
   const goToHome = () => {
     routerHistory.push('/')
   }
+
+  const wrapper = (content: React.ReactNode) => {
+    if (linkedToHome) {
+      return (
+        <a onClick={goToHome} href="#" className={className}>
+          {content}
+        </a>
+      )
+    }
+    return <span className={className}>{content}</span>
+  }
+
   return (
-    <a onClick={goToHome} href="#" className={props?.className}>
-      <img src="/static/img/logo.svg" alt="logo" />
-    </a>
+    wrapper(<img src={iconOnly ? 'static/img/icon.svg' : 'static/img/logo.svg'} alt="logo" />)
   )
 }
 

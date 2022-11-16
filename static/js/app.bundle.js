@@ -57,6 +57,8 @@ const Callback_1 = __importDefault(__webpack_require__(/*! @components/pages/Cal
 const _404_1 = __importDefault(__webpack_require__(/*! @components/pages/404 */ "./src/components/pages/404.tsx"));
 const About_1 = __importDefault(__webpack_require__(/*! @components/pages/About */ "./src/components/pages/About.tsx"));
 const Images_1 = __importDefault(__webpack_require__(/*! @components/pages/Images */ "./src/components/pages/Images.tsx"));
+const Builder_1 = __importDefault(__webpack_require__(/*! @components/pages/Builder */ "./src/components/pages/Builder.tsx"));
+const SignUp_1 = __importDefault(__webpack_require__(/*! @components/pages/public/SignUp */ "./src/components/pages/public/SignUp.tsx"));
 const appContext_1 = __importStar(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const App = () => {
     const { user: userViaAuth0, loginWithRedirect, isLoading: isLoadingViaAuth0, getAccessTokenSilently, } = (0, auth0_react_1.useAuth0)();
@@ -97,6 +99,9 @@ const App = () => {
     return (react_1.default.createElement(appContext_1.default.Provider, { value: defaultCtx },
         react_1.default.createElement(react_router_dom_1.Switch, null,
             react_1.default.createElement(react_router_dom_1.Route, { path: "/", exact: true, component: Index_1.default }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/builder", component: Builder_1.default }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/signup", component: SignUp_1.default }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/sign-up", component: SignUp_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/profile", component: Profile_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/about", component: About_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/images", component: Images_1.default }),
@@ -319,24 +324,49 @@ exports["default"] = AppContext;
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const Logo_1 = __importDefault(__webpack_require__(/*! @components/base/Logo */ "./src/components/base/Logo.tsx"));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 const Footer = () => {
     const routerHistory = (0, react_router_dom_1.useHistory)();
-    const linkStyle = 'text-red-400 mx-4 hover:underline';
+    const linkStyle = 'text-sm text-red-400 mx-2 md:mx-10 hover:underline pt-2';
+    const { loginWithRedirect } = (0, auth0_react_1.useAuth0)();
     const goToPage = (path) => {
         routerHistory.push(path);
     };
+    const handleLogin = () => __awaiter(void 0, void 0, void 0, function* () {
+        yield loginWithRedirect({
+            prompt: 'login',
+            appState: {
+                returnTo: '/',
+            },
+        });
+    });
+    const enableSignup = api_1.default.getVar('ENABLE_SIGNUP') === true;
     return (react_1.default.createElement("footer", { className: "bg-red-50 p-6 mt-12 border-t border-red-100" },
         react_1.default.createElement("div", { className: "flex container mx-auto justify-center" },
+            react_1.default.createElement("a", { href: "", className: linkStyle, onClick: () => goToPage('/') }, "Home"),
+            react_1.default.createElement("a", { href: "", className: linkStyle, onClick: () => goToPage('/builder') }, "Builder"),
             react_1.default.createElement("a", { href: "", className: linkStyle, onClick: () => goToPage('/about') }, "About"),
-            react_1.default.createElement("a", { href: "", className: linkStyle, onClick: () => goToPage('/about') }, "About"),
-            react_1.default.createElement("a", { href: "", className: linkStyle, onClick: () => goToPage('/about') }, "About"),
-            react_1.default.createElement("a", { href: "", className: linkStyle, onClick: () => goToPage('/about') }, "About"))));
+            react_1.default.createElement("div", { className: "pt-1 w-10 md:w-12 md:pt-0 mx-2 md:mx-8" },
+                react_1.default.createElement(Logo_1.default, { iconOnly: true, linkedToHome: false })),
+            react_1.default.createElement("a", { href: "", className: linkStyle, onClick: handleLogin }, "Sign In"),
+            enableSignup && react_1.default.createElement("a", { href: "", className: linkStyle, onClick: () => goToPage('/signup') }, "Sign Up"))));
 };
 exports["default"] = Footer;
 
@@ -368,7 +398,7 @@ const Hero = () => {
             react_1.default.createElement("div", { className: "col-span-1 mt-24 md:mt-36" },
                 react_1.default.createElement("h1", { className: "text-4xl font-bold" }, "The future of generative images starts here"),
                 react_1.default.createElement("h4", { className: "text-xl mt-2" }, "Use our builder to explore the magic of AI imagery for free."),
-                react_1.default.createElement(Button_1.default, { size: "lg", className: "mt-6" }, "Get Started")))));
+                react_1.default.createElement(Button_1.default, { size: "lg", className: "mt-6", onClick: () => goToPage('/builder') }, "Get Started")))));
 };
 exports["default"] = Hero;
 
@@ -713,13 +743,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-const Logo = (props) => {
+const Logo = ({ className, iconOnly = false, linkedToHome = true, }) => {
     const routerHistory = (0, react_router_dom_1.useHistory)();
     const goToHome = () => {
         routerHistory.push('/');
     };
-    return (react_1.default.createElement("a", { onClick: goToHome, href: "#", className: props === null || props === void 0 ? void 0 : props.className },
-        react_1.default.createElement("img", { src: "/static/img/logo.svg", alt: "logo" })));
+    const wrapper = (content) => {
+        if (linkedToHome) {
+            return (react_1.default.createElement("a", { onClick: goToHome, href: "#", className: className }, content));
+        }
+        return react_1.default.createElement("span", { className: className }, content);
+    };
+    return (wrapper(react_1.default.createElement("img", { src: iconOnly ? 'static/img/icon.svg' : 'static/img/logo.svg', alt: "logo" })));
 };
 exports["default"] = Logo;
 
@@ -853,6 +888,7 @@ const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modu
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 const Logo_1 = __importDefault(__webpack_require__(/*! @components/base/Logo */ "./src/components/base/Logo.tsx"));
 const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
+const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
@@ -867,17 +903,18 @@ const PublicHeader = () => {
             },
         });
     });
-    const goToAboutPage = () => {
-        routerHistory.push('/about');
+    const goToPage = (path) => {
+        routerHistory.push(path);
     };
+    const enableSignup = api_1.default.getVar('ENABLE_SIGNUP') === true;
     return (react_1.default.createElement("header", { className: "bg-gray-100 px-6" },
         react_1.default.createElement("div", { className: "flex container mx-auto py-2" },
             react_1.default.createElement("div", { className: "grow" },
                 react_1.default.createElement(Logo_1.default, { className: "w-[100px] md:w-[135px] block" })),
             react_1.default.createElement("div", null,
                 react_1.default.createElement("div", { className: "inline-flex mt-2" },
-                    react_1.default.createElement(Button_1.default, { onClick: loginWithRedirect, size: "med", variant: "unfilled", className: "whitespace-nowrap md:mr-2 mr-4" }, "Sign In"),
-                    react_1.default.createElement(Button_1.default, { size: "med", variant: "filled", style: "primary", className: "whitespace-nowrap" }, "Sign Up"))))));
+                    react_1.default.createElement(Button_1.default, { onClick: handleLogin, size: "med", variant: "unfilled", className: "whitespace-nowrap md:mr-2 mr-4" }, "Sign In"),
+                    enableSignup && react_1.default.createElement(Button_1.default, { size: "med", variant: "filled", style: "primary", className: "whitespace-nowrap", onClick: () => goToPage('/signup') }, "Sign Up"))))));
 };
 exports["default"] = PublicHeader;
 
@@ -1066,6 +1103,31 @@ exports["default"] = Page;
 
 /***/ }),
 
+/***/ "./src/components/pages/Builder.tsx":
+/*!******************************************!*\
+  !*** ./src/components/pages/Builder.tsx ***!
+  \******************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const Prompt_1 = __importDefault(__webpack_require__(/*! @components/Prompt */ "./src/components/Prompt.tsx"));
+const Builder_1 = __importDefault(__webpack_require__(/*! @components/pages/public/Builder */ "./src/components/pages/public/Builder.tsx"));
+const Page = () => {
+    const { user } = (0, auth0_react_1.useAuth0)();
+    return (react_1.default.createElement(Layout_1.default, null, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Builder_1.default, null)));
+};
+exports["default"] = Page;
+
+
+/***/ }),
+
 /***/ "./src/components/pages/Callback.tsx":
 /*!*******************************************!*\
   !*** ./src/components/pages/Callback.tsx ***!
@@ -1215,6 +1277,26 @@ exports["default"] = Page;
 
 /***/ }),
 
+/***/ "./src/components/pages/public/Builder.tsx":
+/*!*************************************************!*\
+  !*** ./src/components/pages/public/Builder.tsx ***!
+  \*************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Page = () => {
+    return (react_1.default.createElement("div", null, "Public Builder"));
+};
+exports["default"] = Page;
+
+
+/***/ }),
+
 /***/ "./src/components/pages/public/Index.tsx":
 /*!***********************************************!*\
   !*** ./src/components/pages/public/Index.tsx ***!
@@ -1262,6 +1344,30 @@ const Page = () => {
             react_1.default.createElement("img", { src: "static/img/4.png", alt: "image 4", className: imgClassName }),
             react_1.default.createElement("img", { src: "static/img/5.png", alt: "image 5", className: imgClassName }),
             react_1.default.createElement("img", { src: "static/img/6.png", alt: "image 6", className: imgClassName }))));
+};
+exports["default"] = Page;
+
+
+/***/ }),
+
+/***/ "./src/components/pages/public/SignUp.tsx":
+/*!************************************************!*\
+  !*** ./src/components/pages/public/SignUp.tsx ***!
+  \************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
+const Page = () => {
+    return (react_1.default.createElement(Layout_1.default, null,
+        react_1.default.createElement("div", { className: "text-center py-12" },
+            react_1.default.createElement("h2", { className: "text-2xl" }, "Signups are currently closed to the public."),
+            react_1.default.createElement("p", null, "Stay tuned! We'll be opening up soon."))));
 };
 exports["default"] = Page;
 

@@ -9,6 +9,7 @@ import Avatar from '@components/base/Avatar'
 import Logo from '@components/base/Logo'
 import Button from '@components/base/Button'
 import AppContext from '@src/appContext'
+import ApiService from '@api/api'
 
 function classNames(...classes:any) {
   return classes.filter(Boolean).join(' ')
@@ -27,9 +28,11 @@ const PublicHeader = () => {
     })
   }
 
-  const goToAboutPage = () => {
-    routerHistory.push('/about')
+  const goToPage = (path:string) => {
+    routerHistory.push(path)
   }
+
+  const enableSignup = ApiService.getVar('ENABLE_SIGNUP') === true
   return (
     <header className="bg-gray-100 px-6">
       <div className="flex container mx-auto py-2">
@@ -39,20 +42,21 @@ const PublicHeader = () => {
         <div>
           <div className="inline-flex mt-2">
             <Button
-              onClick={loginWithRedirect}
+              onClick={handleLogin}
               size="med"
               variant="unfilled"
               className="whitespace-nowrap md:mr-2 mr-4"
             >
               Sign In
             </Button>
-            <Button
+            {enableSignup && <Button
               size="med"
               variant="filled"
               style="primary"
               className="whitespace-nowrap"
+              onClick={() => goToPage('/signup')}
             >Sign Up
-            </Button>
+            </Button>}
           </div>
         </div>
       </div>
