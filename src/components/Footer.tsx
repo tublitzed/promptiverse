@@ -1,4 +1,5 @@
 import React from 'react'
+import clsx from 'clsx'
 import { useLocation, useHistory } from 'react-router-dom'
 import Logo from '@components/base/Logo'
 import { useAuth0 } from '@auth0/auth0-react'
@@ -6,7 +7,11 @@ import ApiService from '@api/api'
 
 const Footer: React.FC = () => {
   const routerHistory = useHistory()
-  const linkStyle = 'text-sm text-red-400 mx-2 md:mx-10 hover:underline pt-2'
+  const location = useLocation()
+
+  const baseLinkStyle = 'text-sm text-red-400 mx-2 md:mx-10 pt-2'
+  const activeLinkStyle = 'underline hover:no-underline'
+  const inactiveLinkStyle = 'hover:underline'
   const { loginWithRedirect } = useAuth0()
 
   const goToPage = (path:string) => {
@@ -28,21 +33,30 @@ const Footer: React.FC = () => {
       <div className="flex container mx-auto justify-center">
         <a
           href=""
-          className={linkStyle}
+          className={clsx(
+            baseLinkStyle,
+            location.pathname === '/' ? activeLinkStyle : inactiveLinkStyle,
+          )}
           onClick={() => goToPage('/')}
         >
         Home
         </a>
         <a
           href=""
-          className={linkStyle}
+          className={clsx(
+            baseLinkStyle,
+            location.pathname === '/builder' ? activeLinkStyle : inactiveLinkStyle,
+          )}
           onClick={() => goToPage('/builder')}
         >
         Builder
         </a>
         <a
           href=""
-          className={linkStyle}
+          className={clsx(
+            baseLinkStyle,
+            location.pathname === '/about' ? activeLinkStyle : inactiveLinkStyle,
+          )}
           onClick={() => goToPage('/about')}
         >
         About
@@ -53,17 +67,22 @@ const Footer: React.FC = () => {
             linkedToHome={false}
           />
         </div>
-
         <a
           href=""
-          className={linkStyle}
+          className={clsx(
+            baseLinkStyle,
+            location.pathname === '/signin' ? activeLinkStyle : inactiveLinkStyle,
+          )}
           onClick={handleLogin}
         >
         Sign In
         </a>
         {enableSignup && <a
           href=""
-          className={linkStyle}
+          className={clsx(
+            baseLinkStyle,
+            location.pathname === '/signup' ? activeLinkStyle : inactiveLinkStyle,
+          )}
           onClick={() => goToPage('/signup')}
         >
         Sign Up

@@ -75,8 +75,8 @@ export const App: React.FC = () => {
         <Route path="/builder" component={BuilderPage} />
         <Route path="/signup" component={SignUpPage} />
         <Route path="/sign-up" component={SignUpPage} />
+        <Route path="/about" component={AboutPage} />
         <ProtectedRoute path="/profile" component={ProfilePage} />
-        <ProtectedRoute path="/about" component={AboutPage} />
         <ProtectedRoute path="/images" component={ImagesPage} />
         <ProtectedRoute path="/sandbox" component={SandboxPage} />
         <Route path="/callback" component={CallbackPage} />

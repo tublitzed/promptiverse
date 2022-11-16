@@ -20,7 +20,7 @@ const Logo = ({
   const wrapper = (content: React.ReactNode) => {
     if (linkedToHome) {
       return (
-        <a onClick={goToHome} href="#" className={className}>
+        <a onClick={goToHome} className={className}>
           {content}
         </a>
       )

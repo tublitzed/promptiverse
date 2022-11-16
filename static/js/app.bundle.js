@@ -102,8 +102,8 @@ const App = () => {
             react_1.default.createElement(react_router_dom_1.Route, { path: "/builder", component: Builder_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/signup", component: SignUp_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/sign-up", component: SignUp_1.default }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/about", component: About_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/profile", component: Profile_1.default }),
-            react_1.default.createElement(ProtectedRoute_1.default, { path: "/about", component: About_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/images", component: Images_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/sandbox", component: Sandbox_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/callback", component: Callback_1.default }),
@@ -338,13 +338,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 const Logo_1 = __importDefault(__webpack_require__(/*! @components/base/Logo */ "./src/components/base/Logo.tsx"));
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
 const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 const Footer = () => {
     const routerHistory = (0, react_router_dom_1.useHistory)();
-    const linkStyle = 'text-sm text-red-400 mx-2 md:mx-10 hover:underline pt-2';
+    const location = (0, react_router_dom_1.useLocation)();
+    const baseLinkStyle = 'text-sm text-red-400 mx-2 md:mx-10 pt-2';
+    const activeLinkStyle = 'underline hover:no-underline';
+    const inactiveLinkStyle = 'hover:underline';
     const { loginWithRedirect } = (0, auth0_react_1.useAuth0)();
     const goToPage = (path) => {
         routerHistory.push(path);
@@ -360,13 +364,13 @@ const Footer = () => {
     const enableSignup = api_1.default.getVar('ENABLE_SIGNUP') === true;
     return (react_1.default.createElement("footer", { className: "bg-red-50 p-6 mt-12 border-t border-red-100" },
         react_1.default.createElement("div", { className: "flex container mx-auto justify-center" },
-            react_1.default.createElement("a", { href: "", className: linkStyle, onClick: () => goToPage('/') }, "Home"),
-            react_1.default.createElement("a", { href: "", className: linkStyle, onClick: () => goToPage('/builder') }, "Builder"),
-            react_1.default.createElement("a", { href: "", className: linkStyle, onClick: () => goToPage('/about') }, "About"),
+            react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/') }, "Home"),
+            react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/builder' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/builder') }, "Builder"),
+            react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/about' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/about') }, "About"),
             react_1.default.createElement("div", { className: "pt-1 w-10 md:w-12 md:pt-0 mx-2 md:mx-8" },
                 react_1.default.createElement(Logo_1.default, { iconOnly: true, linkedToHome: false })),
-            react_1.default.createElement("a", { href: "", className: linkStyle, onClick: handleLogin }, "Sign In"),
-            enableSignup && react_1.default.createElement("a", { href: "", className: linkStyle, onClick: () => goToPage('/signup') }, "Sign Up"))));
+            react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/signin' ? activeLinkStyle : inactiveLinkStyle), onClick: handleLogin }, "Sign In"),
+            enableSignup && react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/signup' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/signup') }, "Sign Up"))));
 };
 exports["default"] = Footer;
 
@@ -750,7 +754,7 @@ const Logo = ({ className, iconOnly = false, linkedToHome = true, }) => {
     };
     const wrapper = (content) => {
         if (linkedToHome) {
-            return (react_1.default.createElement("a", { onClick: goToHome, href: "#", className: className }, content));
+            return (react_1.default.createElement("a", { onClick: goToHome, className: className }, content));
         }
         return react_1.default.createElement("span", { className: className }, content);
     };
