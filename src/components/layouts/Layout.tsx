@@ -7,11 +7,23 @@ import Footer from '@components/Footer'
 
 export interface Props {
   children: React.ReactNode
-  page?: 'INDEX' | 'CUSTOM'
+  page?: 'INDEX' | 'CUSTOM',
+  pageTitle?: string
 }
 
-const Layout = ({ children, page }:Props): JSX.Element => {
+const Layout = ({
+  children,
+  page,
+  pageTitle,
+}:Props): JSX.Element => {
   const { user } = useAuth0()
+
+  React.useEffect(() => {
+    if (pageTitle) {
+      window.document.title = `Promptiverse | ${pageTitle}`
+    }
+  }, [pageTitle])
+
 
   if (!user) {
     return (

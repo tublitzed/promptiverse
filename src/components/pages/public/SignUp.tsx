@@ -3,7 +3,7 @@ import Layout from "@components/layouts/Layout";
 
 const Page = () => {
   return (
-    <Layout>
+    <Layout pageTitle="Sign Up">
       <div className="text-center py-12">
         <h2 className="text-2xl">
           Signups are currently closed to the public.

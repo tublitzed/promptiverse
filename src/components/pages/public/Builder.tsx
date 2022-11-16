@@ -1,10 +1,10 @@
 import React from 'react'
 import Layout from '@components/layouts/Layout'
-
+import PromptComponent from '@components/Prompt'
 const Page = () => {
   return (
-    <div>
-      Public Builder
+    <div className="mt-6">
+      <PromptComponent />
     </div>
   )
 }

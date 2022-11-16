@@ -22,3 +22,15 @@ def all_tags():
             "tags": list(tags.dicts()),
         }
     )
+
+@bp.route("/public", methods=["GET"])
+def all_public_tags():
+    # TODO: limit for non-auth
+    tag_categories = get_all_tag_categories()
+    tags = get_all_tags()
+    return jsonify(
+        {
+            "categories": list(tag_categories.dicts()),
+            "tags": list(tags.dicts()),
+        }
+    )

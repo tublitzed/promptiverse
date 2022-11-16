@@ -3,7 +3,7 @@ import Layout from '@components/layouts/Layout'
 
 const Page = () => {
   return (
-    <Layout>
+    <Layout pageTitle="About">
       <h1>About</h1>
       <p>Credits</p>
       <p>Powered by the <a href="https://github.com/Stability-AI/stability-sdk">Stability-AI SDK</a></p>

@@ -211,6 +211,13 @@ const ApiService = {
             },
         });
     },
+    publicRequest: ({ method = 'GET', path, postBody, }) => {
+        const apiUrl = `${ApiService.getVar('API_SERVER_URL')}/api`;
+        return (0, fetch_1.default)(`${apiUrl}${path}`, {
+            method,
+            postBody,
+        });
+    },
     getVar: (name) => {
         if (!window.promptiverse || !window.promptiverse.vars) {
             return undefined;
@@ -218,9 +225,20 @@ const ApiService = {
         return window.promptiverse.vars[name];
     },
     generateImage: ({ accessToken, promptRaw, seed, tagIds = [], }) => {
-        return ApiService.request({
-            accessToken,
-            path: '/prompt',
+        if (accessToken) {
+            return ApiService.request({
+                accessToken,
+                path: '/prompt',
+                method: 'POST',
+                postBody: {
+                    prompt_raw: promptRaw,
+                    seed,
+                    tag_ids: tagIds,
+                },
+            });
+        }
+        return ApiService.publicRequest({
+            path: '/prompt/public',
             method: 'POST',
             postBody: {
                 prompt_raw: promptRaw,
@@ -236,9 +254,17 @@ const ApiService = {
         }).then(resp => ({ prompts: (0, mappings_1.mapPromptListToTypes)(resp.prompts) }));
     }),
     getTags: (accessToken) => __awaiter(void 0, void 0, void 0, function* () {
-        return ApiService.request({
-            accessToken,
-            path: '/tag',
+        if (accessToken) {
+            return ApiService.request({
+                accessToken,
+                path: '/tag',
+            }).then(resp => ({
+                tags: (0, mappings_1.mapTagListToTypes)(resp.tags),
+                categories: resp.categories,
+            }));
+        }
+        return ApiService.publicRequest({
+            path: '/tag/public',
         }).then(resp => ({
             tags: (0, mappings_1.mapTagListToTypes)(resp.tags),
             categories: resp.categories,
@@ -467,7 +493,7 @@ const PromptComponent = () => {
         setPrompt(Object.assign(Object.assign({}, prompt), { loading: true }));
         const response = yield api_1.default.generateImage({
             promptRaw: prompt.promptRaw,
-            accessToken: user.access_token,
+            accessToken: user === null || user === void 0 ? void 0 : user.access_token,
             seed,
             tagIds: (0, Tags_1.getSelectedTagIds)(tags),
         });
@@ -746,6 +772,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 const Logo = ({ className, iconOnly = false, linkedToHome = true, }) => {
     const routerHistory = (0, react_router_dom_1.useHistory)();
@@ -754,7 +781,7 @@ const Logo = ({ className, iconOnly = false, linkedToHome = true, }) => {
     };
     const wrapper = (content) => {
         if (linkedToHome) {
-            return (react_1.default.createElement("a", { onClick: goToHome, className: className }, content));
+            return (react_1.default.createElement("a", { onClick: goToHome, className: (0, clsx_1.default)(className, 'cursor-pointer') }, content));
         }
         return react_1.default.createElement("span", { className: className }, content);
     };
@@ -777,15 +804,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
 const react_2 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 const react_3 = __webpack_require__(/*! @headlessui/react */ "./node_modules/@headlessui/react/dist/index.cjs");
-const outline_1 = __webpack_require__(/*! @heroicons/react/24/outline */ "./node_modules/@heroicons/react/24/outline/esm/index.js");
 const Avatar_1 = __importDefault(__webpack_require__(/*! @components/base/Avatar */ "./src/components/base/Avatar.tsx"));
 const Logo_1 = __importDefault(__webpack_require__(/*! @components/base/Logo */ "./src/components/base/Logo.tsx"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
@@ -797,17 +823,8 @@ const Header = () => {
         });
     };
     const routerHistory = (0, react_router_dom_1.useHistory)();
-    const goToAboutPage = () => {
-        routerHistory.push('/about');
-    };
-    const goToDashboard = () => {
-        routerHistory.push('/');
-    };
-    const goToProfile = () => {
-        routerHistory.push('/profile');
-    };
-    const goToImages = () => {
-        routerHistory.push('/images');
+    const goToPage = (path) => {
+        routerHistory.push(path);
     };
     const { user } = react_1.default.useContext(appContext_1.default);
     const activeNavLinkClassname = 'bg-gray-900 text-white';
@@ -816,51 +833,191 @@ const Header = () => {
     if (!user) {
         return null;
     }
-    return (react_1.default.createElement("header", null,
-        react_1.default.createElement(react_3.Disclosure, { as: "nav", className: "bg-gray-800" }, ({ open }) => (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", { className: "container mx-auto px-8" },
-                react_1.default.createElement("div", { className: "flex h-16 items-center justify-between" },
+    return (react_1.default.createElement("header", { className: "bg-gray-100 px-6" },
+        react_1.default.createElement("div", { className: "flex container mx-auto py-2" },
+            react_1.default.createElement("div", null,
+                react_1.default.createElement(Logo_1.default, { className: "w-[100px] md:w-[135px] block" })),
+            react_1.default.createElement("div", { className: "grow px-12 mt-6" },
+                react_1.default.createElement(Button_1.default, { onClick: () => goToPage('/builder'), size: "med", variant: "unfilled", className: "whitespace-nowrap md:mr-2 mr-4", style: "secondary" }, "Builder"),
+                react_1.default.createElement(Button_1.default, { onClick: () => goToPage('/images'), size: "med", variant: "unfilled", className: "whitespace-nowrap md:mr-2 mr-4", style: "secondary" }, "Images")),
+            react_1.default.createElement("div", null,
+                react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
                     react_1.default.createElement("div", { className: "flex items-center" },
-                        react_1.default.createElement("div", { className: "flex-shrink-0" },
-                            react_1.default.createElement("a", { onClick: goToDashboard },
-                                react_1.default.createElement(Logo_1.default, null))),
-                        react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
-                            react_1.default.createElement("div", { className: "flex space-x-4" },
-                                react_1.default.createElement("a", { onClick: goToDashboard, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
-                                react_1.default.createElement("a", { onClick: goToImages, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname) }, "Images"),
-                                react_1.default.createElement("a", { onClick: goToAboutPage, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")))),
-                    react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
-                        react_1.default.createElement("div", { className: "flex items-center" },
-                            react_1.default.createElement(react_3.Menu, { as: "div", className: "relative ml-3" },
-                                react_1.default.createElement("div", null,
-                                    react_1.default.createElement(react_3.Menu.Button, { className: "flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" },
-                                        react_1.default.createElement("span", { className: "sr-only" }, "Profile"),
-                                        react_1.default.createElement(Avatar_1.default, null))),
-                                react_1.default.createElement(react_3.Transition, { as: react_2.Fragment, enter: "transition ease-out duration-100", enterFrom: "transform opacity-0 scale-95", enterTo: "transform opacity-100 scale-100", leave: "transition ease-in duration-75", leaveFrom: "transform opacity-100 scale-100", leaveTo: "transform opacity-0 scale-95" },
-                                    react_1.default.createElement(react_3.Menu.Items, { className: "absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" },
-                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: goToProfile, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "My Profile"))),
-                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: handleLogout, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "Sign Out")))))))),
-                    react_1.default.createElement("div", { className: "-mr-2 flex sm:hidden" },
-                        react_1.default.createElement(react_3.Disclosure.Button, { className: "inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" },
-                            react_1.default.createElement("span", { className: "sr-only" }, "Open main menu"),
-                            open
-                                ? (react_1.default.createElement(outline_1.XMarkIcon, { className: "block h-6 w-6", "aria-hidden": "true" }))
-                                : (react_1.default.createElement(outline_1.Bars3Icon, { className: "block h-6 w-6", "aria-hidden": "true" })))))),
-            react_1.default.createElement(react_3.Disclosure.Panel, { className: "sm:hidden" },
-                react_1.default.createElement("div", { className: "space-y-1 px-2 pt-2 pb-3" },
-                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToDashboard, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
-                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToImages, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname) }, "Images"),
-                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToAboutPage, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")),
-                react_1.default.createElement("div", { className: "border-t border-gray-700 pt-4 pb-3" },
-                    react_1.default.createElement("div", { className: "flex items-center px-5" },
-                        react_1.default.createElement("div", { className: "flex-shrink-0" },
-                            react_1.default.createElement(Avatar_1.default, null)),
-                        react_1.default.createElement("div", { className: "ml-3" },
-                            react_1.default.createElement("div", { className: "text-base font-medium text-white" }, user.nickname),
-                            react_1.default.createElement("div", { className: "text-sm font-medium text-gray-400" }, user.name))),
-                    react_1.default.createElement("div", { className: "mt-3 space-y-1 px-2" },
-                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToProfile, className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer" }, "Your Profile"),
-                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: handleLogout, className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer" }, "Sign Out")))))))));
+                        react_1.default.createElement(react_3.Menu, { as: "div", className: "relative ml-3 mt-6" },
+                            react_1.default.createElement("div", null,
+                                react_1.default.createElement(react_3.Menu.Button, { className: "flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" },
+                                    react_1.default.createElement("span", { className: "sr-only" }, "Profile"),
+                                    react_1.default.createElement(Avatar_1.default, null))),
+                            react_1.default.createElement(react_3.Transition, { as: react_2.Fragment, enter: "transition ease-out duration-100", enterFrom: "transform opacity-0 scale-95", enterTo: "transform opacity-100 scale-100", leave: "transition ease-in duration-75", leaveFrom: "transform opacity-100 scale-100", leaveTo: "transform opacity-0 scale-95" },
+                                react_1.default.createElement(react_3.Menu.Items, { className: "absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" },
+                                    react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: () => goToPage('/profile'), className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "My Profile"))),
+                                    react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: handleLogout, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "Sign Out"))))))))))));
+    // return (
+    //   <header>
+    //     <Disclosure as="nav" className="bg-gray-100">
+    //       {({ open }) => (
+    //         <>
+    //           <div className="flex container mx-auto py-2">
+    //             <div className="flex">
+    //               <div className="grow">
+    //                 <Logo className="w-[100px] md:w-[135px] block" />
+    //                 <div className="hidden sm:ml-6 sm:block">
+    //                   <div className="flex space-x-4">
+    //                     {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
+    //                     <a onClick={goToDashboard} className={clsx(
+    //                       'rounded-md px-3 py-2 text-sm font-medium cursor-pointer',
+    //                       location.pathname === '/' ? activeNavLinkClassname : navLinkClassname,
+    //                     )}>
+    //                     Dashboard
+    //                     </a>
+    //                     <a onClick={goToImages} className={clsx(
+    //                       'rounded-md px-3 py-2 text-sm font-medium cursor-pointer',
+    //                       location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname,
+    //                     )}>
+    //                     Images
+    //                     </a>
+    //                     <a onClick={goToAboutPage} className={clsx(
+    //                       'rounded-md px-3 py-2 text-sm font-medium cursor-pointer',
+    //                       location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname,
+    //                     )}>
+    //                     About
+    //                     </a>
+    //                   </div>
+    //                 </div>
+    //               </div>
+    //               <div className="hidden sm:ml-6 sm:block">
+    //                 <div className="flex items-center">
+    //                   {/* Profile dropdown */}
+    //                   <Menu as="div" className="relative ml-3">
+    //                     <div>
+    //                       <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+    //                         <span className="sr-only">Profile</span>
+    //                         <Avatar />
+    //                       </Menu.Button>
+    //                     </div>
+    //                     <Transition
+    //                       as={Fragment}
+    //                       enter="transition ease-out duration-100"
+    //                       enterFrom="transform opacity-0 scale-95"
+    //                       enterTo="transform opacity-100 scale-100"
+    //                       leave="transition ease-in duration-75"
+    //                       leaveFrom="transform opacity-100 scale-100"
+    //                       leaveTo="transform opacity-0 scale-95"
+    //                     >
+    //                       <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+    //                         <Menu.Item>
+    //                           {({ active }) => (
+    //                             <a
+    //                               onClick={goToProfile}
+    //                               className={classNames(
+    //                                 active ? 'bg-gray-100' : '',
+    //                                 'block px-4 py-2 text-sm text-gray-700 cursor-pointer',
+    //                               )}
+    //                             >
+    //                             My Profile
+    //                             </a>
+    //                           )}
+    //                         </Menu.Item>
+    //                         <Menu.Item>
+    //                           {({ active }) => (
+    //                             <a
+    //                               onClick={handleLogout}
+    //                               className={classNames(
+    //                                 active ? 'bg-gray-100' : '',
+    //                                 'block px-4 py-2 text-sm text-gray-700 cursor-pointer',
+    //                               )}
+    //                             >
+    //                             Sign Out
+    //                             </a>
+    //                           )}
+    //                         </Menu.Item>
+    //                       </Menu.Items>
+    //                     </Transition>
+    //                   </Menu>
+    //                 </div>
+    //               </div>
+    //               <div className="-mr-2 flex sm:hidden">
+    //                 {/* Mobile menu button */}
+    //                 <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+    //                   <span className="sr-only">Open main menu</span>
+    //                   {open
+    //                     ? (
+    //                         <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
+    //                       )
+    //                     : (
+    //                         <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
+    //                       )}
+    //                 </Disclosure.Button>
+    //               </div>
+    //             </div>
+    //           </div>
+    //           <Disclosure.Panel className="sm:hidden">
+    //             <div className="space-y-1 px-2 pt-2 pb-3">
+    //               {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
+    //               <Disclosure.Button
+    //                 as="a"
+    //                 onClick={goToDashboard}
+    //                 className={clsx(
+    //                   'block rounded-md px-3 py-2 text-base font-medium cursor-pointer',
+    //                   location.pathname === '/' ? activeNavLinkClassname : navLinkClassname,
+    //                 )}
+    //               >
+    //               Dashboard
+    //               </Disclosure.Button>
+    //               <Disclosure.Button
+    //                 as="a"
+    //                 onClick={goToImages}
+    //                 className={clsx(
+    //                   'block rounded-md px-3 py-2 text-base font-medium cursor-pointer',
+    //                   location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname,
+    //                 )}
+    //               >
+    //               Images
+    //               </Disclosure.Button>
+    //               <Disclosure.Button
+    //                 as="a"
+    //                 onClick={goToAboutPage}
+    //                 className={clsx(
+    //                   'block rounded-md px-3 py-2 text-base font-medium cursor-pointer',
+    //                   location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname,
+    //                 )}
+    //               >
+    //               About
+    //               </Disclosure.Button>
+    //             </div>
+    //             <div className="border-t border-gray-700 pt-4 pb-3">
+    //               <div className="flex items-center px-5">
+    //                 <div className="flex-shrink-0">
+    //                   <Avatar />
+    //                 </div>
+    //                 <div className="ml-3">
+    //                   <div className="text-base font-medium text-white">{user.nickname}</div>
+    //                   <div className="text-sm font-medium text-gray-400">{user.name}</div>
+    //                 </div>
+    //               </div>
+    //               <div className="mt-3 space-y-1 px-2">
+    //                 <Disclosure.Button
+    //                   as="a"
+    //                   onClick={goToProfile}
+    //                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer"
+    //                 >
+    //                 Your Profile
+    //                 </Disclosure.Button>
+    //                 <Disclosure.Button
+    //                   as="a"
+    //                   onClick={handleLogout}
+    //                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer"
+    //                 >
+    //                 Sign Out
+    //                 </Disclosure.Button>
+    //               </div>
+    //             </div>
+    //           </Disclosure.Panel>
+    //         </>
+    //       )}
+    //     </Disclosure>
+    //   </header>
+    // )
 };
 exports["default"] = Header;
 
@@ -1038,8 +1195,13 @@ const PublicHeader_1 = __importDefault(__webpack_require__(/*! @components/heade
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
 const Hero_1 = __importDefault(__webpack_require__(/*! @components/Hero */ "./src/components/Hero.tsx"));
 const Footer_1 = __importDefault(__webpack_require__(/*! @components/Footer */ "./src/components/Footer.tsx"));
-const Layout = ({ children, page }) => {
+const Layout = ({ children, page, pageTitle, }) => {
     const { user } = (0, auth0_react_1.useAuth0)();
+    react_1.default.useEffect(() => {
+        if (pageTitle) {
+            window.document.title = `Promptiverse | ${pageTitle}`;
+        }
+    }, [pageTitle]);
     if (!user) {
         return (react_1.default.createElement("main", { className: "overflow-x-hidden" },
             react_1.default.createElement("div", { className: "min-h-screen" },
@@ -1095,7 +1257,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
 const Page = () => {
-    return (react_1.default.createElement(Layout_1.default, null,
+    return (react_1.default.createElement(Layout_1.default, { pageTitle: "About" },
         react_1.default.createElement("h1", null, "About"),
         react_1.default.createElement("p", null, "Credits"),
         react_1.default.createElement("p", null,
@@ -1125,7 +1287,7 @@ const Prompt_1 = __importDefault(__webpack_require__(/*! @components/Prompt */ "
 const Builder_1 = __importDefault(__webpack_require__(/*! @components/pages/public/Builder */ "./src/components/pages/public/Builder.tsx"));
 const Page = () => {
     const { user } = (0, auth0_react_1.useAuth0)();
-    return (react_1.default.createElement(Layout_1.default, null, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Builder_1.default, null)));
+    return (react_1.default.createElement(Layout_1.default, { pageTitle: "Builder" }, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Builder_1.default, null)));
 };
 exports["default"] = Page;
 
@@ -1293,8 +1455,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Prompt_1 = __importDefault(__webpack_require__(/*! @components/Prompt */ "./src/components/Prompt.tsx"));
 const Page = () => {
-    return (react_1.default.createElement("div", null, "Public Builder"));
+    return (react_1.default.createElement("div", { className: "mt-6" },
+        react_1.default.createElement(Prompt_1.default, null)));
 };
 exports["default"] = Page;
 
@@ -1368,7 +1532,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
 const Page = () => {
-    return (react_1.default.createElement(Layout_1.default, null,
+    return (react_1.default.createElement(Layout_1.default, { pageTitle: "Sign Up" },
         react_1.default.createElement("div", { className: "text-center py-12" },
             react_1.default.createElement("h2", { className: "text-2xl" }, "Signups are currently closed to the public."),
             react_1.default.createElement("p", null, "Stay tuned! We'll be opening up soon."))));
@@ -1449,7 +1613,7 @@ const Tags = ({}) => {
         setTags(newTags);
     };
     const loadTags = () => __awaiter(void 0, void 0, void 0, function* () {
-        const resp = yield api_1.default.getTags(user.access_token);
+        const resp = yield api_1.default.getTags(user === null || user === void 0 ? void 0 : user.access_token);
         if (!resp.tags || !resp.categories) {
             setError('Unable to load tags');
             return;
@@ -1467,10 +1631,10 @@ const Tags = ({}) => {
         setTags(tagCollections);
     });
     react_1.default.useEffect(() => {
-        if (user.access_token && !tags) {
+        if (!tags) {
             loadTags();
         }
-    }, [user.access_token]);
+    }, []);
     if (error) {
         return react_1.default.createElement("div", null, error);
     }

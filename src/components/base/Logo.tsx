@@ -1,4 +1,5 @@
 import React from 'react'
+import clsx from 'clsx'
 import { useHistory } from 'react-router-dom'
 
 interface LogoProps {
@@ -20,7 +21,7 @@ const Logo = ({
   const wrapper = (content: React.ReactNode) => {
     if (linkedToHome) {
       return (
-        <a onClick={goToHome} className={className}>
+        <a onClick={goToHome} className={clsx(className, 'cursor-pointer')}>
           {content}
         </a>
       )

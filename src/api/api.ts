@@ -13,7 +13,7 @@ window.promptiverse = window.promptiverse || {}
 
 interface GenerateImageArgs {
   promptRaw: string
-  accessToken: string
+  accessToken?: string
   seed?: number
   tagIds?: string[]
 }
@@ -25,6 +25,11 @@ interface ApiRequest {
   postBody?: any
 }
 
+interface PublicApiRequest extends Partial<ApiRequest> {
+  method?: ApiRequest['method'],
+  path: string
+  postBody?: any
+}
 const ApiService = {
   request: ({
     accessToken,
@@ -42,6 +47,18 @@ const ApiService = {
     })
   },
 
+  publicRequest: ({
+    method = 'GET',
+    path,
+    postBody,
+  }:PublicApiRequest) => {
+    const apiUrl = `${ApiService.getVar('API_SERVER_URL')}/api`
+    return fetcher(`${apiUrl}${path}`, {
+      method,
+      postBody,
+    })
+  },
+
   getVar: (name: any) => {
     if (!window.promptiverse || !window.promptiverse.vars) {
       return undefined
@@ -55,9 +72,20 @@ const ApiService = {
     seed,
     tagIds = [],
   }:GenerateImageArgs):Promise<{ prompt: PromptApiResponse }> => {
-    return ApiService.request({
-      accessToken,
-      path: '/prompt',
+    if (accessToken) {
+      return ApiService.request({
+        accessToken,
+        path: '/prompt',
+        method: 'POST',
+        postBody: {
+          prompt_raw: promptRaw,
+          seed,
+          tag_ids: tagIds,
+        },
+      })
+    }
+    return ApiService.publicRequest({
+      path: '/prompt/public',
       method: 'POST',
       postBody: {
         prompt_raw: promptRaw,
@@ -74,10 +102,19 @@ const ApiService = {
     }).then(resp => ({ prompts: mapPromptListToTypes(resp.prompts) }))
   },
 
-  getTags: async (accessToken: string):Promise<{ tags: Tag[], categories: TagCategory[]}> => {
-    return ApiService.request({
-      accessToken,
-      path: '/tag',
+  getTags: async (accessToken?: string):Promise<{ tags: Tag[], categories: TagCategory[]}> => {
+    if (accessToken) {
+      return ApiService.request({
+        accessToken,
+        path: '/tag',
+      }).then(resp => ({
+        tags: mapTagListToTypes(resp.tags),
+        categories: resp.categories,
+      }))
+    }
+
+    return ApiService.publicRequest({
+      path: '/tag/public',
     }).then(resp => ({
       tags: mapTagListToTypes(resp.tags),
       categories: resp.categories,

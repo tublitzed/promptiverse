@@ -18,7 +18,7 @@ const PromptComponent = () => {
     })
     const response = await Api.generateImage({
       promptRaw: prompt.promptRaw,
-      accessToken: user.access_token,
+      accessToken: user?.access_token,
       seed,
       tagIds: getSelectedTagIds(tags),
     })
@@ -41,7 +41,6 @@ const PromptComponent = () => {
     LocalStorage.setPrompt(newPromptVal)
     LocalStorage.setTags(tags)
   }
-
 
   const setPromptRaw = (newVal:string) => {
     setPrompt({
