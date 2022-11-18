@@ -39,7 +39,7 @@ const Header = () => {
   }
 
   return (
-    <header className="bg-gray-100 px-6">
+    <header className="bg-gray-100 px-8">
       <div className="flex container mx-auto py-2">
         <div>
           <Logo className="w-[100px] md:w-[135px] block" />

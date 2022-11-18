@@ -33,6 +33,7 @@ const Button = ({
       ? 'text-red-600 hover:text-red-700 ring-offset-2 hover:ring hover:ring-red-700 focus:ring-red-800 focus:text-red-800'
       : '',
     'font-medium rounded-lg',
+    'h-fit',
     size === 'med' ? 'py-2 px-6' : '',
     size === 'lg' ? 'text-lg py-2 px-10' : '',
   )

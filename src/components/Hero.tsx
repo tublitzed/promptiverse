@@ -14,9 +14,9 @@ const Hero: React.FC = () => {
     routerHistory.push(path)
   }
   return (
-    <div className="h-[500px] bg-red-900 px-6">
-      <div className="container mx-auto grid sm:grid-cols-3 text-white">
-        <div className="col-span-1 mt-24 md:mt-36">
+    <div className="h-[500px] bg-gray-900">
+      <div className="container mx-auto grid grid-cols-3 text-white">
+        <div className="col-span-3 md:col-span-2 lg:col-span-1 mt-20 lg:mt-32 px-6">
           <h1 className="text-4xl font-bold">The future of generative images starts here</h1>
           <h4 className="text-xl mt-2">Use our builder to explore the magic of AI imagery for free.</h4>
           <Button

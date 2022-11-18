@@ -10,8 +10,13 @@ import LocalStorage from '@utils/localStorage'
 const PromptComponent = () => {
   const { setPrompt, prompt, user, tags } = React.useContext(AppContext)
   const [seed, setSeed] = React.useState<number | undefined>(prompt?.seed)
+  const [promptRawError, setPromptRawError] = React.useState<string>()
 
   const submit = async () => {
+    console.log(prompt, prompt?.promptRaw)
+    if (!prompt || !prompt?.promptRaw || prompt.promptRaw === '') {
+      return setPromptRawError('Missing required prompt.')
+    }
     setPrompt({
       ...prompt,
       loading: true,
@@ -47,6 +52,7 @@ const PromptComponent = () => {
       ...prompt,
       promptRaw: newVal,
     })
+    setPromptRawError('')
   }
 
   return (
@@ -59,6 +65,7 @@ const PromptComponent = () => {
           placeholder="enter a prompt, like 'cat dancing on the moon'"
           disabled={prompt?.loading}
           autoFocus
+          error={promptRawError}
         />
         <Input
           className="w-24"
@@ -77,8 +84,7 @@ const PromptComponent = () => {
         <Button
           onClick={submit}
           disabled={prompt?.loading}
-          className="min-w-[150px]"
-        >Go!</Button>
+        >Generate Image</Button>
       </div>
       <Tags />
       <div>

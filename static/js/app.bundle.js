@@ -423,9 +423,9 @@ const Hero = () => {
     const goToPage = (path) => {
         routerHistory.push(path);
     };
-    return (react_1.default.createElement("div", { className: "h-[500px] bg-red-900 px-6" },
-        react_1.default.createElement("div", { className: "container mx-auto grid sm:grid-cols-3 text-white" },
-            react_1.default.createElement("div", { className: "col-span-1 mt-24 md:mt-36" },
+    return (react_1.default.createElement("div", { className: "h-[500px] bg-gray-900" },
+        react_1.default.createElement("div", { className: "container mx-auto grid grid-cols-3 text-white" },
+            react_1.default.createElement("div", { className: "col-span-3 md:col-span-2 lg:col-span-1 mt-20 lg:mt-32 px-6" },
                 react_1.default.createElement("h1", { className: "text-4xl font-bold" }, "The future of generative images starts here"),
                 react_1.default.createElement("h4", { className: "text-xl mt-2" }, "Use our builder to explore the magic of AI imagery for free."),
                 react_1.default.createElement(Button_1.default, { size: "lg", className: "mt-6", onClick: () => goToPage('/builder') }, "Get Started")))));
@@ -489,7 +489,12 @@ const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStora
 const PromptComponent = () => {
     const { setPrompt, prompt, user, tags } = react_1.default.useContext(appContext_1.default);
     const [seed, setSeed] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.seed);
+    const [promptRawError, setPromptRawError] = react_1.default.useState();
     const submit = () => __awaiter(void 0, void 0, void 0, function* () {
+        console.log(prompt, prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw);
+        if (!prompt || !(prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw) || prompt.promptRaw === '') {
+            return setPromptRawError('Missing required prompt.');
+        }
         setPrompt(Object.assign(Object.assign({}, prompt), { loading: true }));
         const response = yield api_1.default.generateImage({
             promptRaw: prompt.promptRaw,
@@ -510,10 +515,11 @@ const PromptComponent = () => {
     });
     const setPromptRaw = (newVal) => {
         setPrompt(Object.assign(Object.assign({}, prompt), { promptRaw: newVal }));
+        setPromptRawError('');
     };
     return (react_1.default.createElement("div", null,
         react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
-            react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw) || '', onChange: setPromptRaw, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading, autoFocus: true }),
+            react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw) || '', onChange: setPromptRaw, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading, autoFocus: true, error: promptRawError }),
             react_1.default.createElement(Input_1.default, { className: "w-24", placeholder: "Seed?", value: seed, type: "number", onChange: (value) => {
                     const possibleNumber = typeof value === 'string' ? parseInt(value.trim(), 10) : undefined;
                     if (typeof possibleNumber === 'number' && !isNaN(possibleNumber)) {
@@ -521,7 +527,7 @@ const PromptComponent = () => {
                     }
                     setSeed(undefined);
                 }, disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading }),
-            react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading, className: "min-w-[150px]" }, "Go!")),
+            react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading }, "Generate Image")),
         react_1.default.createElement(Tags_1.default, null),
         react_1.default.createElement("div", null,
             react_1.default.createElement(PromptImage_1.default, null))));
@@ -677,7 +683,7 @@ const Button = ({ children, download, href, onClick, disabled, className, style 
         ? 'text-white bg-red-500 ring ring-offset-2 ring-transparent hover:ring-red-400 hover:bg-red-600 focus:ring-red-600 focus:bg-red-700'
         : '', variant === 'unfilled' && style === 'primary'
         ? 'text-red-600 hover:text-red-700 ring-offset-2 hover:ring hover:ring-red-700 focus:ring-red-800 focus:text-red-800'
-        : '', 'font-medium rounded-lg', size === 'med' ? 'py-2 px-6' : '', size === 'lg' ? 'text-lg py-2 px-10' : '');
+        : '', 'font-medium rounded-lg', 'h-fit', size === 'med' ? 'py-2 px-6' : '', size === 'lg' ? 'text-lg py-2 px-10' : '');
     if (href) {
         return (react_1.default.createElement("a", { onClick: onClick, className: `${cssClasses} inline-block`, href: href, download: download }, children));
     }
@@ -713,7 +719,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
 const Input = (_a) => {
-    var { className, type, value: valueViaProps, autoFocus, onChange, disabled } = _a, otherProps = __rest(_a, ["className", "type", "value", "autoFocus", "onChange", "disabled"]);
+    var { className, type, value: valueViaProps, autoFocus, onChange, disabled, error } = _a, otherProps = __rest(_a, ["className", "type", "value", "autoFocus", "onChange", "disabled", "error"]);
     const inputRef = react_1.default.useRef(null);
     const [value, setValue] = react_1.default.useState(valueViaProps || '');
     react_1.default.useEffect(() => {
@@ -727,12 +733,14 @@ const Input = (_a) => {
         autoFocus,
         valueViaProps,
     ]);
-    return (react_1.default.createElement("input", Object.assign({ value: value, ref: inputRef, disabled: disabled, type: type || 'string', onChange: (e) => {
-            setValue(e.target.value);
-            if (onChange) {
-                onChange(e.target.value);
-            }
-        }, className: (0, clsx_1.default)(className, 'p-2 rounded-sm', disabled ? 'bg-gray-300 text-gray-500' : 'bg-gray-200 text-gray-700 cursor:pointer', 'focus:bg-white focus:outline-none focus:ring focus:ring-blue-200') }, otherProps)));
+    return (react_1.default.createElement("div", { className: className },
+        react_1.default.createElement("input", Object.assign({ value: value, ref: inputRef, disabled: disabled, type: type || 'string', onChange: (e) => {
+                setValue(e.target.value);
+                if (onChange) {
+                    onChange(e.target.value);
+                }
+            }, className: (0, clsx_1.default)('p-2 rounded-sm w-full', disabled ? 'bg-gray-300 text-gray-500' : 'text-gray-700 cursor:pointer', 'focus:bg-white focus:outline-none focus:ring focus:ring-blue-200', error && 'bg-red-50 border-red-500 border', !disabled && !error && 'bg-gray-200') }, otherProps)),
+        error && react_1.default.createElement("div", { className: "text-red-500 font-semibold mt-1" }, error)));
 };
 exports["default"] = Input;
 
@@ -792,6 +800,28 @@ exports["default"] = Logo;
 
 /***/ }),
 
+/***/ "./src/components/base/PageTitle.tsx":
+/*!*******************************************!*\
+  !*** ./src/components/base/PageTitle.tsx ***!
+  \*******************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const PageTitle = ({ title, subtitle, }) => {
+    return (react_1.default.createElement("div", { className: "pt-4 pb-2 border-b" },
+        react_1.default.createElement("h2", { className: "text-xl text-gray-700" }, title),
+        subtitle && react_1.default.createElement("h3", { className: "text-lg text-gray-500" }, subtitle)));
+};
+exports["default"] = PageTitle;
+
+
+/***/ }),
+
 /***/ "./src/components/headers/Header.tsx":
 /*!*******************************************!*\
   !*** ./src/components/headers/Header.tsx ***!
@@ -833,7 +863,7 @@ const Header = () => {
     if (!user) {
         return null;
     }
-    return (react_1.default.createElement("header", { className: "bg-gray-100 px-6" },
+    return (react_1.default.createElement("header", { className: "bg-gray-100 px-8" },
         react_1.default.createElement("div", { className: "flex container mx-auto py-2" },
             react_1.default.createElement("div", null,
                 react_1.default.createElement(Logo_1.default, { className: "w-[100px] md:w-[135px] block" })),
@@ -1068,8 +1098,8 @@ const PublicHeader = () => {
         routerHistory.push(path);
     };
     const enableSignup = api_1.default.getVar('ENABLE_SIGNUP') === true;
-    return (react_1.default.createElement("header", { className: "bg-gray-100 px-6" },
-        react_1.default.createElement("div", { className: "flex container mx-auto py-2" },
+    return (react_1.default.createElement("header", { className: "bg-gray-100 px-8" },
+        react_1.default.createElement("div", { className: "flex container mx-auto py-2 px-6" },
             react_1.default.createElement("div", { className: "grow" },
                 react_1.default.createElement(Logo_1.default, { className: "w-[100px] md:w-[135px] block" })),
             react_1.default.createElement("div", null,
@@ -1456,8 +1486,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Prompt_1 = __importDefault(__webpack_require__(/*! @components/Prompt */ "./src/components/Prompt.tsx"));
+const PageTitle_1 = __importDefault(__webpack_require__(/*! @components/base/PageTitle */ "./src/components/base/PageTitle.tsx"));
 const Page = () => {
-    return (react_1.default.createElement("div", { className: "mt-6" },
+    return (react_1.default.createElement("div", null,
+        react_1.default.createElement(PageTitle_1.default, { title: "Builder" }),
+        react_1.default.createElement("p", { className: "text-gray-500 py-2 mt-2" }, "Build your own images by typing a simple prompt here:"),
         react_1.default.createElement(Prompt_1.default, null)));
 };
 exports["default"] = Page;
