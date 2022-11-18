@@ -16,6 +16,7 @@ bp_name = "base"
 bp_url_prefix = "/"
 bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
 
+
 def render_static():
     cache_buster = random.randint(0, 1000000000)
     app_vars = {

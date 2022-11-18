@@ -55,11 +55,16 @@ def save(
         user_id=user_id,
     )
 
+
 def get_by_user(user_id):
-    return Prompt.select(
-        Prompt.id,
-        Prompt.created_at,
-        Prompt.img_url,
-        Prompt.prompt,
-        Prompt.seed,
-    ).where(Prompt.user_id == user_id).order_by(Prompt.created_at.desc())
+    return (
+        Prompt.select(
+            Prompt.id,
+            Prompt.created_at,
+            Prompt.img_url,
+            Prompt.prompt,
+            Prompt.seed,
+        )
+        .where(Prompt.user_id == user_id)
+        .order_by(Prompt.created_at.desc())
+    )

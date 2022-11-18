@@ -15,8 +15,7 @@ def seed_tag_categories():
             if row_count != 0:  # skip header row
                 print(row)
                 create_tag_category(
-                    value=row[1],
-                    label=row[0],
+                    value=row[1], label=row[0], is_public=row[2] == "True"
                 )
             row_count = row_count + 1
 

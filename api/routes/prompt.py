@@ -11,6 +11,7 @@ bp_name = "api-prompt"
 bp_url_prefix = "/api/prompt"
 bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
 
+
 @bp.route("/public", methods=["POST", "OPTIONS"])
 def public():
     request_data = request.get_json()
@@ -48,7 +49,8 @@ def public():
     #         }
     #     }
     # )
-    return (jsonify({"prompt_raw":prompt_raw}), 200)
+    return (jsonify({"prompt_raw": prompt_raw}), 200)
+
 
 @bp.route("", methods=["POST", "OPTIONS"])
 @requires_auth
@@ -90,12 +92,14 @@ def post():
     )
     return (prompt_response, 201)
 
+
 @bp.route("", methods=["GET"])
 @requires_auth
 def get():
-    user_id=user.get_user_id(user_info=user.get_user_info())
+    user_id = user.get_user_id(user_info=user.get_user_info())
     prompts = list(get_by_user(user_id).dicts())
     return (jsonify({"prompts": prompts}), 200)
+
 
 # http://localhost:5002/api/prompt/authtest
 @bp.route("/authtest", methods=["POST", "GET"])
