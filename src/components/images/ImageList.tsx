@@ -4,16 +4,20 @@ import AppContext from '@src/appContext'
 import ApiService from '@api/api'
 import { PromptApiResponse } from '@types'
 import ImageListItem from './ImageListItem'
+import { useLocation, useHistory } from 'react-router-dom'
 
 const ImageList = () => {
   const { user } = React.useContext(AppContext)
   const [images, setImages] = React.useState<PromptApiResponse[]>()
+  const routerHistory = useHistory()
 
+  const goToPage = (path:string) => {
+    routerHistory.push(path)
+  }
   React.useEffect(() => {
     const loadImages = async () => {
       // Images are really just prompt objects.
       const resp = await ApiService.getImages(user.access_token)
-
       if (!resp?.prompts) {
         console.log('TODO: errors')
         return
@@ -24,6 +28,14 @@ const ImageList = () => {
       loadImages()
     }
   }, [user])
+
+  if (images && images.length === 0) {
+    return (
+      <div>
+        You have not generated any images yet. <a onClick={() => goToPage('/builder')} className="underline hover:no-underline">Go to the builder</a> to make some.
+      </div>
+    )
+  }
   return (
     <div className="p-6 bg-white rounded mt-6">
       {images
@@ -34,7 +46,7 @@ const ImageList = () => {
                 key={`imageListItem_${img.id}`}
               />)}
           </div>
-        : <Loader />}
+        : <Loader text="Loading images..." />}
     </div>
   )
 }

@@ -6,7 +6,7 @@ import PublicBuilder from '@components/pages/public/Builder'
 const Page: React.FC<{}> = () => {
   const { user } = useAuth0()
   return (
-    <Layout pageTitle="Builder">
+    <Layout pageTitle="Builder" windowTitle="Builder">
       {user ? <Prompt /> : <PublicBuilder />}
     </Layout>
   )

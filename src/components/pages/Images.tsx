@@ -4,7 +4,7 @@ import ImageList from '@components/images/ImageList'
 
 const Page = () => {
   return (
-    <Layout>
+    <Layout pageTitle="Images" windowTitle="Images">
       <ImageList />
     </Layout>
   )

@@ -425,7 +425,7 @@ const Hero = () => {
     };
     return (react_1.default.createElement("div", { className: "h-[500px] bg-gray-900" },
         react_1.default.createElement("div", { className: "container mx-auto grid grid-cols-3 text-white" },
-            react_1.default.createElement("div", { className: "col-span-3 md:col-span-2 lg:col-span-1 mt-20 lg:mt-32 px-6" },
+            react_1.default.createElement("div", { className: "col-span-3 md:col-span-2 lg:col-span-1 mt-20 lg:mt-32 px-8" },
                 react_1.default.createElement("h1", { className: "text-4xl font-bold" }, "The future of generative images starts here"),
                 react_1.default.createElement("h4", { className: "text-xl mt-2" }, "Use our builder to explore the magic of AI imagery for free."),
                 react_1.default.createElement(Button_1.default, { size: "lg", className: "mt-6", onClick: () => goToPage('/builder') }, "Get Started")))));
@@ -486,15 +486,17 @@ const PromptImage_1 = __importDefault(__webpack_require__(/*! ./PromptImage */ "
 const Button_1 = __importDefault(__webpack_require__(/*! ./base/Button */ "./src/components/base/Button.tsx"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
+const Loader_1 = __importDefault(__webpack_require__(/*! ./base/Loader */ "./src/components/base/Loader.tsx"));
 const PromptComponent = () => {
     const { setPrompt, prompt, user, tags } = react_1.default.useContext(appContext_1.default);
     const [seed, setSeed] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.seed);
     const [promptRawError, setPromptRawError] = react_1.default.useState();
+    const [isGenerating, setIsGenerating] = react_1.default.useState(false);
     const submit = () => __awaiter(void 0, void 0, void 0, function* () {
-        console.log(prompt, prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw);
         if (!prompt || !(prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw) || prompt.promptRaw === '') {
             return setPromptRawError('Missing required prompt.');
         }
+        setIsGenerating(true);
         setPrompt(Object.assign(Object.assign({}, prompt), { loading: true }));
         const response = yield api_1.default.generateImage({
             promptRaw: prompt.promptRaw,
@@ -510,6 +512,7 @@ const PromptComponent = () => {
         const newPromptVal = Object.assign(Object.assign({}, response.prompt), { loading: false });
         setPrompt(newPromptVal);
         setSeed(newPromptVal.seed);
+        setIsGenerating(false);
         localStorage_1.default.setPrompt(newPromptVal);
         localStorage_1.default.setTags(tags);
     });
@@ -529,8 +532,11 @@ const PromptComponent = () => {
                 }, disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading }),
             react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading }, "Generate Image")),
         react_1.default.createElement(Tags_1.default, null),
-        react_1.default.createElement("div", null,
-            react_1.default.createElement(PromptImage_1.default, null))));
+        react_1.default.createElement("div", null, isGenerating
+            ?
+                react_1.default.createElement("div", { className: "mt-8" },
+                    react_1.default.createElement(Loader_1.default, { text: "Building your image..." }))
+            : react_1.default.createElement(PromptImage_1.default, null))));
 };
 exports["default"] = PromptComponent;
 
@@ -759,9 +765,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
-const Loader = ({ bgClassName = 'bg-white' }) => {
-    return (react_1.default.createElement("div", { className: (0, clsx_1.default)('bg-gradient-to-r from-slate-300 to-slate-400 h-[3px] w-full', `after:absolute after:h-[3px] after:bg-slate-600 after:left-0 after:right-[100%] after:animate-loader`) }));
+const Loader = ({ text, }) => {
+    return (react_1.default.createElement("div", { className: "flex text-gray-600 font-medium justify-center" },
+        react_1.default.createElement("svg", { className: "animate-spin -ml-1 mr-3 h-5 w-5 text-gray-600", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24" },
+            react_1.default.createElement("circle", { className: "opacity-25", cx: "12", cy: "12", r: "10", stroke: "currentColor", strokeWidth: "4" }),
+            react_1.default.createElement("path", { className: "opacity-75", fill: "currentColor", d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" })),
+        react_1.default.createElement("span", null, text !== null && text !== void 0 ? text : 'Loading...')));
 };
 exports["default"] = Loader;
 
@@ -834,6 +843,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
 const react_2 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
@@ -842,9 +852,6 @@ const Avatar_1 = __importDefault(__webpack_require__(/*! @components/base/Avatar
 const Logo_1 = __importDefault(__webpack_require__(/*! @components/base/Logo */ "./src/components/base/Logo.tsx"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
-function classNames(...classes) {
-    return classes.filter(Boolean).join(' ');
-}
 const Header = () => {
     const { logout } = (0, auth0_react_1.useAuth0)();
     const handleLogout = () => {
@@ -858,196 +865,30 @@ const Header = () => {
     };
     const { user } = react_1.default.useContext(appContext_1.default);
     const activeNavLinkClassname = 'bg-gray-900 text-white';
-    const navLinkClassname = 'text-gray-300 hover:bg-gray-700 hover:text-white';
+    const navLinkClassname = 'text-gray-500 hover:bg-gray-700 hover:text-white';
     const location = (0, react_router_dom_1.useLocation)();
     if (!user) {
         return null;
     }
-    return (react_1.default.createElement("header", { className: "bg-gray-100 px-8" },
-        react_1.default.createElement("div", { className: "flex container mx-auto py-2" },
+    return (react_1.default.createElement("header", { className: "bg-gray-100 px-8 border-b border-b-gray-200 border-t-2 border-t-red-100" },
+        react_1.default.createElement("div", { className: "flex container mx-auto py-2 px-6" },
             react_1.default.createElement("div", null,
                 react_1.default.createElement(Logo_1.default, { className: "w-[100px] md:w-[135px] block" })),
-            react_1.default.createElement("div", { className: "grow px-12 mt-6" },
-                react_1.default.createElement(Button_1.default, { onClick: () => goToPage('/builder'), size: "med", variant: "unfilled", className: "whitespace-nowrap md:mr-2 mr-4", style: "secondary" }, "Builder"),
-                react_1.default.createElement(Button_1.default, { onClick: () => goToPage('/images'), size: "med", variant: "unfilled", className: "whitespace-nowrap md:mr-2 mr-4", style: "secondary" }, "Images")),
+            react_1.default.createElement("div", { className: "grow justify-end flex px-6 mt-6 gap-x-3" },
+                react_1.default.createElement(Button_1.default, { onClick: () => goToPage('/'), size: "med", variant: "unfilled", className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer focus:ring-2 focus:ring-gray-300', (location.pathname === '/' || location.pathname === '/builder') ? activeNavLinkClassname : navLinkClassname), style: "secondary" }, "Builder"),
+                react_1.default.createElement(Button_1.default, { onClick: () => goToPage('/images'), size: "med", variant: "unfilled", className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname), style: "secondary" }, "Images")),
             react_1.default.createElement("div", null,
                 react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
                     react_1.default.createElement("div", { className: "flex items-center" },
                         react_1.default.createElement(react_3.Menu, { as: "div", className: "relative ml-3 mt-6" },
                             react_1.default.createElement("div", null,
-                                react_1.default.createElement(react_3.Menu.Button, { className: "flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" },
+                                react_1.default.createElement(react_3.Menu.Button, { className: "flex rounded-full bg-gray-800 text-sm focus:outline-none ring-2 ring-gray-300 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-800" },
                                     react_1.default.createElement("span", { className: "sr-only" }, "Profile"),
                                     react_1.default.createElement(Avatar_1.default, null))),
                             react_1.default.createElement(react_3.Transition, { as: react_2.Fragment, enter: "transition ease-out duration-100", enterFrom: "transform opacity-0 scale-95", enterTo: "transform opacity-100 scale-100", leave: "transition ease-in duration-75", leaveFrom: "transform opacity-100 scale-100", leaveTo: "transform opacity-0 scale-95" },
                                 react_1.default.createElement(react_3.Menu.Items, { className: "absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" },
-                                    react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: () => goToPage('/profile'), className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "My Profile"))),
-                                    react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: handleLogout, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "Sign Out"))))))))))));
-    // return (
-    //   <header>
-    //     <Disclosure as="nav" className="bg-gray-100">
-    //       {({ open }) => (
-    //         <>
-    //           <div className="flex container mx-auto py-2">
-    //             <div className="flex">
-    //               <div className="grow">
-    //                 <Logo className="w-[100px] md:w-[135px] block" />
-    //                 <div className="hidden sm:ml-6 sm:block">
-    //                   <div className="flex space-x-4">
-    //                     {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
-    //                     <a onClick={goToDashboard} className={clsx(
-    //                       'rounded-md px-3 py-2 text-sm font-medium cursor-pointer',
-    //                       location.pathname === '/' ? activeNavLinkClassname : navLinkClassname,
-    //                     )}>
-    //                     Dashboard
-    //                     </a>
-    //                     <a onClick={goToImages} className={clsx(
-    //                       'rounded-md px-3 py-2 text-sm font-medium cursor-pointer',
-    //                       location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname,
-    //                     )}>
-    //                     Images
-    //                     </a>
-    //                     <a onClick={goToAboutPage} className={clsx(
-    //                       'rounded-md px-3 py-2 text-sm font-medium cursor-pointer',
-    //                       location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname,
-    //                     )}>
-    //                     About
-    //                     </a>
-    //                   </div>
-    //                 </div>
-    //               </div>
-    //               <div className="hidden sm:ml-6 sm:block">
-    //                 <div className="flex items-center">
-    //                   {/* Profile dropdown */}
-    //                   <Menu as="div" className="relative ml-3">
-    //                     <div>
-    //                       <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-    //                         <span className="sr-only">Profile</span>
-    //                         <Avatar />
-    //                       </Menu.Button>
-    //                     </div>
-    //                     <Transition
-    //                       as={Fragment}
-    //                       enter="transition ease-out duration-100"
-    //                       enterFrom="transform opacity-0 scale-95"
-    //                       enterTo="transform opacity-100 scale-100"
-    //                       leave="transition ease-in duration-75"
-    //                       leaveFrom="transform opacity-100 scale-100"
-    //                       leaveTo="transform opacity-0 scale-95"
-    //                     >
-    //                       <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-    //                         <Menu.Item>
-    //                           {({ active }) => (
-    //                             <a
-    //                               onClick={goToProfile}
-    //                               className={classNames(
-    //                                 active ? 'bg-gray-100' : '',
-    //                                 'block px-4 py-2 text-sm text-gray-700 cursor-pointer',
-    //                               )}
-    //                             >
-    //                             My Profile
-    //                             </a>
-    //                           )}
-    //                         </Menu.Item>
-    //                         <Menu.Item>
-    //                           {({ active }) => (
-    //                             <a
-    //                               onClick={handleLogout}
-    //                               className={classNames(
-    //                                 active ? 'bg-gray-100' : '',
-    //                                 'block px-4 py-2 text-sm text-gray-700 cursor-pointer',
-    //                               )}
-    //                             >
-    //                             Sign Out
-    //                             </a>
-    //                           )}
-    //                         </Menu.Item>
-    //                       </Menu.Items>
-    //                     </Transition>
-    //                   </Menu>
-    //                 </div>
-    //               </div>
-    //               <div className="-mr-2 flex sm:hidden">
-    //                 {/* Mobile menu button */}
-    //                 <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-    //                   <span className="sr-only">Open main menu</span>
-    //                   {open
-    //                     ? (
-    //                         <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
-    //                       )
-    //                     : (
-    //                         <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
-    //                       )}
-    //                 </Disclosure.Button>
-    //               </div>
-    //             </div>
-    //           </div>
-    //           <Disclosure.Panel className="sm:hidden">
-    //             <div className="space-y-1 px-2 pt-2 pb-3">
-    //               {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
-    //               <Disclosure.Button
-    //                 as="a"
-    //                 onClick={goToDashboard}
-    //                 className={clsx(
-    //                   'block rounded-md px-3 py-2 text-base font-medium cursor-pointer',
-    //                   location.pathname === '/' ? activeNavLinkClassname : navLinkClassname,
-    //                 )}
-    //               >
-    //               Dashboard
-    //               </Disclosure.Button>
-    //               <Disclosure.Button
-    //                 as="a"
-    //                 onClick={goToImages}
-    //                 className={clsx(
-    //                   'block rounded-md px-3 py-2 text-base font-medium cursor-pointer',
-    //                   location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname,
-    //                 )}
-    //               >
-    //               Images
-    //               </Disclosure.Button>
-    //               <Disclosure.Button
-    //                 as="a"
-    //                 onClick={goToAboutPage}
-    //                 className={clsx(
-    //                   'block rounded-md px-3 py-2 text-base font-medium cursor-pointer',
-    //                   location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname,
-    //                 )}
-    //               >
-    //               About
-    //               </Disclosure.Button>
-    //             </div>
-    //             <div className="border-t border-gray-700 pt-4 pb-3">
-    //               <div className="flex items-center px-5">
-    //                 <div className="flex-shrink-0">
-    //                   <Avatar />
-    //                 </div>
-    //                 <div className="ml-3">
-    //                   <div className="text-base font-medium text-white">{user.nickname}</div>
-    //                   <div className="text-sm font-medium text-gray-400">{user.name}</div>
-    //                 </div>
-    //               </div>
-    //               <div className="mt-3 space-y-1 px-2">
-    //                 <Disclosure.Button
-    //                   as="a"
-    //                   onClick={goToProfile}
-    //                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer"
-    //                 >
-    //                 Your Profile
-    //                 </Disclosure.Button>
-    //                 <Disclosure.Button
-    //                   as="a"
-    //                   onClick={handleLogout}
-    //                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer"
-    //                 >
-    //                 Sign Out
-    //                 </Disclosure.Button>
-    //               </div>
-    //             </div>
-    //           </Disclosure.Panel>
-    //         </>
-    //       )}
-    //     </Disclosure>
-    //   </header>
-    // )
+                                    react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: () => goToPage('/profile'), className: (0, clsx_1.default)(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "My Profile"))),
+                                    react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: handleLogout, className: (0, clsx_1.default)(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "Sign Out"))))))))))));
 };
 exports["default"] = Header;
 
@@ -1137,9 +978,14 @@ const Loader_1 = __importDefault(__webpack_require__(/*! @components/base/Loader
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 const ImageListItem_1 = __importDefault(__webpack_require__(/*! ./ImageListItem */ "./src/components/images/ImageListItem.tsx"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 const ImageList = () => {
     const { user } = react_1.default.useContext(appContext_1.default);
     const [images, setImages] = react_1.default.useState();
+    const routerHistory = (0, react_router_dom_1.useHistory)();
+    const goToPage = (path) => {
+        routerHistory.push(path);
+    };
     react_1.default.useEffect(() => {
         const loadImages = () => __awaiter(void 0, void 0, void 0, function* () {
             // Images are really just prompt objects.
@@ -1154,9 +1000,15 @@ const ImageList = () => {
             loadImages();
         }
     }, [user]);
+    if (images && images.length === 0) {
+        return (react_1.default.createElement("div", null,
+            "You have not generated any images yet. ",
+            react_1.default.createElement("a", { onClick: () => goToPage('/builder'), className: "underline hover:no-underline" }, "Go to the builder"),
+            " to make some."));
+    }
     return (react_1.default.createElement("div", { className: "p-6 bg-white rounded mt-6" }, images
         ? react_1.default.createElement("div", { className: "grid grid-cols-2 md:grid-cols-4" }, images.map(img => react_1.default.createElement(ImageListItem_1.default, Object.assign({}, img, { key: `imageListItem_${img.id}` }))))
-        : react_1.default.createElement(Loader_1.default, null)));
+        : react_1.default.createElement(Loader_1.default, { text: "Loading images..." })));
 };
 exports["default"] = ImageList;
 
@@ -1225,26 +1077,22 @@ const PublicHeader_1 = __importDefault(__webpack_require__(/*! @components/heade
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
 const Hero_1 = __importDefault(__webpack_require__(/*! @components/Hero */ "./src/components/Hero.tsx"));
 const Footer_1 = __importDefault(__webpack_require__(/*! @components/Footer */ "./src/components/Footer.tsx"));
-const Layout = ({ children, page, pageTitle, }) => {
+const PageTitle_1 = __importDefault(__webpack_require__(/*! @components/base/PageTitle */ "./src/components/base/PageTitle.tsx"));
+const Layout = ({ children, page, windowTitle, pageTitle, pageDescription, }) => {
     const { user } = (0, auth0_react_1.useAuth0)();
     react_1.default.useEffect(() => {
-        if (pageTitle) {
-            window.document.title = `Promptiverse | ${pageTitle}`;
+        if (windowTitle) {
+            window.document.title = `Promptiverse | ${windowTitle}`;
         }
-    }, [pageTitle]);
-    if (!user) {
-        return (react_1.default.createElement("main", { className: "overflow-x-hidden" },
-            react_1.default.createElement("div", { className: "min-h-screen" },
-                react_1.default.createElement(PublicHeader_1.default, null),
-                page === 'INDEX' &&
-                    react_1.default.createElement(Hero_1.default, null),
-                react_1.default.createElement("section", { className: "container mx-auto px-6" }, children)),
-            react_1.default.createElement(Footer_1.default, null)));
-    }
-    return (react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
-        react_1.default.createElement(Header_1.default, null),
-        react_1.default.createElement("div", { className: "container mx-auto h-full" },
-            react_1.default.createElement("div", { className: "py-6 px-8" }, children))));
+    }, [windowTitle]);
+    return (react_1.default.createElement("main", { className: "overflow-x-hidden" },
+        react_1.default.createElement("div", { className: "min-h-screen" },
+            user ? react_1.default.createElement(Header_1.default, null) : react_1.default.createElement(PublicHeader_1.default, null),
+            (page === 'INDEX' && !user) && react_1.default.createElement(Hero_1.default, null),
+            react_1.default.createElement("section", { className: "container mx-auto px-6" },
+                pageTitle && react_1.default.createElement(PageTitle_1.default, { title: pageTitle, subtitle: pageDescription }),
+                react_1.default.createElement("div", { className: "mt-4" }, children))),
+        !user && react_1.default.createElement(Footer_1.default, null)));
 };
 exports["default"] = Layout;
 
@@ -1287,8 +1135,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
 const Page = () => {
-    return (react_1.default.createElement(Layout_1.default, { pageTitle: "About" },
-        react_1.default.createElement("h1", null, "About"),
+    return (react_1.default.createElement(Layout_1.default, { windowTitle: "About", pageTitle: "About" },
         react_1.default.createElement("p", null, "Credits"),
         react_1.default.createElement("p", null,
             "Powered by the ",
@@ -1317,7 +1164,7 @@ const Prompt_1 = __importDefault(__webpack_require__(/*! @components/Prompt */ "
 const Builder_1 = __importDefault(__webpack_require__(/*! @components/pages/public/Builder */ "./src/components/pages/public/Builder.tsx"));
 const Page = () => {
     const { user } = (0, auth0_react_1.useAuth0)();
-    return (react_1.default.createElement(Layout_1.default, { pageTitle: "Builder" }, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Builder_1.default, null)));
+    return (react_1.default.createElement(Layout_1.default, { pageTitle: "Builder", windowTitle: "Builder" }, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Builder_1.default, null)));
 };
 exports["default"] = Page;
 
@@ -1367,7 +1214,7 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
 const ImageList_1 = __importDefault(__webpack_require__(/*! @components/images/ImageList */ "./src/components/images/ImageList.tsx"));
 const Page = () => {
-    return (react_1.default.createElement(Layout_1.default, null,
+    return (react_1.default.createElement(Layout_1.default, { pageTitle: "Images", windowTitle: "Images" },
         react_1.default.createElement(ImageList_1.default, null)));
 };
 exports["default"] = Page;
@@ -1393,7 +1240,7 @@ const Prompt_1 = __importDefault(__webpack_require__(/*! @components/Prompt */ "
 const Index_1 = __importDefault(__webpack_require__(/*! @components/pages/public/Index */ "./src/components/pages/public/Index.tsx"));
 const Page = () => {
     const { user } = (0, auth0_react_1.useAuth0)();
-    return (react_1.default.createElement(Layout_1.default, { page: "INDEX" }, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Index_1.default, null)));
+    return (react_1.default.createElement(Layout_1.default, { page: "INDEX", pageTitle: "Builder" }, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Index_1.default, null)));
 };
 exports["default"] = Page;
 
@@ -1486,11 +1333,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Prompt_1 = __importDefault(__webpack_require__(/*! @components/Prompt */ "./src/components/Prompt.tsx"));
-const PageTitle_1 = __importDefault(__webpack_require__(/*! @components/base/PageTitle */ "./src/components/base/PageTitle.tsx"));
 const Page = () => {
     return (react_1.default.createElement("div", null,
-        react_1.default.createElement(PageTitle_1.default, { title: "Builder" }),
-        react_1.default.createElement("p", { className: "text-gray-500 py-2 mt-2" }, "Build your own images by typing a simple prompt here:"),
+        react_1.default.createElement("p", { className: "text-gray-500 py-2" }, "Build your own images by typing a simple prompt here:"),
         react_1.default.createElement(Prompt_1.default, null)));
 };
 exports["default"] = Page;
@@ -1565,7 +1410,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
 const Page = () => {
-    return (react_1.default.createElement(Layout_1.default, { pageTitle: "Sign Up" },
+    return (react_1.default.createElement(Layout_1.default, { pageTitle: "Sign Up", windowTitle: "Sign Up" },
         react_1.default.createElement("div", { className: "text-center py-12" },
             react_1.default.createElement("h2", { className: "text-2xl" }, "Signups are currently closed to the public."),
             react_1.default.createElement("p", null, "Stay tuned! We'll be opening up soon."))));

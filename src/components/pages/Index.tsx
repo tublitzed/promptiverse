@@ -6,7 +6,7 @@ import Index from '@components/pages/public/Index'
 const Page: React.FC<{}> = () => {
   const { user } = useAuth0()
   return (
-    <Layout page="INDEX">
+    <Layout page="INDEX" pageTitle="Builder">
       {user ? <Prompt /> : <Index />}
     </Layout>
   )

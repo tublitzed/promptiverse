@@ -6,17 +6,19 @@ import PromptImage from './PromptImage'
 import Button from './base/Button'
 import AppContext from '@src/appContext'
 import LocalStorage from '@utils/localStorage'
+import Loader from './base/Loader'
 
 const PromptComponent = () => {
   const { setPrompt, prompt, user, tags } = React.useContext(AppContext)
   const [seed, setSeed] = React.useState<number | undefined>(prompt?.seed)
   const [promptRawError, setPromptRawError] = React.useState<string>()
+  const [isGenerating, setIsGenerating] = React.useState<boolean>(false)
 
   const submit = async () => {
-    console.log(prompt, prompt?.promptRaw)
     if (!prompt || !prompt?.promptRaw || prompt.promptRaw === '') {
       return setPromptRawError('Missing required prompt.')
     }
+    setIsGenerating(true)
     setPrompt({
       ...prompt,
       loading: true,
@@ -43,6 +45,7 @@ const PromptComponent = () => {
     }
     setPrompt(newPromptVal)
     setSeed(newPromptVal.seed)
+    setIsGenerating(false)
     LocalStorage.setPrompt(newPromptVal)
     LocalStorage.setTags(tags)
   }
@@ -88,7 +91,10 @@ const PromptComponent = () => {
       </div>
       <Tags />
       <div>
-        <PromptImage />
+        {isGenerating
+          ?
+            <div className="mt-8"><Loader text="Building your image..." /></div>
+          : <PromptImage />}
       </div>
     </div>
   )

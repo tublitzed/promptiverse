@@ -3,8 +3,10 @@ import Layout from '@components/layouts/Layout'
 
 const Page = () => {
   return (
-    <Layout pageTitle="About">
-      <h1>About</h1>
+    <Layout
+      windowTitle="About"
+      pageTitle="About"
+    >
       <p>Credits</p>
       <p>Powered by the <a href="https://github.com/Stability-AI/stability-sdk">Stability-AI SDK</a></p>
     </Layout>
