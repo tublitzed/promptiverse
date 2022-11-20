@@ -423,11 +423,15 @@ const Hero = () => {
     const goToPage = (path) => {
         routerHistory.push(path);
     };
-    return (react_1.default.createElement("div", { className: "h-[500px] bg-gray-900" },
-        react_1.default.createElement("div", { className: "container mx-auto grid grid-cols-3 text-white" },
-            react_1.default.createElement("div", { className: "col-span-3 md:col-span-2 lg:col-span-1 mt-20 lg:mt-32 px-8" },
+    const style = {
+        background: 'url("/static/img/bgs/rolling_waves_trending_on_artstation_ernst.png") no-repeat 0 0',
+        backgroundSize: 'cover',
+    };
+    return (react_1.default.createElement("div", { className: "h-[500px] bg-gray-900 flex", style: style },
+        react_1.default.createElement("div", { className: "flex container mx-auto justify-center self-center" },
+            react_1.default.createElement("div", { className: "text-white p-8 rounded mx-4 bg-[#3b4657a1]" },
                 react_1.default.createElement("h1", { className: "text-4xl font-bold" }, "The future of generative images starts here"),
-                react_1.default.createElement("h4", { className: "text-xl mt-2" }, "Use our builder to explore the magic of AI imagery for free."),
+                react_1.default.createElement("h4", { className: "text-xl mt-2" }, "Try our image builder to explore the magic of AI imagery for free"),
                 react_1.default.createElement(Button_1.default, { size: "lg", className: "mt-6", onClick: () => goToPage('/builder') }, "Get Started")))));
 };
 exports["default"] = Hero;
@@ -1006,7 +1010,7 @@ const ImageList = () => {
             react_1.default.createElement("a", { onClick: () => goToPage('/builder'), className: "underline hover:no-underline" }, "Go to the builder"),
             " to make some."));
     }
-    return (react_1.default.createElement("div", { className: "p-6 bg-white rounded mt-6" }, images
+    return (react_1.default.createElement(react_1.default.Fragment, null, images
         ? react_1.default.createElement("div", { className: "grid grid-cols-2 md:grid-cols-4" }, images.map(img => react_1.default.createElement(ImageListItem_1.default, Object.assign({}, img, { key: `imageListItem_${img.id}` }))))
         : react_1.default.createElement(Loader_1.default, { text: "Loading images..." })));
 };
@@ -1135,11 +1139,20 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
 const Page = () => {
+    const headerClass = 'font-medium text-gray-900 mt-4';
+    const textBlockClass = 'text-gray-600 text-sm';
     return (react_1.default.createElement(Layout_1.default, { windowTitle: "About", pageTitle: "About" },
-        react_1.default.createElement("p", null, "Credits"),
-        react_1.default.createElement("p", null,
-            "Powered by the ",
-            react_1.default.createElement("a", { href: "https://github.com/Stability-AI/stability-sdk" }, "Stability-AI SDK"))));
+        react_1.default.createElement("div", { className: "container max-w-lg mx-auto" },
+            react_1.default.createElement("div", { className: "flex justify-center my-12" },
+                react_1.default.createElement("img", { src: '/static/img/typing_cat_in_sunglasses_trending_on_as.png', alt: "The best avatar around", title: "Typing cat in sunglasses, trending on artstation", 
+                    // TODO: just downsize the image.
+                    className: "rounded-full ring-4 ring-offset-2 ring-red-100 border-red-700 border-4 w-[200px]" })),
+            react_1.default.createElement("p", { className: "text-gray-800 text-lg font-light" }, "Our mission is to explore what's possible in the world of generative art. We aim to empower others to do the same, by acting as a translation layer between ideas and images."),
+            react_1.default.createElement("h3", { className: headerClass }, "Credits"),
+            react_1.default.createElement("p", { className: textBlockClass },
+                "Powered by the ",
+                react_1.default.createElement("a", { href: "https://github.com/Stability-AI/stability-sdk", className: "underline hover:no-underline", target: "_blank" }, "Stability SDK"),
+                ", without which none of this would be possible."))));
 };
 exports["default"] = Page;
 
@@ -1240,7 +1253,7 @@ const Prompt_1 = __importDefault(__webpack_require__(/*! @components/Prompt */ "
 const Index_1 = __importDefault(__webpack_require__(/*! @components/pages/public/Index */ "./src/components/pages/public/Index.tsx"));
 const Page = () => {
     const { user } = (0, auth0_react_1.useAuth0)();
-    return (react_1.default.createElement(Layout_1.default, { page: "INDEX", pageTitle: "Builder" }, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Index_1.default, null)));
+    return (react_1.default.createElement(Layout_1.default, { page: "INDEX", pageTitle: user ? 'BUILDER' : undefined }, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Index_1.default, null)));
 };
 exports["default"] = Page;
 
@@ -1379,17 +1392,44 @@ const Page = () => {
     //     background: 'url("/static/img/bgs/cover.png") no-repeat 0 -200px',
     //     backgroundSize: 'cover',
     // }
-    const imgClassName = "border h-24 mt-4 md:mt-0";
+    const images = [{
+            path: '/static/img/1.png',
+            rawPrompt: 'foo',
+            subtitle: 'todo',
+        },
+        {
+            path: '/static/img/1.png',
+            rawPrompt: 'foo',
+            subtitle: 'todo',
+        },
+        {
+            path: '/static/img/1.png',
+            rawPrompt: 'foo',
+            subtitle: 'todo',
+        },
+        {
+            path: '/static/img/1.png',
+            rawPrompt: 'foo',
+            subtitle: 'todo',
+        },
+        {
+            path: '/static/img/1.png',
+            rawPrompt: 'foo',
+            subtitle: 'todo',
+        },
+        {
+            path: '/static/img/1.png',
+            rawPrompt: 'foo',
+            subtitle: 'todo',
+        }];
     return (react_1.default.createElement("div", null,
         react_1.default.createElement("div", { className: "my-4 text-center" },
             react_1.default.createElement("h2", { className: "text-xl" }, "Main heading")),
-        react_1.default.createElement("div", { className: "md:grid grid-cols-2 gap-4 mt-4" },
-            react_1.default.createElement("img", { src: "static/img/1.png", alt: "image 1", className: imgClassName }),
-            react_1.default.createElement("img", { src: "static/img/2.png", alt: "image 2", className: imgClassName }),
-            react_1.default.createElement("img", { src: "static/img/3.png", alt: "image 3", className: imgClassName }),
-            react_1.default.createElement("img", { src: "static/img/4.png", alt: "image 4", className: imgClassName }),
-            react_1.default.createElement("img", { src: "static/img/5.png", alt: "image 5", className: imgClassName }),
-            react_1.default.createElement("img", { src: "static/img/6.png", alt: "image 6", className: imgClassName }))));
+        react_1.default.createElement("div", { className: "md:grid grid-cols-2 gap-4 mt-4" }, images.map((img) => {
+            return (react_1.default.createElement("div", { className: "border h-24 mt-4 md:mt-0" },
+                react_1.default.createElement("img", { src: img.path, alt: `Image showing ${img.rawPrompt}` }),
+                react_1.default.createElement("p", null, img.rawPrompt)));
+        }))));
 };
 exports["default"] = Page;
 

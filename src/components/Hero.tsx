@@ -13,12 +13,18 @@ const Hero: React.FC = () => {
   const goToPage = (path:string) => {
     routerHistory.push(path)
   }
+
+  const style = {
+    background: 'url("/static/img/bgs/rolling_waves_trending_on_artstation_ernst.png") no-repeat 0 0',
+    backgroundSize: 'cover',
+  }
+
   return (
-    <div className="h-[500px] bg-gray-900">
-      <div className="container mx-auto grid grid-cols-3 text-white">
-        <div className="col-span-3 md:col-span-2 lg:col-span-1 mt-20 lg:mt-32 px-8">
+    <div className="h-[500px] bg-gray-900 flex" style={style}>
+      <div className="flex container mx-auto justify-center self-center">
+        <div className="text-white p-8 rounded mx-4 bg-[#3b4657a1]">
           <h1 className="text-4xl font-bold">The future of generative images starts here</h1>
-          <h4 className="text-xl mt-2">Use our builder to explore the magic of AI imagery for free.</h4>
+          <h4 className="text-xl mt-2">Try our image builder to explore the magic of AI imagery for free</h4>
           <Button
             size="lg"
             className="mt-6"

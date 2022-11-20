@@ -37,7 +37,7 @@ const ImageList = () => {
     )
   }
   return (
-    <div className="p-6 bg-white rounded mt-6">
+    <>
       {images
         ? <div className="grid grid-cols-2 md:grid-cols-4">{
             images.map(img =>
@@ -47,7 +47,7 @@ const ImageList = () => {
               />)}
           </div>
         : <Loader text="Loading images..." />}
-    </div>
+    </>
   )
 }
 

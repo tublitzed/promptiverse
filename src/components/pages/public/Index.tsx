@@ -18,19 +18,50 @@ const Page: React.FC<{}> = () => {
   //     backgroundSize: 'cover',
   // }
 
-  const imgClassName = "border h-24 mt-4 md:mt-0";
+  const images = [{
+    path: '/static/img/1.png',
+    rawPrompt: 'foo',
+    subtitle: 'todo',
+  },
+  {
+    path: '/static/img/1.png',
+    rawPrompt: 'foo',
+    subtitle: 'todo',
+  },
+  {
+    path: '/static/img/1.png',
+    rawPrompt: 'foo',
+    subtitle: 'todo',
+  },
+  {
+    path: '/static/img/1.png',
+    rawPrompt: 'foo',
+    subtitle: 'todo',
+  },
+  {
+    path: '/static/img/1.png',
+    rawPrompt: 'foo',
+    subtitle: 'todo',
+  },
+  {
+    path: '/static/img/1.png',
+    rawPrompt: 'foo',
+    subtitle: 'todo',
+  }]
   return (
     <div>
       <div className="my-4 text-center">
         <h2 className="text-xl">Main heading</h2>
       </div>
       <div className="md:grid grid-cols-2 gap-4 mt-4">
-        <img src="static/img/1.png" alt="image 1" className={imgClassName} />
-        <img src="static/img/2.png" alt="image 2" className={imgClassName} />
-        <img src="static/img/3.png" alt="image 3" className={imgClassName} />
-        <img src="static/img/4.png" alt="image 4" className={imgClassName} />
-        <img src="static/img/5.png" alt="image 5" className={imgClassName} />
-        <img src="static/img/6.png" alt="image 6" className={imgClassName} />
+        {images.map((img) => {
+          return (
+            <div className="border h-24 mt-4 md:mt-0">
+              <img src={img.path} alt={`Image showing ${img.rawPrompt}`} />
+              <p>{img.rawPrompt}</p>
+            </div>
+          )
+        })}
       </div>
     </div>
   );

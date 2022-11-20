@@ -78,6 +78,10 @@ def generate(prompt=string, prompt_raw=string, user_id=string, seed=None, tag_id
         prompt=prompt,
         seed=seed,  # if provided, specifying a random seed makes results deterministic
         # steps=30, # defaults to 50 if not specified
+
+        # height and width must be in multiples of 64
+        # height=512,
+        # width=1600
     )
     for resp in answers:
         for artifact in resp.artifacts:
