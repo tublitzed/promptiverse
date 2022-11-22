@@ -3,7 +3,7 @@ import Layout from '@components/layouts/Layout'
 
 const Page = () => {
   const headerClass = 'font-medium text-gray-900 mt-4'
-  const textBlockClass = 'text-gray-600 text-sm'
+  const textBlockClass = 'text-gray-600 text-sm mt-1'
   return (
     <Layout
       windowTitle="About"

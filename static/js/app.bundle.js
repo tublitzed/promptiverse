@@ -1143,7 +1143,7 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
 const Page = () => {
     const headerClass = 'font-medium text-gray-900 mt-4';
-    const textBlockClass = 'text-gray-600 text-sm';
+    const textBlockClass = 'text-gray-600 text-sm mt-1';
     return (react_1.default.createElement(Layout_1.default, { windowTitle: "About", pageTitle: "About" },
         react_1.default.createElement("div", { className: "container max-w-lg mx-auto" },
             react_1.default.createElement("div", { className: "flex justify-center my-12" },
@@ -1382,42 +1382,40 @@ const Index = () => {
     //     backgroundSize: 'cover',
     // }
     const images = [{
-            path: '/static/img/1.png',
-            rawPrompt: 'foo',
-            subtitle: 'todo',
+            path: '/static/img/samples/yarniverse.png',
+            rawPrompt: 'the universe spun in multicolor yarn, trending on artstation, by Pablo Picasso',
+            subtitle: 'the universe spun in multicolor yarn, trending on artstation, by Pablo Picasso',
         },
         {
-            path: '/static/img/1.png',
-            rawPrompt: 'foo',
-            subtitle: 'todo',
+            path: '/static/img/samples/rollerblading_manhattan_bridge.png',
+            rawPrompt: 'rollerblading across the manhattan bridge, by Pablo Picasso',
+            subtitle: 'rollerblading across the manhattan bridge, by Pablo Picasso',
         },
         {
-            path: '/static/img/1.png',
-            rawPrompt: 'foo',
-            subtitle: 'todo',
+            path: '/static/img/samples/eiffel_picchu.png',
+            rawPrompt: 'the eiffel tower on top of machu picchu, by Paul Klee',
+            subtitle: 'the eiffel tower on top of machu picchu, by Paul Klee',
         },
         {
-            path: '/static/img/1.png',
-            rawPrompt: 'foo',
-            subtitle: 'todo',
+            path: '/static/img/samples/electric.png',
+            rawPrompt: 'electricity flowing through highly detailed and complex brain synapses, trending on artstation',
+            subtitle: 'electricity flowing through highly detailed and complex brain synapses, trending on artstation',
         },
         {
-            path: '/static/img/1.png',
-            rawPrompt: 'foo',
-            subtitle: 'todo',
+            path: '/static/img/samples/forest_trees.png',
+            rawPrompt: 'the forest through the trees, by Walt Disney',
+            subtitle: 'the forest through the trees, by Walt Disney',
         },
         {
-            path: '/static/img/1.png',
-            rawPrompt: 'foo',
-            subtitle: 'todo',
+            path: '/static/img/samples/sloth_in_paris.png',
+            rawPrompt: 'a friendly three toed sloth, riding a bicycle through the cobblestone alleyways of Paris, by Wayne Thiebaud',
+            subtitle: 'a friendly three toed sloth, riding a bicycle through the cobblestone alleyways of Paris, by Wayne Thiebaud',
         }];
     return (react_1.default.createElement("div", null,
-        react_1.default.createElement("div", { className: "my-4 text-center" },
-            react_1.default.createElement("h2", { className: "text-xl" }, "Your only limit is your imagination.")),
-        react_1.default.createElement("div", { className: "md:grid grid-cols-2 gap-4 mt-4" }, images.map((img, index) => {
-            return (react_1.default.createElement("div", { className: "border h-24 mt-4 md:mt-0", key: `${img.path}_${index}_indexImages` },
-                react_1.default.createElement("img", { src: img.path, alt: `Image showing ${img.rawPrompt}` }),
-                react_1.default.createElement("p", null, img.rawPrompt)));
+        react_1.default.createElement("div", { className: "md:grid grid-cols-2 gap-4 mt-8" }, images.map((img, index) => {
+            return (react_1.default.createElement("div", { className: "border mt-4 md:mt-0 px-4 py-8 bg-white rounded shadow-sm", key: `${img.path}_${index}_indexImages` },
+                react_1.default.createElement("img", { src: img.path, alt: `Image showing ${img.rawPrompt}`, className: "max-h-[400px] mx-auto rounded border-gray-500" }),
+                react_1.default.createElement("p", { className: "text-center mt-6 text-sm text-gray-600 max-w-sm mx-auto" }, img.rawPrompt)));
         }))));
 };
 exports["default"] = Index;
