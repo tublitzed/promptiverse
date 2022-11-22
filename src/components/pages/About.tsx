@@ -22,6 +22,8 @@ const Page = () => {
         <p className="text-gray-800 text-lg font-light">
         Our mission is to explore what's possible in the world of generative art. We aim to empower others to do the same, by acting as a translation layer between ideas and images.
         </p>
+        <h3 className={headerClass}>Contact Us</h3>
+        <p className={textBlockClass}>We'd love to hear your feedback! Feature requests, bug reports, it's all welcome. <a href="mailto:admin@promptiverse.com" className="underline hover:no-underline">Send us an email</a> and we'll get back to you as soon as we can.</p>
 
         <h3 className={headerClass}>Credits</h3>
         <p className={textBlockClass}>Powered by the <a href="https://github.com/Stability-AI/stability-sdk" className="underline hover:no-underline" target="_blank">Stability SDK</a>, without which none of this would be possible.</p>

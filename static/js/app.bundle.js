@@ -372,14 +372,15 @@ const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api
 const Footer = () => {
     const routerHistory = (0, react_router_dom_1.useHistory)();
     const location = (0, react_router_dom_1.useLocation)();
-    const baseLinkStyle = 'text-sm text-red-400 mx-2 md:mx-10 pt-2';
+    const baseLinkStyle = 'text-sm text-red-400 mx-4 md:mx-10 pt-2';
     const activeLinkStyle = 'underline hover:no-underline';
     const inactiveLinkStyle = 'hover:underline';
     const { loginWithRedirect } = (0, auth0_react_1.useAuth0)();
     const goToPage = (path) => {
         routerHistory.push(path);
     };
-    const handleLogin = () => __awaiter(void 0, void 0, void 0, function* () {
+    const handleLogin = (e) => __awaiter(void 0, void 0, void 0, function* () {
+        e.preventDefault();
         yield loginWithRedirect({
             prompt: 'login',
             appState: {
@@ -389,11 +390,13 @@ const Footer = () => {
     });
     const enableSignup = api_1.default.getVar('ENABLE_SIGNUP') === true;
     return (react_1.default.createElement("footer", { className: "bg-red-50 p-6 mt-12 border-t border-red-100" },
+        react_1.default.createElement("div", { className: "w-10 pb-4 mx-auto block md:hidden" },
+            react_1.default.createElement(Logo_1.default, { iconOnly: true, linkedToHome: false })),
         react_1.default.createElement("div", { className: "flex container mx-auto justify-center" },
             react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/') }, "Home"),
             react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/builder' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/builder') }, "Builder"),
             react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/about' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/about') }, "About"),
-            react_1.default.createElement("div", { className: "pt-1 w-10 md:w-12 md:pt-0 mx-2 md:mx-8" },
+            react_1.default.createElement("div", { className: "pt-1 w-10 md:w-12 md:pt-0 mx-2 md:mx-8 hidden md:block" },
                 react_1.default.createElement(Logo_1.default, { iconOnly: true, linkedToHome: false })),
             react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/signin' ? activeLinkStyle : inactiveLinkStyle), onClick: handleLogin }, "Sign In"),
             enableSignup && react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/signup' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/signup') }, "Sign Up"))));
@@ -943,7 +946,7 @@ const PublicHeader = () => {
         routerHistory.push(path);
     };
     const enableSignup = api_1.default.getVar('ENABLE_SIGNUP') === true;
-    return (react_1.default.createElement("header", { className: "bg-gray-100 px-8" },
+    return (react_1.default.createElement("header", { className: "bg-gray-100 lg:px-8" },
         react_1.default.createElement("div", { className: "flex container mx-auto py-2 px-6" },
             react_1.default.createElement("div", { className: "grow" },
                 react_1.default.createElement(Logo_1.default, { className: "w-[100px] md:w-[135px] block" })),
@@ -1148,6 +1151,11 @@ const Page = () => {
                     // TODO: just downsize the image.
                     className: "rounded-full ring-4 ring-offset-2 ring-red-100 border-red-700 border-4 w-[200px]" })),
             react_1.default.createElement("p", { className: "text-gray-800 text-lg font-light" }, "Our mission is to explore what's possible in the world of generative art. We aim to empower others to do the same, by acting as a translation layer between ideas and images."),
+            react_1.default.createElement("h3", { className: headerClass }, "Contact Us"),
+            react_1.default.createElement("p", { className: textBlockClass },
+                "We'd love to hear your feedback! Feature requests, bug reports, it's all welcome. ",
+                react_1.default.createElement("a", { href: "mailto:admin@promptiverse.com", className: "underline hover:no-underline" }, "Send us an email"),
+                " and we'll get back to you as soon as we can."),
             react_1.default.createElement("h3", { className: headerClass }, "Credits"),
             react_1.default.createElement("p", { className: textBlockClass },
                 "Powered by the ",
@@ -1363,31 +1371,12 @@ exports["default"] = Page;
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const Page = () => {
-    const { loginWithRedirect, user } = (0, auth0_react_1.useAuth0)();
-    const handleLogin = () => __awaiter(void 0, void 0, void 0, function* () {
-        yield loginWithRedirect({
-            prompt: "login",
-            appState: {
-                returnTo: "/",
-            },
-        });
-    });
+const Index = () => {
     //   const style = {
     //     background: 'url("/static/img/bgs/cover.png") no-repeat 0 -200px',
     //     backgroundSize: 'cover',
@@ -1424,14 +1413,14 @@ const Page = () => {
         }];
     return (react_1.default.createElement("div", null,
         react_1.default.createElement("div", { className: "my-4 text-center" },
-            react_1.default.createElement("h2", { className: "text-xl" }, "Main heading")),
-        react_1.default.createElement("div", { className: "md:grid grid-cols-2 gap-4 mt-4" }, images.map((img) => {
-            return (react_1.default.createElement("div", { className: "border h-24 mt-4 md:mt-0" },
+            react_1.default.createElement("h2", { className: "text-xl" }, "Your only limit is your imagination.")),
+        react_1.default.createElement("div", { className: "md:grid grid-cols-2 gap-4 mt-4" }, images.map((img, index) => {
+            return (react_1.default.createElement("div", { className: "border h-24 mt-4 md:mt-0", key: `${img.path}_${index}_indexImages` },
                 react_1.default.createElement("img", { src: img.path, alt: `Image showing ${img.rawPrompt}` }),
                 react_1.default.createElement("p", null, img.rawPrompt)));
         }))));
 };
-exports["default"] = Page;
+exports["default"] = Index;
 
 
 /***/ }),

@@ -34,7 +34,7 @@ const PublicHeader = () => {
 
   const enableSignup = ApiService.getVar('ENABLE_SIGNUP') === true
   return (
-    <header className="bg-gray-100 px-8">
+    <header className="bg-gray-100 lg:px-8">
       <div className="flex container mx-auto py-2 px-6">
         <div className="grow">
           <Logo className="w-[100px] md:w-[135px] block" />

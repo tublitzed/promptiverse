@@ -5,11 +5,12 @@ import Logo from '@components/base/Logo'
 import { useAuth0 } from '@auth0/auth0-react'
 import ApiService from '@api/api'
 
+
 const Footer: React.FC = () => {
   const routerHistory = useHistory()
   const location = useLocation()
 
-  const baseLinkStyle = 'text-sm text-red-400 mx-2 md:mx-10 pt-2'
+  const baseLinkStyle = 'text-sm text-red-400 mx-4 md:mx-10 pt-2'
   const activeLinkStyle = 'underline hover:no-underline'
   const inactiveLinkStyle = 'hover:underline'
   const { loginWithRedirect } = useAuth0()
@@ -18,7 +19,8 @@ const Footer: React.FC = () => {
     routerHistory.push(path)
   }
 
-  const handleLogin = async () => {
+  const handleLogin = async (e:React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
     await loginWithRedirect({
       prompt: 'login',
       appState: {
@@ -30,6 +32,12 @@ const Footer: React.FC = () => {
   const enableSignup = ApiService.getVar('ENABLE_SIGNUP') === true
   return (
     <footer className="bg-red-50 p-6 mt-12 border-t border-red-100">
+      <div className="w-10 pb-4 mx-auto block md:hidden">
+        <Logo
+          iconOnly
+          linkedToHome={false}
+        />
+      </div>
       <div className="flex container mx-auto justify-center">
         <a
           href=""
@@ -61,7 +69,7 @@ const Footer: React.FC = () => {
         >
         About
         </a>
-        <div className="pt-1 w-10 md:w-12 md:pt-0 mx-2 md:mx-8">
+        <div className="pt-1 w-10 md:w-12 md:pt-0 mx-2 md:mx-8 hidden md:block">
           <Logo
             iconOnly
             linkedToHome={false}

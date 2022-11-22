@@ -1,18 +1,8 @@
 import React from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+
 import Button from "@components/base/Button";
-const Page: React.FC<{}> = () => {
-  const { loginWithRedirect, user } = useAuth0();
 
-  const handleLogin = async () => {
-    await loginWithRedirect({
-      prompt: "login",
-      appState: {
-        returnTo: "/",
-      },
-    });
-  };
-
+const Index: React.FC<{}> = () => {
   //   const style = {
   //     background: 'url("/static/img/bgs/cover.png") no-repeat 0 -200px',
   //     backgroundSize: 'cover',
@@ -51,12 +41,15 @@ const Page: React.FC<{}> = () => {
   return (
     <div>
       <div className="my-4 text-center">
-        <h2 className="text-xl">Main heading</h2>
+        <h2 className="text-xl">Your only limit is your imagination.</h2>
       </div>
       <div className="md:grid grid-cols-2 gap-4 mt-4">
-        {images.map((img) => {
+        {images.map((img, index) => {
           return (
-            <div className="border h-24 mt-4 md:mt-0">
+            <div
+              className="border h-24 mt-4 md:mt-0"
+              key={`${img.path}_${index}_indexImages`}
+            >
               <img src={img.path} alt={`Image showing ${img.rawPrompt}`} />
               <p>{img.rawPrompt}</p>
             </div>
@@ -67,4 +60,4 @@ const Page: React.FC<{}> = () => {
   );
 };
 
-export default Page;
+export default Index;
