@@ -8,6 +8,7 @@ DATABASE_URL=postgres://tublitzed:tublitzed@localhost:5432/promptiverse
 
 ENABLE_SEEDER=false
 ENABLE_SIGNUP=true
+PUBLIC_GENERATION_LIMIT_BY_IP=10
 
 # https://docs.python.org/3/library/logging.html#logging-levels
 LOG_LEVEL=DEBUG

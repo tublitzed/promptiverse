@@ -8,8 +8,6 @@ import random, os
 from api.services.auth0 import requires_auth
 from api.helpers import app
 from api.helpers.seeder import seed_tag_categories, seed_tags
-from api.models.tag import get_by_ids
-from api.services.prompt import generate, build
 from peewee import *
 
 bp_name = "base"
@@ -45,7 +43,7 @@ def index():
     return render_static()
 
 
-@bp.route("/sandbox", methods=["POST"])
+@bp.route("/sandbox", methods=["POST", "GET"])
 def sandbox():
     if app.is_dev() is False:
         return make_response("error", 400)

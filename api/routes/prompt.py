@@ -1,10 +1,11 @@
-import os
+import os, logging
 from flask import Blueprint, jsonify, request
 
 from api.services.auth0 import requires_auth
 from api.services.prompt import generate, build
 from api.models.tag import get_by_ids
 from api.models.prompt import get_by_user
+from api.models.ip_event import create, get_count_by_ip, update_generation_count
 from api.helpers import user
 
 bp_name = "api-prompt"
@@ -12,8 +13,27 @@ bp_url_prefix = "/api/prompt"
 bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
 
 
+## Public builder will allow a limited number of generations per IP.
+## Will save images in S3 for awhile, although should start a cleaning job if needed
+## Will not save public records in DB to err on safe side
 @bp.route("/public", methods=["POST", "OPTIONS"])
 def public():
+    ip_address = request.remote_addr
+
+    logging.info(f"Attempting to generate for IP: {ip_address}")
+
+    # Before we allow generation, record ip and limit.
+    # Not foolproof but can but limit to 0 quickly here to stop generations if needed.
+    count_or_none = get_count_by_ip(ip_address)
+    if count_or_none is None:
+        create(ip_address)
+    elif count_or_none > int(os.environ.get("PUBLIC_GENERATION_LIMIT_BY_IP", 10)):
+        return jsonify(error="Exceeded limit"), 403
+    else:
+        update_generation_count(ip_address, count_or_none + 1)
+
+    # TODO: post to slack here to notify of generations for monitoring purposes
+
     request_data = request.get_json()
     for value in ["prompt_raw", "tag_ids"]:
         if value not in request_data:
@@ -29,6 +49,9 @@ def public():
         seed = None
 
     prompt_raw = request_data["prompt_raw"]
+    logging.info(
+        f"Generating for IP: {ip_address} using prompt: {prompt_raw} and tags: {tag_ids}"
+    )
     # saved_prompt = generate(
     #     prompt=build(prompt_raw=prompt_raw, tags=tags),
     #     prompt_raw=prompt_raw,
