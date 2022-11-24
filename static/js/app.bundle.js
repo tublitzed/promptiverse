@@ -511,6 +511,7 @@ const PromptComponent = () => {
             seed,
             tagIds: (0, Tags_1.getSelectedTagIds)(tags),
         });
+        console.log(response);
         if (!response.prompt) {
             console.error(`Unable to generate prompt`, response);
             setPrompt(Object.assign(Object.assign({}, prompt), { loading: false }));
@@ -1636,15 +1637,18 @@ const fetcher = (url, options) => __awaiter(void 0, void 0, void 0, function* ()
                 'X-CSRF-Token': ((_d = options === null || options === void 0 ? void 0 : options.headers) === null || _d === void 0 ? void 0 : _d['X-CSRF-Token']) || csrfToken,
             } }, ((options === null || options === void 0 ? void 0 : options.postBody) ? { body: JSON.stringify(options.postBody) } : []));
         return fetch(url, fetchOptions)
-            .then(response => {
+            .then((response) => __awaiter(void 0, void 0, void 0, function* () {
             if (!response.ok) {
-                // throw new Error(response.statusText)
-                console.error(response.statusText);
-                return { error: response.statusText,
-                    status: response.status };
+                // TODO: this is not quite right.
+                // try returning response.json(), you get the right thing.
+                console.log(response);
+                return {
+                    error: response.statusText,
+                    status: response.status,
+                };
             }
             return response.json();
-        })
+        }))
             .then(resp => resp);
     }
     catch (err) {

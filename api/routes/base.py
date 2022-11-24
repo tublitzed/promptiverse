@@ -3,9 +3,11 @@ from flask import (
     render_template,
     make_response,
     jsonify,
+    request,
 )
 import random, os
 from api.services.auth0 import requires_auth
+from api.services.slack import send_slack_message
 from api.helpers import app
 from api.helpers.seeder import seed_tag_categories, seed_tags
 from peewee import *

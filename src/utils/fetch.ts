@@ -27,12 +27,15 @@ const fetcher = async (url: string, options?: FetchOptions) => {
 
 
     return fetch(url, fetchOptions)
-      .then(response => {
+      .then(async response => {
         if (!response.ok) {
-          // throw new Error(response.statusText)
-          console.error(response.statusText)
-          return { error: response.statusText,
-            status: response.status }
+          // TODO: this is not quite right.
+          // try returning response.json(), you get the right thing.
+          console.log(response)
+          return {
+            error: response.statusText,
+            status: response.status,
+          }
         }
         return response.json()
       })

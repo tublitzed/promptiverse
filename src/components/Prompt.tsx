@@ -30,6 +30,8 @@ const PromptComponent = () => {
       tagIds: getSelectedTagIds(tags),
     })
 
+    console.log(response)
+
     if (!response.prompt) {
       console.error(`Unable to generate prompt`, response)
       setPrompt({
