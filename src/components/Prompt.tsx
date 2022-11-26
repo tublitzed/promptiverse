@@ -7,14 +7,17 @@ import Button from './base/Button'
 import AppContext from '@src/appContext'
 import LocalStorage from '@utils/localStorage'
 import Loader from './base/Loader'
+import Alert from '@components/base/Alert'
 
 const PromptComponent = () => {
   const { setPrompt, prompt, user, tags } = React.useContext(AppContext)
   const [seed, setSeed] = React.useState<number | undefined>(prompt?.seed)
   const [promptRawError, setPromptRawError] = React.useState<string>()
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false)
+  const [error, setError] = React.useState<string|undefined>()
 
   const submit = async () => {
+    setError(undefined)
     if (!prompt || !prompt?.promptRaw || prompt.promptRaw === '') {
       return setPromptRawError('Missing required prompt.')
     }
@@ -31,18 +34,19 @@ const PromptComponent = () => {
     })
 
     console.log(response)
-
-    if (!response.prompt) {
+    if (response.status === 'error' || !response.data.prompt) {
       console.error(`Unable to generate prompt`, response)
+      setError(response?.error || 'Unable to generate prompt')
       setPrompt({
         ...prompt,
         loading: false,
       })
+      setIsGenerating(false)
       return
     }
 
     const newPromptVal = {
-      ...response.prompt,
+      ...response.data.prompt,
       loading: false,
     }
     setPrompt(newPromptVal)
@@ -50,6 +54,7 @@ const PromptComponent = () => {
     setIsGenerating(false)
     LocalStorage.setPrompt(newPromptVal)
     LocalStorage.setTags(tags)
+    setError(undefined)
   }
 
   const setPromptRaw = (newVal:string) => {
@@ -62,6 +67,9 @@ const PromptComponent = () => {
 
   return (
     <div>
+      {error &&
+        <Alert message={error} show className="my-4"/>
+      }
       <div className="flex flex-row gap-x-2">
         <Input
           value={prompt?.promptRaw || ''}

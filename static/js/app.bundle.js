@@ -251,7 +251,7 @@ const ApiService = {
         return ApiService.request({
             accessToken,
             path: '/prompt',
-        }).then(resp => ({ prompts: (0, mappings_1.mapPromptListToTypes)(resp.prompts) }));
+        }).then(resp => ({ prompts: (0, mappings_1.mapPromptListToTypes)(resp.data.prompts) }));
     }),
     getTags: (accessToken) => __awaiter(void 0, void 0, void 0, function* () {
         if (accessToken) {
@@ -259,15 +259,15 @@ const ApiService = {
                 accessToken,
                 path: '/tag',
             }).then(resp => ({
-                tags: (0, mappings_1.mapTagListToTypes)(resp.tags),
-                categories: resp.categories,
+                tags: (0, mappings_1.mapTagListToTypes)(resp.data.tags),
+                categories: resp.data.ategories,
             }));
         }
         return ApiService.publicRequest({
             path: '/tag/public',
         }).then(resp => ({
-            tags: (0, mappings_1.mapTagListToTypes)(resp.tags),
-            categories: resp.categories,
+            tags: (0, mappings_1.mapTagListToTypes)(resp.data.tags),
+            categories: resp.data.categories,
         }));
     }),
     sandboxTest: (accessToken) => {
@@ -494,12 +494,15 @@ const Button_1 = __importDefault(__webpack_require__(/*! ./base/Button */ "./src
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
 const Loader_1 = __importDefault(__webpack_require__(/*! ./base/Loader */ "./src/components/base/Loader.tsx"));
+const Alert_1 = __importDefault(__webpack_require__(/*! @components/base/Alert */ "./src/components/base/Alert.tsx"));
 const PromptComponent = () => {
     const { setPrompt, prompt, user, tags } = react_1.default.useContext(appContext_1.default);
     const [seed, setSeed] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.seed);
     const [promptRawError, setPromptRawError] = react_1.default.useState();
     const [isGenerating, setIsGenerating] = react_1.default.useState(false);
+    const [error, setError] = react_1.default.useState();
     const submit = () => __awaiter(void 0, void 0, void 0, function* () {
+        setError(undefined);
         if (!prompt || !(prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw) || prompt.promptRaw === '') {
             return setPromptRawError('Missing required prompt.');
         }
@@ -512,23 +515,28 @@ const PromptComponent = () => {
             tagIds: (0, Tags_1.getSelectedTagIds)(tags),
         });
         console.log(response);
-        if (!response.prompt) {
+        if (response.status === 'error' || !response.data.prompt) {
             console.error(`Unable to generate prompt`, response);
+            setError((response === null || response === void 0 ? void 0 : response.error) || 'Unable to generate prompt');
             setPrompt(Object.assign(Object.assign({}, prompt), { loading: false }));
+            setIsGenerating(false);
             return;
         }
-        const newPromptVal = Object.assign(Object.assign({}, response.prompt), { loading: false });
+        const newPromptVal = Object.assign(Object.assign({}, response.data.prompt), { loading: false });
         setPrompt(newPromptVal);
         setSeed(newPromptVal.seed);
         setIsGenerating(false);
         localStorage_1.default.setPrompt(newPromptVal);
         localStorage_1.default.setTags(tags);
+        setError(undefined);
     });
     const setPromptRaw = (newVal) => {
         setPrompt(Object.assign(Object.assign({}, prompt), { promptRaw: newVal }));
         setPromptRawError('');
     };
     return (react_1.default.createElement("div", null,
+        error &&
+            react_1.default.createElement(Alert_1.default, { message: error, show: true, className: "my-4" }),
         react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
             react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw) || '', onChange: setPromptRaw, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading, autoFocus: true, error: promptRawError }),
             react_1.default.createElement(Input_1.default, { className: "w-24", placeholder: "Seed?", value: seed, type: "number", onChange: (value) => {
@@ -650,6 +658,36 @@ const ProtectedRoute = (_a) => {
         }) }, args)));
 };
 exports["default"] = ProtectedRoute;
+
+
+/***/ }),
+
+/***/ "./src/components/base/Alert.tsx":
+/*!***************************************!*\
+  !*** ./src/components/base/Alert.tsx ***!
+  \***************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
+const Notice = ({ type = 'ERROR', show, message, className, }) => {
+    const [isVisible, setIsVisible] = react_1.default.useState(show);
+    const hide = () => {
+        setIsVisible(false);
+    };
+    if (!isVisible) {
+        return null;
+    }
+    return (react_1.default.createElement("section", { className: (0, clsx_1.default)(className, 'w-full text-center py-6 px-2 shadow rounded relative', type === 'ERROR' && 'bg-red-50 ring ring-red-200 text-red-600', type === 'WARNING' && 'bg-orange-100 ring ring-orange-300 text-orange-600') },
+        react_1.default.createElement("p", { className: "text-lg" }, message),
+        react_1.default.createElement("a", { href: "#", onClick: hide, title: "Close", className: "no-underline hover:bg-white/20 w-6 h-6 text-center right-0 top-0 absolute rounded-full m-2" }, "X")));
+};
+exports["default"] = Notice;
 
 
 /***/ }),
@@ -1637,22 +1675,22 @@ const fetcher = (url, options) => __awaiter(void 0, void 0, void 0, function* ()
                 'X-CSRF-Token': ((_d = options === null || options === void 0 ? void 0 : options.headers) === null || _d === void 0 ? void 0 : _d['X-CSRF-Token']) || csrfToken,
             } }, ((options === null || options === void 0 ? void 0 : options.postBody) ? { body: JSON.stringify(options.postBody) } : []));
         return fetch(url, fetchOptions)
-            .then((response) => __awaiter(void 0, void 0, void 0, function* () {
-            if (!response.ok) {
-                // TODO: this is not quite right.
-                // try returning response.json(), you get the right thing.
-                console.log(response);
+            .then(resp => resp.json())
+            .then(data => {
+            if (data.error) {
                 return {
-                    error: response.statusText,
-                    status: response.status,
+                    status: 'error',
+                    error: data.error,
                 };
             }
-            return response.json();
-        }))
-            .then(resp => resp);
+            return {
+                status: 'ok',
+                data,
+            };
+        });
     }
     catch (err) {
-        console.log(err);
+        console.error(err);
     }
 });
 exports["default"] = fetcher;

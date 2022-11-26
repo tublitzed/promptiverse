@@ -45,7 +45,10 @@ def public():
     if count_or_none is None:
         create(ip_address)
     elif count_or_none > int(os.environ.get("PUBLIC_GENERATION_LIMIT_BY_IP", 10)):
-        return jsonify({"error": "Exceeded Limit"}), 403
+        logging.info(f"Hit IP limit: {ip_address}")
+        return jsonify({
+                "error": "You have exceeded the number of images you can create without an account.",
+                }), 403
     else:
         update_generation_count(ip_address, count_or_none + 1)
 

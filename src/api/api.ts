@@ -1,4 +1,4 @@
-import fetcher from '@utils/fetch'
+import fetcher, { FetchResp } from '@utils/fetch'
 import { Tag, TagCategory, PromptApiResponse, Prompt, TagApiResponse } from '@types'
 
 import { mapPromptListToTypes, mapTagListToTypes } from './mappings'
@@ -29,6 +29,10 @@ interface PublicApiRequest extends Partial<ApiRequest> {
   method?: ApiRequest['method'],
   path: string
   postBody?: any
+}
+
+interface GenerateImageResp extends FetchResp {
+  prompt: PromptApiResponse
 }
 const ApiService = {
   request: ({
@@ -71,7 +75,7 @@ const ApiService = {
     promptRaw,
     seed,
     tagIds = [],
-  }:GenerateImageArgs):Promise<{ prompt: PromptApiResponse }> => {
+  }:GenerateImageArgs):Promise<GenerateImageResp | FetchResp> => {
     if (accessToken) {
       return ApiService.request({
         accessToken,
@@ -99,7 +103,7 @@ const ApiService = {
     return ApiService.request({
       accessToken,
       path: '/prompt',
-    }).then(resp => ({ prompts: mapPromptListToTypes(resp.prompts) }))
+    }).then(resp => ({ prompts: mapPromptListToTypes(resp.data.prompts) }))
   },
 
   getTags: async (accessToken?: string):Promise<{ tags: Tag[], categories: TagCategory[]}> => {
@@ -108,16 +112,16 @@ const ApiService = {
         accessToken,
         path: '/tag',
       }).then(resp => ({
-        tags: mapTagListToTypes(resp.tags),
-        categories: resp.categories,
+        tags: mapTagListToTypes(resp.data.tags),
+        categories: resp.data.ategories,
       }))
     }
 
     return ApiService.publicRequest({
       path: '/tag/public',
     }).then(resp => ({
-      tags: mapTagListToTypes(resp.tags),
-      categories: resp.categories,
+      tags: mapTagListToTypes(resp.data.tags),
+      categories: resp.data.categories,
     }))
   },
 
