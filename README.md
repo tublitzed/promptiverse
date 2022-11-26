@@ -14,6 +14,7 @@
 ## Deployments
 
 1. Heroku, via UI for the limited time being
+1. `heroku ps:exec bash -a promptiverse` run a bash shell in the main web dyno
 
 ## Envs
 
@@ -24,3 +25,5 @@
 
 * Via Auth0
 
+## Logs
+* `heroku logs -a promptiverse --tail`
