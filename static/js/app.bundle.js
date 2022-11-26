@@ -51,7 +51,6 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 const ProtectedRoute_1 = __importDefault(__webpack_require__(/*! @components/auth/ProtectedRoute */ "./src/components/auth/ProtectedRoute.tsx"));
 const Index_1 = __importDefault(__webpack_require__(/*! @components/pages/Index */ "./src/components/pages/Index.tsx"));
-const Profile_1 = __importDefault(__webpack_require__(/*! @components/pages/Profile */ "./src/components/pages/Profile.tsx"));
 const Sandbox_1 = __importDefault(__webpack_require__(/*! @components/pages/Sandbox */ "./src/components/pages/Sandbox.tsx"));
 const Callback_1 = __importDefault(__webpack_require__(/*! @components/pages/Callback */ "./src/components/pages/Callback.tsx"));
 const _404_1 = __importDefault(__webpack_require__(/*! @components/pages/404 */ "./src/components/pages/404.tsx"));
@@ -103,7 +102,6 @@ const App = () => {
             react_1.default.createElement(react_router_dom_1.Route, { path: "/signup", component: SignUp_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/sign-up", component: SignUp_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/about", component: About_1.default }),
-            react_1.default.createElement(ProtectedRoute_1.default, { path: "/profile", component: Profile_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/images", component: Images_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/sandbox", component: Sandbox_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/callback", component: Callback_1.default }),
@@ -933,7 +931,6 @@ const Header = () => {
                                     react_1.default.createElement(Avatar_1.default, null))),
                             react_1.default.createElement(react_3.Transition, { as: react_2.Fragment, enter: "transition ease-out duration-100", enterFrom: "transform opacity-0 scale-95", enterTo: "transform opacity-100 scale-100", leave: "transition ease-in duration-75", leaveFrom: "transform opacity-100 scale-100", leaveTo: "transform opacity-0 scale-95" },
                                 react_1.default.createElement(react_3.Menu.Items, { className: "absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" },
-                                    react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: () => goToPage('/profile'), className: (0, clsx_1.default)(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "My Profile"))),
                                     react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: handleLogout, className: (0, clsx_1.default)(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "Sign Out"))))))))))));
 };
 exports["default"] = Header;
@@ -1301,39 +1298,6 @@ const Index_1 = __importDefault(__webpack_require__(/*! @components/pages/public
 const Page = () => {
     const { user } = (0, auth0_react_1.useAuth0)();
     return (react_1.default.createElement(Layout_1.default, { page: "INDEX", pageTitle: user ? 'BUILDER' : undefined }, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Index_1.default, null)));
-};
-exports["default"] = Page;
-
-
-/***/ }),
-
-/***/ "./src/components/pages/Profile.tsx":
-/*!******************************************!*\
-  !*** ./src/components/pages/Profile.tsx ***!
-  \******************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
-const Page = () => {
-    const { user } = (0, auth0_react_1.useAuth0)();
-    return (react_1.default.createElement(Layout_1.default, null,
-        react_1.default.createElement("ul", { className: "list-disc list-inside text-white" },
-            react_1.default.createElement("li", null,
-                "Name: ",
-                user.name),
-            react_1.default.createElement("li", null,
-                "Email: ",
-                user.email),
-            react_1.default.createElement("li", null,
-                "Nickname: ",
-                user.nickname))));
 };
 exports["default"] = Page;
 

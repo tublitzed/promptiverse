@@ -90,19 +90,6 @@ const Header = () => {
                     <Menu.Item>
                       {({ active }) => (
                         <a
-                          onClick={() => goToPage('/profile')}
-                          className={clsx(
-                            active ? 'bg-gray-100' : '',
-                            'block px-4 py-2 text-sm text-gray-700 cursor-pointer',
-                          )}
-                        >
-                              My Profile
-                        </a>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item>
-                      {({ active }) => (
-                        <a
                           onClick={handleLogout}
                           className={clsx(
                             active ? 'bg-gray-100' : '',
