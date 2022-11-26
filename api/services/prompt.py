@@ -1,4 +1,4 @@
-import string, os, warnings, random
+import string, os, warnings, random, uuid
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 from api.models import prompt as prompt_model
@@ -6,6 +6,9 @@ from api.models.prompt import ENGINE_SD_1
 
 from api.helpers.file import (
     create_img_file,
+)
+from api.helpers.aws import (
+    copy_to_s3_public,
 )
 
 # https://github.com/Stability-AI/stability-sdk
@@ -70,7 +73,43 @@ def build(prompt_raw, tags):
     return f"{prompt_raw}{tag_suffix}"
 
 
-def generate(prompt=string, prompt_raw=string, user_id=string, seed=None, tag_ids=[]):
+def generate_for_user(
+    user_id=string, prompt=string, prompt_raw=string, seed=None, tag_ids=[]
+):
+    img_url = generate(prompt=prompt, prompt_raw=prompt_raw, seed=seed, tag_ids=tag_ids)
+    saved_prompt = prompt_model.save(
+        img_url=img_url,
+        prompt_raw=prompt_raw,
+        prompt=prompt,
+        seed=seed,
+        tag_ids=tag_ids,
+        user_id=user_id,
+    )
+    return saved_prompt
+
+
+def generate_public(
+    ip_address=string, prompt=string, prompt_raw=string, seed=None, tag_ids=[]
+):
+    img_url = generate(prompt=prompt, prompt_raw=prompt_raw, seed=seed, tag_ids=tag_ids)
+    prompt_id = uuid.uuid4()
+    s3_img_url = copy_to_s3_public(
+        filename=f"{prompt_id}/image.png",
+        src_filepath=img_url,
+        ip_address=ip_address,
+    )
+    return {
+        "engine": ENGINE_SD_1,
+        "id": prompt_id,
+        "imgUrl": s3_img_url,
+        "promptRaw": prompt_raw,
+        "prompt": prompt,
+        "seed": seed,
+        "tagIds": tag_ids,
+    }
+
+
+def generate(prompt=string, prompt_raw=string, seed=None, tag_ids=[]):
     if seed is None:
         seed = random.randint(1, 10000)
 
@@ -78,6 +117,9 @@ def generate(prompt=string, prompt_raw=string, user_id=string, seed=None, tag_id
         prompt=prompt,
         seed=seed,  # if provided, specifying a random seed makes results deterministic
         # steps=30, # defaults to 50 if not specified
+        # height and width must be in multiples of 64
+        # height=512,
+        # width=1600
     )
     for resp in answers:
         for artifact in resp.artifacts:
@@ -95,12 +137,4 @@ def generate(prompt=string, prompt_raw=string, user_id=string, seed=None, tag_id
                 outfile.write(artifact.binary)
                 outfile.flush()  # Optional but a good idea
                 outfile.close()
-                saved_prompt = prompt_model.save(
-                    img_url=file_meta["public_path"],
-                    prompt_raw=prompt_raw,
-                    prompt=prompt,
-                    seed=seed,
-                    tag_ids=tag_ids,
-                    user_id=user_id,
-                )
-    return saved_prompt
+    return file_meta["public_path"]

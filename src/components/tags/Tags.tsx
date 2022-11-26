@@ -77,7 +77,7 @@ const Tags = ({}) => {
   }
 
   const loadTags = async () => {
-    const resp = await Api.getTags(user.access_token)
+    const resp = await Api.getTags(user?.access_token)
     if (!resp.tags || !resp.categories) {
       setError('Unable to load tags')
       return
@@ -96,10 +96,10 @@ const Tags = ({}) => {
   }
 
   React.useEffect(() => {
-    if (user.access_token && !tags) {
+    if (!tags) {
       loadTags()
     }
-  }, [user.access_token])
+  }, [])
 
   if (error) {
     return <div>{error}</div>

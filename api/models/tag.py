@@ -50,6 +50,10 @@ def get_all():
     )
 
 
+def get_public_tags():
+    return Tag.select().join(Tag_Category).where(Tag_Category.is_public == True)
+
+
 def get_by_ids(tag_ids):
     return Tag.select().where(Tag.id.in_(tag_ids))
 

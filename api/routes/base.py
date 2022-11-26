@@ -3,13 +3,13 @@ from flask import (
     render_template,
     make_response,
     jsonify,
+    request,
 )
 import random, os
 from api.services.auth0 import requires_auth
+from api.services.slack import send_slack_message
 from api.helpers import app
 from api.helpers.seeder import seed_tag_categories, seed_tags
-from api.models.tag import get_by_ids
-from api.services.prompt import generate, build
 from peewee import *
 
 bp_name = "base"
@@ -28,6 +28,7 @@ def render_static():
             "CLIENT_APP_AUTH0_CALLBACK_URL"
         ),
         "ENV": os.environ.get("FLASK_ENV"),
+        "ENABLE_SIGNUP": os.environ.get("ENABLE_SIGNUP", False),
         "SENTRY_CLIENT_DSN": os.environ.get("SENTRY_CLIENT_DSN"),
     }
     return render_template("index.html", app_vars=app_vars, cache_buster=cache_buster)
@@ -44,7 +45,7 @@ def index():
     return render_static()
 
 
-@bp.route("/sandbox", methods=["POST"])
+@bp.route("/sandbox", methods=["POST", "GET"])
 def sandbox():
     if app.is_dev() is False:
         return make_response("error", 400)

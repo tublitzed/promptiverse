@@ -11,7 +11,14 @@ interface FetchOptions {
   postBody?: any
 }
 
-const fetcher = async (url: string, options?: FetchOptions) => {
+export interface FetchResp {
+  status: 'ok' | 'error',
+  error?: string
+  data?: {
+    [k:string]: any
+  }
+}
+const fetcher = async (url: string, options?: FetchOptions):Promise<FetchResp> => {
   const csrfToken = Api.getVar('APP_TOKEN')
   try {
     const fetchOptions = {
@@ -27,18 +34,21 @@ const fetcher = async (url: string, options?: FetchOptions) => {
 
 
     return fetch(url, fetchOptions)
-      .then(response => {
-        if (!response.ok) {
-          // throw new Error(response.statusText)
-          console.error(response.statusText)
-          return { error: response.statusText,
-            status: response.status }
+      .then(resp => resp.json())
+      .then(data => {
+        if (data.error) {
+          return {
+            status: 'error',
+            error: data.error,
+          }
         }
-        return response.json()
+        return {
+          status: 'ok',
+          data,
+        }
       })
-      .then(resp => resp)
   } catch (err) {
-    console.log(err)
+    console.error(err)
   }
 }
 

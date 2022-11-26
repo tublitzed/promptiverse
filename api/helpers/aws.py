@@ -17,6 +17,7 @@ logging.getLogger("urllib3").setLevel(BOTO_LOG_LEVEL)
 # 86400 seconds = 24 hours
 EXPIRES = 86400 * 7
 BUCKET_NAME = os.environ.get("S3_BUCKET_NAME")
+BUCKET_NAME_PUBLIC = os.environ.get("S3_BUCKET_NAME_PUBLIC")
 PRESIGNED_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID_PRESIGNED_URLS_ONLY")
 PRESIGNED_SECRET_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY_PRESIGNED_URLS_ONLY")
 
@@ -35,9 +36,9 @@ def create_client():
     return client
 
 
-def copy_to_s3_dir(user_id: str, src_filepath=str, filename=str):
+def copy_to_s3_dir(identifier: str, src_filepath=str, filename=str, bucket_name=str):
     try:
-        object_name = f"img/{user_id}/{filename}"
+        object_name = f"img/{identifier}/{filename}"
         s3_client = create_client()
         s3_client.upload_file(src_filepath, BUCKET_NAME, object_name)
     except Exception as e:
@@ -52,11 +53,31 @@ def copy_to_s3_dir(user_id: str, src_filepath=str, filename=str):
 def copy_to_s3(user_id: str, src_filepath: str, filename: str):
     try:
         object_name = copy_to_s3_dir(
-            user_id=user_id, src_filepath=src_filepath, filename=filename
+            identifier=user_id,
+            src_filepath=src_filepath,
+            filename=filename,
+            bucket_name=BUCKET_NAME,
         )
     except:
         logging.error(
             f"Cannot copy_to_s3. user id: {user_id}, Filepath: {src_filepath}, Filename: {filename}."
         )
     img_path_in_s3 = f"https://{BUCKET_NAME}.s3.amazonaws.com/{object_name}"
+    return img_path_in_s3
+
+
+def copy_to_s3_public(ip_address: str, src_filepath: str, filename: str):
+    hashed_ip = hash(ip_address)
+    try:
+        object_name = copy_to_s3_dir(
+            identifier=f"public_{hashed_ip}",
+            src_filepath=src_filepath,
+            filename=filename,
+            bucket_name=BUCKET_NAME_PUBLIC,
+        )
+    except:
+        logging.error(
+            f"Cannot copy_to_s3_public. user ip_address: {ip_address}, hash: {hashed_ip}, Filepath: {src_filepath}, Filename: {filename}."
+        )
+    img_path_in_s3 = f"https://{BUCKET_NAME_PUBLIC}.s3.amazonaws.com/{object_name}"
     return img_path_in_s3

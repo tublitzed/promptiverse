@@ -9,6 +9,8 @@ import CallbackPage from '@components/pages/Callback'
 import NotFoundPage from '@components/pages/404'
 import AboutPage from '@components/pages/About'
 import ImagesPage from '@components/pages/Images'
+import BuilderPage from '@components/pages/Builder'
+import SignUpPage from '@components/pages/public/SignUp'
 import AppContext, { defaultContext } from '@src/appContext'
 import { Prompt, TagCollection } from '@types'
 
@@ -70,8 +72,12 @@ export const App: React.FC = () => {
     <AppContext.Provider value={defaultCtx}>
       <Switch>
         <Route path="/" exact component={IndexPage} />
-        <ProtectedRoute path="/profile" component={ProfilePage} />
-        <ProtectedRoute path="/about" component={AboutPage} />
+        <Route path="/builder" component={BuilderPage} />
+        <Route path="/signup" component={SignUpPage} />
+        <Route path="/sign-up" component={SignUpPage} />
+        <Route path="/about" component={AboutPage} />
+        {/* killed this page for now */}
+        {/* <ProtectedRoute path="/profile" component={ProfilePage} /> */}
         <ProtectedRoute path="/images" component={ImagesPage} />
         <ProtectedRoute path="/sandbox" component={SandboxPage} />
         <Route path="/callback" component={CallbackPage} />

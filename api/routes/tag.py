@@ -3,8 +3,11 @@ from flask import Blueprint, jsonify, request
 
 from api.services.auth0 import requires_auth
 
-from api.models.tag_category import get_all as get_all_tag_categories
-from api.models.tag import get_all as get_all_tags
+from api.models.tag_category import (
+    get_all as get_all_tag_categories,
+    get_public_tag_categories,
+)
+from api.models.tag import get_all as get_all_tags, get_public_tags
 
 bp_name = "api-tag"
 bp_url_prefix = "/api/tag"
@@ -16,6 +19,19 @@ bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
 def all_tags():
     tag_categories = get_all_tag_categories()
     tags = get_all_tags()
+    return jsonify(
+        {
+            "categories": list(tag_categories.dicts()),
+            "tags": list(tags.dicts()),
+        }
+    )
+
+
+@bp.route("/public", methods=["GET"])
+def all_public_tags():
+    # TODO: limit for non-auth
+    tag_categories = get_public_tag_categories()
+    tags = get_public_tags()
     return jsonify(
         {
             "categories": list(tag_categories.dicts()),

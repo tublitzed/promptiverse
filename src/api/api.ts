@@ -1,4 +1,4 @@
-import fetcher from '@utils/fetch'
+import fetcher, { FetchResp } from '@utils/fetch'
 import { Tag, TagCategory, PromptApiResponse, Prompt, TagApiResponse } from '@types'
 
 import { mapPromptListToTypes, mapTagListToTypes } from './mappings'
@@ -13,7 +13,7 @@ window.promptiverse = window.promptiverse || {}
 
 interface GenerateImageArgs {
   promptRaw: string
-  accessToken: string
+  accessToken?: string
   seed?: number
   tagIds?: string[]
 }
@@ -25,6 +25,15 @@ interface ApiRequest {
   postBody?: any
 }
 
+interface PublicApiRequest extends Partial<ApiRequest> {
+  method?: ApiRequest['method'],
+  path: string
+  postBody?: any
+}
+
+interface GenerateImageResp extends FetchResp {
+  prompt: PromptApiResponse
+}
 const ApiService = {
   request: ({
     accessToken,
@@ -42,6 +51,18 @@ const ApiService = {
     })
   },
 
+  publicRequest: ({
+    method = 'GET',
+    path,
+    postBody,
+  }:PublicApiRequest) => {
+    const apiUrl = `${ApiService.getVar('API_SERVER_URL')}/api`
+    return fetcher(`${apiUrl}${path}`, {
+      method,
+      postBody,
+    })
+  },
+
   getVar: (name: any) => {
     if (!window.promptiverse || !window.promptiverse.vars) {
       return undefined
@@ -54,10 +75,21 @@ const ApiService = {
     promptRaw,
     seed,
     tagIds = [],
-  }:GenerateImageArgs):Promise<{ prompt: PromptApiResponse }> => {
-    return ApiService.request({
-      accessToken,
-      path: '/prompt',
+  }:GenerateImageArgs):Promise<GenerateImageResp | FetchResp> => {
+    if (accessToken) {
+      return ApiService.request({
+        accessToken,
+        path: '/prompt',
+        method: 'POST',
+        postBody: {
+          prompt_raw: promptRaw,
+          seed,
+          tag_ids: tagIds,
+        },
+      })
+    }
+    return ApiService.publicRequest({
+      path: '/prompt/public',
       method: 'POST',
       postBody: {
         prompt_raw: promptRaw,
@@ -71,16 +103,25 @@ const ApiService = {
     return ApiService.request({
       accessToken,
       path: '/prompt',
-    }).then(resp => ({ prompts: mapPromptListToTypes(resp.prompts) }))
+    }).then(resp => ({ prompts: mapPromptListToTypes(resp.data.prompts) }))
   },
 
-  getTags: async (accessToken: string):Promise<{ tags: Tag[], categories: TagCategory[]}> => {
-    return ApiService.request({
-      accessToken,
-      path: '/tag',
+  getTags: async (accessToken?: string):Promise<{ tags: Tag[], categories: TagCategory[]}> => {
+    if (accessToken) {
+      return ApiService.request({
+        accessToken,
+        path: '/tag',
+      }).then(resp => ({
+        tags: mapTagListToTypes(resp.data.tags),
+        categories: resp.data.ategories,
+      }))
+    }
+
+    return ApiService.publicRequest({
+      path: '/tag/public',
     }).then(resp => ({
-      tags: mapTagListToTypes(resp.tags),
-      categories: resp.categories,
+      tags: mapTagListToTypes(resp.data.tags),
+      categories: resp.data.categories,
     }))
   },
 

@@ -6,6 +6,7 @@ export interface Props extends Omit<React.DetailedHTMLProps<React.InputHTMLAttri
   onChange?: (value?: any) => void;
   type?: 'string' | 'number';
   valueViaProps?: any;
+  error?: string;
 }
 
 const Input = ({
@@ -15,6 +16,7 @@ const Input = ({
   autoFocus,
   onChange,
   disabled,
+  error,
   ...otherProps
 }:Props) => {
   const inputRef = React.useRef<HTMLInputElement>(null)
@@ -32,25 +34,29 @@ const Input = ({
     valueViaProps,
   ])
   return (
-    <input
-      value={value}
-      ref={inputRef}
-      disabled={disabled}
-      type={type || 'string'}
-      onChange={(e:React.ChangeEvent<HTMLInputElement>) => {
-        setValue(e.target.value)
-        if (onChange) {
-          onChange(e.target.value)
-        }
-      }}
-      className={clsx(
-        className,
-        'p-2 rounded-sm',
-        disabled ? 'bg-gray-300 text-gray-500' : 'bg-gray-200 text-gray-700 cursor:pointer',
-        'focus:bg-white focus:outline-none focus:ring focus:ring-blue-200',
-      )}
-      {...otherProps}
-    />
+    <div className={className}>
+      <input
+        value={value}
+        ref={inputRef}
+        disabled={disabled}
+        type={type || 'string'}
+        onChange={(e:React.ChangeEvent<HTMLInputElement>) => {
+          setValue(e.target.value)
+          if (onChange) {
+            onChange(e.target.value)
+          }
+        }}
+        className={clsx(
+          'p-2 rounded-sm w-full',
+          disabled ? 'bg-gray-300 text-gray-500' : 'text-gray-700 cursor:pointer',
+          'focus:bg-white focus:outline-none focus:ring focus:ring-blue-200',
+          error && 'bg-red-50 border-red-500 border',
+          !disabled && !error && 'bg-gray-200',
+        )}
+        {...otherProps}
+      />
+      {error && <div className="text-red-500 font-semibold mt-1">{error}</div>}
+    </div>
   )
 }
 

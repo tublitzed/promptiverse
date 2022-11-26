@@ -51,12 +51,13 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 const ProtectedRoute_1 = __importDefault(__webpack_require__(/*! @components/auth/ProtectedRoute */ "./src/components/auth/ProtectedRoute.tsx"));
 const Index_1 = __importDefault(__webpack_require__(/*! @components/pages/Index */ "./src/components/pages/Index.tsx"));
-const Profile_1 = __importDefault(__webpack_require__(/*! @components/pages/Profile */ "./src/components/pages/Profile.tsx"));
 const Sandbox_1 = __importDefault(__webpack_require__(/*! @components/pages/Sandbox */ "./src/components/pages/Sandbox.tsx"));
 const Callback_1 = __importDefault(__webpack_require__(/*! @components/pages/Callback */ "./src/components/pages/Callback.tsx"));
 const _404_1 = __importDefault(__webpack_require__(/*! @components/pages/404 */ "./src/components/pages/404.tsx"));
 const About_1 = __importDefault(__webpack_require__(/*! @components/pages/About */ "./src/components/pages/About.tsx"));
 const Images_1 = __importDefault(__webpack_require__(/*! @components/pages/Images */ "./src/components/pages/Images.tsx"));
+const Builder_1 = __importDefault(__webpack_require__(/*! @components/pages/Builder */ "./src/components/pages/Builder.tsx"));
+const SignUp_1 = __importDefault(__webpack_require__(/*! @components/pages/public/SignUp */ "./src/components/pages/public/SignUp.tsx"));
 const appContext_1 = __importStar(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const App = () => {
     const { user: userViaAuth0, loginWithRedirect, isLoading: isLoadingViaAuth0, getAccessTokenSilently, } = (0, auth0_react_1.useAuth0)();
@@ -97,8 +98,10 @@ const App = () => {
     return (react_1.default.createElement(appContext_1.default.Provider, { value: defaultCtx },
         react_1.default.createElement(react_router_dom_1.Switch, null,
             react_1.default.createElement(react_router_dom_1.Route, { path: "/", exact: true, component: Index_1.default }),
-            react_1.default.createElement(ProtectedRoute_1.default, { path: "/profile", component: Profile_1.default }),
-            react_1.default.createElement(ProtectedRoute_1.default, { path: "/about", component: About_1.default }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/builder", component: Builder_1.default }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/signup", component: SignUp_1.default }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/sign-up", component: SignUp_1.default }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/about", component: About_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/images", component: Images_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/sandbox", component: Sandbox_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/callback", component: Callback_1.default }),
@@ -206,6 +209,13 @@ const ApiService = {
             },
         });
     },
+    publicRequest: ({ method = 'GET', path, postBody, }) => {
+        const apiUrl = `${ApiService.getVar('API_SERVER_URL')}/api`;
+        return (0, fetch_1.default)(`${apiUrl}${path}`, {
+            method,
+            postBody,
+        });
+    },
     getVar: (name) => {
         if (!window.promptiverse || !window.promptiverse.vars) {
             return undefined;
@@ -213,9 +223,20 @@ const ApiService = {
         return window.promptiverse.vars[name];
     },
     generateImage: ({ accessToken, promptRaw, seed, tagIds = [], }) => {
-        return ApiService.request({
-            accessToken,
-            path: '/prompt',
+        if (accessToken) {
+            return ApiService.request({
+                accessToken,
+                path: '/prompt',
+                method: 'POST',
+                postBody: {
+                    prompt_raw: promptRaw,
+                    seed,
+                    tag_ids: tagIds,
+                },
+            });
+        }
+        return ApiService.publicRequest({
+            path: '/prompt/public',
             method: 'POST',
             postBody: {
                 prompt_raw: promptRaw,
@@ -228,15 +249,23 @@ const ApiService = {
         return ApiService.request({
             accessToken,
             path: '/prompt',
-        }).then(resp => ({ prompts: (0, mappings_1.mapPromptListToTypes)(resp.prompts) }));
+        }).then(resp => ({ prompts: (0, mappings_1.mapPromptListToTypes)(resp.data.prompts) }));
     }),
     getTags: (accessToken) => __awaiter(void 0, void 0, void 0, function* () {
-        return ApiService.request({
-            accessToken,
-            path: '/tag',
+        if (accessToken) {
+            return ApiService.request({
+                accessToken,
+                path: '/tag',
+            }).then(resp => ({
+                tags: (0, mappings_1.mapTagListToTypes)(resp.data.tags),
+                categories: resp.data.ategories,
+            }));
+        }
+        return ApiService.publicRequest({
+            path: '/tag/public',
         }).then(resp => ({
-            tags: (0, mappings_1.mapTagListToTypes)(resp.tags),
-            categories: resp.categories,
+            tags: (0, mappings_1.mapTagListToTypes)(resp.data.tags),
+            categories: resp.data.categories,
         }));
     }),
     sandboxTest: (accessToken) => {
@@ -312,10 +341,73 @@ exports["default"] = AppContext;
 
 /***/ }),
 
-/***/ "./src/components/Header.tsx":
+/***/ "./src/components/Footer.tsx":
 /*!***********************************!*\
-  !*** ./src/components/Header.tsx ***!
+  !*** ./src/components/Footer.tsx ***!
   \***********************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const Logo_1 = __importDefault(__webpack_require__(/*! @components/base/Logo */ "./src/components/base/Logo.tsx"));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
+const Footer = () => {
+    const routerHistory = (0, react_router_dom_1.useHistory)();
+    const location = (0, react_router_dom_1.useLocation)();
+    const baseLinkStyle = 'text-sm text-red-400 mx-4 md:mx-10 pt-2';
+    const activeLinkStyle = 'underline hover:no-underline';
+    const inactiveLinkStyle = 'hover:underline';
+    const { loginWithRedirect } = (0, auth0_react_1.useAuth0)();
+    const goToPage = (path) => {
+        routerHistory.push(path);
+    };
+    const handleLogin = (e) => __awaiter(void 0, void 0, void 0, function* () {
+        e.preventDefault();
+        yield loginWithRedirect({
+            prompt: 'login',
+            appState: {
+                returnTo: '/',
+            },
+        });
+    });
+    const enableSignup = api_1.default.getVar('ENABLE_SIGNUP') === true;
+    return (react_1.default.createElement("footer", { className: "bg-red-50 p-6 mt-12 border-t border-red-100" },
+        react_1.default.createElement("div", { className: "w-10 pb-4 mx-auto block md:hidden" },
+            react_1.default.createElement(Logo_1.default, { iconOnly: true, linkedToHome: false })),
+        react_1.default.createElement("div", { className: "flex container mx-auto justify-center" },
+            react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/') }, "Home"),
+            react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/builder' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/builder') }, "Builder"),
+            react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/about' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/about') }, "About"),
+            react_1.default.createElement("div", { className: "pt-1 w-10 md:w-12 md:pt-0 mx-2 md:mx-8 hidden md:block" },
+                react_1.default.createElement(Logo_1.default, { iconOnly: true, linkedToHome: false })),
+            react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/signin' ? activeLinkStyle : inactiveLinkStyle), onClick: handleLogin }, "Sign In"),
+            enableSignup && react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/signup' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/signup') }, "Sign Up"))));
+};
+exports["default"] = Footer;
+
+
+/***/ }),
+
+/***/ "./src/components/Hero.tsx":
+/*!*********************************!*\
+  !*** ./src/components/Hero.tsx ***!
+  \*********************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -324,92 +416,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
-const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const react_2 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-const react_3 = __webpack_require__(/*! @headlessui/react */ "./node_modules/@headlessui/react/dist/index.cjs");
-const outline_1 = __webpack_require__(/*! @heroicons/react/24/outline */ "./node_modules/@heroicons/react/24/outline/esm/index.js");
-const Avatar_1 = __importDefault(__webpack_require__(/*! @components/base/Avatar */ "./src/components/base/Avatar.tsx"));
-const Logo_1 = __importDefault(__webpack_require__(/*! @components/base/Logo */ "./src/components/base/Logo.tsx"));
-const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
-function classNames(...classes) {
-    return classes.filter(Boolean).join(' ');
-}
-const Header = () => {
-    const { logout } = (0, auth0_react_1.useAuth0)();
-    const handleLogout = () => {
-        logout({
-            returnTo: window.location.origin,
-        });
-    };
+const Hero = () => {
     const routerHistory = (0, react_router_dom_1.useHistory)();
-    const goToAboutPage = () => {
-        routerHistory.push('/about');
+    const linkStyle = 'text-red-400 mx-4 hover:underline';
+    const goToPage = (path) => {
+        routerHistory.push(path);
     };
-    const goToDashboard = () => {
-        routerHistory.push('/');
+    const style = {
+        background: 'url("/static/img/bgs/rolling_waves_trending_on_artstation_ernst.png") no-repeat 0 0',
+        backgroundSize: 'cover',
     };
-    const goToProfile = () => {
-        routerHistory.push('/profile');
-    };
-    const goToImages = () => {
-        routerHistory.push('/images');
-    };
-    const { user } = react_1.default.useContext(appContext_1.default);
-    const activeNavLinkClassname = 'bg-gray-900 text-white';
-    const navLinkClassname = 'text-gray-300 hover:bg-gray-700 hover:text-white';
-    const location = (0, react_router_dom_1.useLocation)();
-    if (!user) {
-        return null;
-    }
-    return (react_1.default.createElement("header", null,
-        react_1.default.createElement(react_3.Disclosure, { as: "nav", className: "bg-gray-800" }, ({ open }) => (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", { className: "container mx-auto px-8" },
-                react_1.default.createElement("div", { className: "flex h-16 items-center justify-between" },
-                    react_1.default.createElement("div", { className: "flex items-center" },
-                        react_1.default.createElement("div", { className: "flex-shrink-0" },
-                            react_1.default.createElement("a", { onClick: goToDashboard },
-                                react_1.default.createElement(Logo_1.default, null))),
-                        react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
-                            react_1.default.createElement("div", { className: "flex space-x-4" },
-                                react_1.default.createElement("a", { onClick: goToDashboard, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
-                                react_1.default.createElement("a", { onClick: goToImages, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname) }, "Images"),
-                                react_1.default.createElement("a", { onClick: goToAboutPage, className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")))),
-                    react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
-                        react_1.default.createElement("div", { className: "flex items-center" },
-                            react_1.default.createElement(react_3.Menu, { as: "div", className: "relative ml-3" },
-                                react_1.default.createElement("div", null,
-                                    react_1.default.createElement(react_3.Menu.Button, { className: "flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" },
-                                        react_1.default.createElement("span", { className: "sr-only" }, "Profile"),
-                                        react_1.default.createElement(Avatar_1.default, null))),
-                                react_1.default.createElement(react_3.Transition, { as: react_2.Fragment, enter: "transition ease-out duration-100", enterFrom: "transform opacity-0 scale-95", enterTo: "transform opacity-100 scale-100", leave: "transition ease-in duration-75", leaveFrom: "transform opacity-100 scale-100", leaveTo: "transform opacity-0 scale-95" },
-                                    react_1.default.createElement(react_3.Menu.Items, { className: "absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" },
-                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: goToProfile, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "My Profile"))),
-                                        react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: handleLogout, className: classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "Sign Out")))))))),
-                    react_1.default.createElement("div", { className: "-mr-2 flex sm:hidden" },
-                        react_1.default.createElement(react_3.Disclosure.Button, { className: "inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" },
-                            react_1.default.createElement("span", { className: "sr-only" }, "Open main menu"),
-                            open
-                                ? (react_1.default.createElement(outline_1.XMarkIcon, { className: "block h-6 w-6", "aria-hidden": "true" }))
-                                : (react_1.default.createElement(outline_1.Bars3Icon, { className: "block h-6 w-6", "aria-hidden": "true" })))))),
-            react_1.default.createElement(react_3.Disclosure.Panel, { className: "sm:hidden" },
-                react_1.default.createElement("div", { className: "space-y-1 px-2 pt-2 pb-3" },
-                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToDashboard, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/' ? activeNavLinkClassname : navLinkClassname) }, "Dashboard"),
-                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToImages, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname) }, "Images"),
-                    react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToAboutPage, className: (0, clsx_1.default)('block rounded-md px-3 py-2 text-base font-medium cursor-pointer', location.pathname === '/about' ? activeNavLinkClassname : navLinkClassname) }, "About")),
-                react_1.default.createElement("div", { className: "border-t border-gray-700 pt-4 pb-3" },
-                    react_1.default.createElement("div", { className: "flex items-center px-5" },
-                        react_1.default.createElement("div", { className: "flex-shrink-0" },
-                            react_1.default.createElement(Avatar_1.default, null)),
-                        react_1.default.createElement("div", { className: "ml-3" },
-                            react_1.default.createElement("div", { className: "text-base font-medium text-white" }, user.nickname),
-                            react_1.default.createElement("div", { className: "text-sm font-medium text-gray-400" }, user.name))),
-                    react_1.default.createElement("div", { className: "mt-3 space-y-1 px-2" },
-                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: goToProfile, className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer" }, "Your Profile"),
-                        react_1.default.createElement(react_3.Disclosure.Button, { as: "a", onClick: handleLogout, className: "block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer" }, "Sign Out")))))))));
+    return (react_1.default.createElement("div", { className: "h-[500px] bg-gray-900 flex", style: style },
+        react_1.default.createElement("div", { className: "flex container mx-auto justify-center self-center" },
+            react_1.default.createElement("div", { className: "text-white p-8 rounded mx-4 bg-[#3b4657a1]" },
+                react_1.default.createElement("h1", { className: "text-4xl font-bold" }, "The future of generative images starts here"),
+                react_1.default.createElement("h4", { className: "text-xl mt-2" }, "Try our image builder to explore the magic of AI imagery for free"),
+                react_1.default.createElement(Button_1.default, { size: "lg", className: "mt-6", onClick: () => goToPage('/builder') }, "Get Started")))));
 };
-exports["default"] = Header;
+exports["default"] = Hero;
 
 
 /***/ }),
@@ -465,34 +491,51 @@ const PromptImage_1 = __importDefault(__webpack_require__(/*! ./PromptImage */ "
 const Button_1 = __importDefault(__webpack_require__(/*! ./base/Button */ "./src/components/base/Button.tsx"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
+const Loader_1 = __importDefault(__webpack_require__(/*! ./base/Loader */ "./src/components/base/Loader.tsx"));
+const Alert_1 = __importDefault(__webpack_require__(/*! @components/base/Alert */ "./src/components/base/Alert.tsx"));
 const PromptComponent = () => {
     const { setPrompt, prompt, user, tags } = react_1.default.useContext(appContext_1.default);
     const [seed, setSeed] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.seed);
+    const [promptRawError, setPromptRawError] = react_1.default.useState();
+    const [isGenerating, setIsGenerating] = react_1.default.useState(false);
+    const [error, setError] = react_1.default.useState();
     const submit = () => __awaiter(void 0, void 0, void 0, function* () {
+        setError(undefined);
+        if (!prompt || !(prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw) || prompt.promptRaw === '') {
+            return setPromptRawError('Missing required prompt.');
+        }
+        setIsGenerating(true);
         setPrompt(Object.assign(Object.assign({}, prompt), { loading: true }));
         const response = yield api_1.default.generateImage({
             promptRaw: prompt.promptRaw,
-            accessToken: user.access_token,
+            accessToken: user === null || user === void 0 ? void 0 : user.access_token,
             seed,
             tagIds: (0, Tags_1.getSelectedTagIds)(tags),
         });
-        if (!response.prompt) {
+        if (response.status === 'error' || !response.data.prompt) {
             console.error(`Unable to generate prompt`, response);
+            setError((response === null || response === void 0 ? void 0 : response.error) || 'Unable to generate prompt');
             setPrompt(Object.assign(Object.assign({}, prompt), { loading: false }));
+            setIsGenerating(false);
             return;
         }
-        const newPromptVal = Object.assign(Object.assign({}, response.prompt), { loading: false });
+        const newPromptVal = Object.assign(Object.assign({}, response.data.prompt), { loading: false });
         setPrompt(newPromptVal);
         setSeed(newPromptVal.seed);
+        setIsGenerating(false);
         localStorage_1.default.setPrompt(newPromptVal);
         localStorage_1.default.setTags(tags);
+        setError(undefined);
     });
     const setPromptRaw = (newVal) => {
         setPrompt(Object.assign(Object.assign({}, prompt), { promptRaw: newVal }));
+        setPromptRawError('');
     };
     return (react_1.default.createElement("div", null,
+        error &&
+            react_1.default.createElement(Alert_1.default, { message: error, show: true, className: "my-4" }),
         react_1.default.createElement("div", { className: "flex flex-row gap-x-2" },
-            react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw) || '', onChange: setPromptRaw, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading, autoFocus: true }),
+            react_1.default.createElement(Input_1.default, { value: (prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw) || '', onChange: setPromptRaw, className: "grow", placeholder: "enter a prompt, like 'cat dancing on the moon'", disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading, autoFocus: true, error: promptRawError }),
             react_1.default.createElement(Input_1.default, { className: "w-24", placeholder: "Seed?", value: seed, type: "number", onChange: (value) => {
                     const possibleNumber = typeof value === 'string' ? parseInt(value.trim(), 10) : undefined;
                     if (typeof possibleNumber === 'number' && !isNaN(possibleNumber)) {
@@ -500,10 +543,13 @@ const PromptComponent = () => {
                     }
                     setSeed(undefined);
                 }, disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading }),
-            react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading, className: "min-w-[150px]" }, "Go!")),
+            react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading }, "Generate Image")),
         react_1.default.createElement(Tags_1.default, null),
-        react_1.default.createElement("div", null,
-            react_1.default.createElement(PromptImage_1.default, null))));
+        react_1.default.createElement("div", null, isGenerating
+            ?
+                react_1.default.createElement("div", { className: "mt-8" },
+                    react_1.default.createElement(Loader_1.default, { text: "Building your image..." }))
+            : react_1.default.createElement(PromptImage_1.default, null))));
 };
 exports["default"] = PromptComponent;
 
@@ -613,6 +659,36 @@ exports["default"] = ProtectedRoute;
 
 /***/ }),
 
+/***/ "./src/components/base/Alert.tsx":
+/*!***************************************!*\
+  !*** ./src/components/base/Alert.tsx ***!
+  \***************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
+const Notice = ({ type = 'ERROR', show, message, className, }) => {
+    const [isVisible, setIsVisible] = react_1.default.useState(show);
+    const hide = () => {
+        setIsVisible(false);
+    };
+    if (!isVisible) {
+        return null;
+    }
+    return (react_1.default.createElement("section", { className: (0, clsx_1.default)(className, 'w-full text-center py-6 px-2 shadow rounded relative', type === 'ERROR' && 'bg-red-50 ring ring-red-200 text-red-600', type === 'WARNING' && 'bg-orange-100 ring ring-orange-300 text-orange-600') },
+        react_1.default.createElement("p", { className: "text-lg" }, message),
+        react_1.default.createElement("a", { href: "#", onClick: hide, title: "Close", className: "no-underline hover:bg-white/20 w-6 h-6 text-center right-0 top-0 absolute rounded-full m-2" }, "X")));
+};
+exports["default"] = Notice;
+
+
+/***/ }),
+
 /***/ "./src/components/base/Avatar.tsx":
 /*!****************************************!*\
   !*** ./src/components/base/Avatar.tsx ***!
@@ -651,10 +727,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
-const Button = ({ children, download, href, onClick, disabled, className }) => {
-    const cssClasses = (0, clsx_1.default)(className, 'py-2 px-6 border no-underline border-transparent text-sm font-medium rounded-md text-white', disabled
-        ? 'bg-slate-500'
-        : 'bg-slate-700 hover:bg-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500');
+const Button = ({ children, download, href, onClick, disabled, className, style = 'primary', variant = 'filled', size = 'med', }) => {
+    const cssClasses = (0, clsx_1.default)(className, variant === 'filled' && style === 'primary'
+        ? 'text-white bg-red-500 ring ring-offset-2 ring-transparent hover:ring-red-400 hover:bg-red-600 focus:ring-red-600 focus:bg-red-700'
+        : '', variant === 'unfilled' && style === 'primary'
+        ? 'text-red-600 hover:text-red-700 ring-offset-2 hover:ring hover:ring-red-700 focus:ring-red-800 focus:text-red-800'
+        : '', 'font-medium rounded-lg', 'h-fit', size === 'med' ? 'py-2 px-6' : '', size === 'lg' ? 'text-lg py-2 px-10' : '');
     if (href) {
         return (react_1.default.createElement("a", { onClick: onClick, className: `${cssClasses} inline-block`, href: href, download: download }, children));
     }
@@ -690,7 +768,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
 const Input = (_a) => {
-    var { className, type, value: valueViaProps, autoFocus, onChange, disabled } = _a, otherProps = __rest(_a, ["className", "type", "value", "autoFocus", "onChange", "disabled"]);
+    var { className, type, value: valueViaProps, autoFocus, onChange, disabled, error } = _a, otherProps = __rest(_a, ["className", "type", "value", "autoFocus", "onChange", "disabled", "error"]);
     const inputRef = react_1.default.useRef(null);
     const [value, setValue] = react_1.default.useState(valueViaProps || '');
     react_1.default.useEffect(() => {
@@ -704,12 +782,14 @@ const Input = (_a) => {
         autoFocus,
         valueViaProps,
     ]);
-    return (react_1.default.createElement("input", Object.assign({ value: value, ref: inputRef, disabled: disabled, type: type || 'string', onChange: (e) => {
-            setValue(e.target.value);
-            if (onChange) {
-                onChange(e.target.value);
-            }
-        }, className: (0, clsx_1.default)(className, 'p-2 rounded-sm', disabled ? 'bg-gray-300 text-gray-500' : 'bg-gray-200 text-gray-700 cursor:pointer', 'focus:bg-white focus:outline-none focus:ring focus:ring-blue-200') }, otherProps)));
+    return (react_1.default.createElement("div", { className: className },
+        react_1.default.createElement("input", Object.assign({ value: value, ref: inputRef, disabled: disabled, type: type || 'string', onChange: (e) => {
+                setValue(e.target.value);
+                if (onChange) {
+                    onChange(e.target.value);
+                }
+            }, className: (0, clsx_1.default)('p-2 rounded-sm w-full', disabled ? 'bg-gray-300 text-gray-500' : 'text-gray-700 cursor:pointer', 'focus:bg-white focus:outline-none focus:ring focus:ring-blue-200', error && 'bg-red-50 border-red-500 border', !disabled && !error && 'bg-gray-200') }, otherProps)),
+        error && react_1.default.createElement("div", { className: "text-red-500 font-semibold mt-1" }, error)));
 };
 exports["default"] = Input;
 
@@ -728,9 +808,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
-const Loader = ({ bgClassName = 'bg-white' }) => {
-    return (react_1.default.createElement("div", { className: (0, clsx_1.default)('bg-gradient-to-r from-slate-300 to-slate-400 h-[3px] w-full', `after:absolute after:h-[3px] after:bg-slate-600 after:left-0 after:right-[100%] after:animate-loader`) }));
+const Loader = ({ text, }) => {
+    return (react_1.default.createElement("div", { className: "flex text-gray-600 font-medium justify-center" },
+        react_1.default.createElement("svg", { className: "animate-spin -ml-1 mr-3 h-5 w-5 text-gray-600", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24" },
+            react_1.default.createElement("circle", { className: "opacity-25", cx: "12", cy: "12", r: "10", stroke: "currentColor", strokeWidth: "4" }),
+            react_1.default.createElement("path", { className: "opacity-75", fill: "currentColor", d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" })),
+        react_1.default.createElement("span", null, text !== null && text !== void 0 ? text : 'Loading...')));
 };
 exports["default"] = Loader;
 
@@ -749,11 +832,165 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const Logo = () => {
-    return (react_1.default.createElement("div", null,
-        react_1.default.createElement("span", { className: "font-light text-2xl text-white" }, "[ P ]")));
+const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const Logo = ({ className, iconOnly = false, linkedToHome = true, }) => {
+    const routerHistory = (0, react_router_dom_1.useHistory)();
+    const goToHome = () => {
+        routerHistory.push('/');
+    };
+    const wrapper = (content) => {
+        if (linkedToHome) {
+            return (react_1.default.createElement("a", { onClick: goToHome, className: (0, clsx_1.default)(className, 'cursor-pointer') }, content));
+        }
+        return react_1.default.createElement("span", { className: className }, content);
+    };
+    return (wrapper(react_1.default.createElement("img", { src: iconOnly ? 'static/img/icon.svg' : 'static/img/logo.svg', alt: "logo" })));
 };
 exports["default"] = Logo;
+
+
+/***/ }),
+
+/***/ "./src/components/base/PageTitle.tsx":
+/*!*******************************************!*\
+  !*** ./src/components/base/PageTitle.tsx ***!
+  \*******************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const PageTitle = ({ title, subtitle, }) => {
+    return (react_1.default.createElement("div", { className: "pt-4 pb-2 border-b" },
+        react_1.default.createElement("h2", { className: "text-xl text-gray-700" }, title),
+        subtitle && react_1.default.createElement("h3", { className: "text-lg text-gray-500" }, subtitle)));
+};
+exports["default"] = PageTitle;
+
+
+/***/ }),
+
+/***/ "./src/components/headers/Header.tsx":
+/*!*******************************************!*\
+  !*** ./src/components/headers/Header.tsx ***!
+  \*******************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const clsx_1 = __importDefault(__webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.m.js"));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_2 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const react_3 = __webpack_require__(/*! @headlessui/react */ "./node_modules/@headlessui/react/dist/index.cjs");
+const Avatar_1 = __importDefault(__webpack_require__(/*! @components/base/Avatar */ "./src/components/base/Avatar.tsx"));
+const Logo_1 = __importDefault(__webpack_require__(/*! @components/base/Logo */ "./src/components/base/Logo.tsx"));
+const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
+const Header = () => {
+    const { logout } = (0, auth0_react_1.useAuth0)();
+    const handleLogout = () => {
+        logout({
+            returnTo: window.location.origin,
+        });
+    };
+    const routerHistory = (0, react_router_dom_1.useHistory)();
+    const goToPage = (path) => {
+        routerHistory.push(path);
+    };
+    const { user } = react_1.default.useContext(appContext_1.default);
+    const activeNavLinkClassname = 'bg-gray-900 text-white';
+    const navLinkClassname = 'text-gray-500 hover:bg-gray-700 hover:text-white';
+    const location = (0, react_router_dom_1.useLocation)();
+    if (!user) {
+        return null;
+    }
+    return (react_1.default.createElement("header", { className: "bg-gray-100 px-8 border-b border-b-gray-200 border-t-2 border-t-red-100" },
+        react_1.default.createElement("div", { className: "flex container mx-auto py-2 px-6" },
+            react_1.default.createElement("div", null,
+                react_1.default.createElement(Logo_1.default, { className: "w-[100px] md:w-[135px] block" })),
+            react_1.default.createElement("div", { className: "grow justify-end flex px-6 mt-6 gap-x-3" },
+                react_1.default.createElement(Button_1.default, { onClick: () => goToPage('/'), size: "med", variant: "unfilled", className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer focus:ring-2 focus:ring-gray-300', (location.pathname === '/' || location.pathname === '/builder') ? activeNavLinkClassname : navLinkClassname), style: "secondary" }, "Builder"),
+                react_1.default.createElement(Button_1.default, { onClick: () => goToPage('/images'), size: "med", variant: "unfilled", className: (0, clsx_1.default)('rounded-md px-3 py-2 text-sm font-medium cursor-pointer', location.pathname === '/images' ? activeNavLinkClassname : navLinkClassname), style: "secondary" }, "Images")),
+            react_1.default.createElement("div", null,
+                react_1.default.createElement("div", { className: "hidden sm:ml-6 sm:block" },
+                    react_1.default.createElement("div", { className: "flex items-center" },
+                        react_1.default.createElement(react_3.Menu, { as: "div", className: "relative ml-3 mt-6" },
+                            react_1.default.createElement("div", null,
+                                react_1.default.createElement(react_3.Menu.Button, { className: "flex rounded-full bg-gray-800 text-sm focus:outline-none ring-2 ring-gray-300 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-800" },
+                                    react_1.default.createElement("span", { className: "sr-only" }, "Profile"),
+                                    react_1.default.createElement(Avatar_1.default, null))),
+                            react_1.default.createElement(react_3.Transition, { as: react_2.Fragment, enter: "transition ease-out duration-100", enterFrom: "transform opacity-0 scale-95", enterTo: "transform opacity-100 scale-100", leave: "transition ease-in duration-75", leaveFrom: "transform opacity-100 scale-100", leaveTo: "transform opacity-0 scale-95" },
+                                react_1.default.createElement(react_3.Menu.Items, { className: "absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" },
+                                    react_1.default.createElement(react_3.Menu.Item, null, ({ active }) => (react_1.default.createElement("a", { onClick: handleLogout, className: (0, clsx_1.default)(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700 cursor-pointer') }, "Sign Out"))))))))))));
+};
+exports["default"] = Header;
+
+
+/***/ }),
+
+/***/ "./src/components/headers/PublicHeader.tsx":
+/*!*************************************************!*\
+  !*** ./src/components/headers/PublicHeader.tsx ***!
+  \*************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+const Logo_1 = __importDefault(__webpack_require__(/*! @components/base/Logo */ "./src/components/base/Logo.tsx"));
+const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
+const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
+function classNames(...classes) {
+    return classes.filter(Boolean).join(' ');
+}
+const PublicHeader = () => {
+    const routerHistory = (0, react_router_dom_1.useHistory)();
+    const { loginWithRedirect, user } = (0, auth0_react_1.useAuth0)();
+    const handleLogin = () => __awaiter(void 0, void 0, void 0, function* () {
+        yield loginWithRedirect({
+            prompt: 'login',
+            appState: {
+                returnTo: '/',
+            },
+        });
+    });
+    const goToPage = (path) => {
+        routerHistory.push(path);
+    };
+    const enableSignup = api_1.default.getVar('ENABLE_SIGNUP') === true;
+    return (react_1.default.createElement("header", { className: "bg-gray-100 lg:px-8" },
+        react_1.default.createElement("div", { className: "flex container mx-auto py-2 px-6" },
+            react_1.default.createElement("div", { className: "grow" },
+                react_1.default.createElement(Logo_1.default, { className: "w-[100px] md:w-[135px] block" })),
+            react_1.default.createElement("div", null,
+                react_1.default.createElement("div", { className: "inline-flex mt-2" },
+                    react_1.default.createElement(Button_1.default, { onClick: handleLogin, size: "med", variant: "unfilled", className: "whitespace-nowrap md:mr-2 mr-4" }, "Sign In"),
+                    enableSignup && react_1.default.createElement(Button_1.default, { size: "med", variant: "filled", style: "primary", className: "whitespace-nowrap", onClick: () => goToPage('/signup') }, "Sign Up"))))));
+};
+exports["default"] = PublicHeader;
 
 
 /***/ }),
@@ -783,9 +1020,14 @@ const Loader_1 = __importDefault(__webpack_require__(/*! @components/base/Loader
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 const ImageListItem_1 = __importDefault(__webpack_require__(/*! ./ImageListItem */ "./src/components/images/ImageListItem.tsx"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 const ImageList = () => {
     const { user } = react_1.default.useContext(appContext_1.default);
     const [images, setImages] = react_1.default.useState();
+    const routerHistory = (0, react_router_dom_1.useHistory)();
+    const goToPage = (path) => {
+        routerHistory.push(path);
+    };
     react_1.default.useEffect(() => {
         const loadImages = () => __awaiter(void 0, void 0, void 0, function* () {
             // Images are really just prompt objects.
@@ -800,9 +1042,15 @@ const ImageList = () => {
             loadImages();
         }
     }, [user]);
-    return (react_1.default.createElement("div", { className: "p-6 bg-white rounded mt-6" }, images
+    if (images && images.length === 0) {
+        return (react_1.default.createElement("div", null,
+            "You have not generated any images yet. ",
+            react_1.default.createElement("a", { onClick: () => goToPage('/builder'), className: "underline hover:no-underline" }, "Go to the builder"),
+            " to make some."));
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null, images
         ? react_1.default.createElement("div", { className: "grid grid-cols-2 md:grid-cols-4" }, images.map(img => react_1.default.createElement(ImageListItem_1.default, Object.assign({}, img, { key: `imageListItem_${img.id}` }))))
-        : react_1.default.createElement(Loader_1.default, null)));
+        : react_1.default.createElement(Loader_1.default, { text: "Loading images..." })));
 };
 exports["default"] = ImageList;
 
@@ -866,17 +1114,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const Header_1 = __importDefault(__webpack_require__(/*! @components/Header */ "./src/components/Header.tsx"));
+const Header_1 = __importDefault(__webpack_require__(/*! @components/headers/Header */ "./src/components/headers/Header.tsx"));
+const PublicHeader_1 = __importDefault(__webpack_require__(/*! @components/headers/PublicHeader */ "./src/components/headers/PublicHeader.tsx"));
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const Layout = ({ children }) => {
+const Hero_1 = __importDefault(__webpack_require__(/*! @components/Hero */ "./src/components/Hero.tsx"));
+const Footer_1 = __importDefault(__webpack_require__(/*! @components/Footer */ "./src/components/Footer.tsx"));
+const PageTitle_1 = __importDefault(__webpack_require__(/*! @components/base/PageTitle */ "./src/components/base/PageTitle.tsx"));
+const Layout = ({ children, page, windowTitle, pageTitle, pageDescription, }) => {
     const { user } = (0, auth0_react_1.useAuth0)();
-    if (!user) {
-        return (react_1.default.createElement("main", null, children));
-    }
-    return (react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
-        react_1.default.createElement(Header_1.default, null),
-        react_1.default.createElement("div", { className: "container mx-auto h-full" },
-            react_1.default.createElement("div", { className: "py-6 px-8" }, children))));
+    react_1.default.useEffect(() => {
+        if (windowTitle) {
+            window.document.title = `Promptiverse | ${windowTitle}`;
+        }
+    }, [windowTitle]);
+    return (react_1.default.createElement("main", { className: "overflow-x-hidden" },
+        react_1.default.createElement("div", { className: "min-h-screen" },
+            user ? react_1.default.createElement(Header_1.default, null) : react_1.default.createElement(PublicHeader_1.default, null),
+            (page === 'INDEX' && !user) && react_1.default.createElement(Hero_1.default, null),
+            react_1.default.createElement("section", { className: "container mx-auto px-6" },
+                pageTitle && react_1.default.createElement(PageTitle_1.default, { title: pageTitle, subtitle: pageDescription }),
+                react_1.default.createElement("div", { className: "mt-4" }, children))),
+        !user && react_1.default.createElement(Footer_1.default, null)));
 };
 exports["default"] = Layout;
 
@@ -919,12 +1177,50 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
 const Page = () => {
-    return (react_1.default.createElement(Layout_1.default, null,
-        react_1.default.createElement("h1", null, "About"),
-        react_1.default.createElement("p", null, "Credits"),
-        react_1.default.createElement("p", null,
-            "Powered by the ",
-            react_1.default.createElement("a", { href: "https://github.com/Stability-AI/stability-sdk" }, "Stability-AI SDK"))));
+    const headerClass = 'font-medium text-gray-900 mt-4';
+    const textBlockClass = 'text-gray-600 text-sm mt-1';
+    return (react_1.default.createElement(Layout_1.default, { windowTitle: "About", pageTitle: "About" },
+        react_1.default.createElement("div", { className: "container max-w-lg mx-auto" },
+            react_1.default.createElement("div", { className: "flex justify-center my-12" },
+                react_1.default.createElement("img", { src: '/static/img/typing_cat_in_sunglasses_trending_on_as.png', alt: "The best avatar around", title: "Typing cat in sunglasses, trending on artstation", 
+                    // TODO: just downsize the image.
+                    className: "rounded-full ring-4 ring-offset-2 ring-red-100 border-red-700 border-4 w-[200px]" })),
+            react_1.default.createElement("p", { className: "text-gray-800 text-lg font-light" }, "Our mission is to explore what's possible in the world of generative art. We aim to empower others to do the same, by acting as a translation layer between ideas and images."),
+            react_1.default.createElement("h3", { className: headerClass }, "Contact Us"),
+            react_1.default.createElement("p", { className: textBlockClass },
+                "We'd love to hear your feedback! Feature requests, bug reports, it's all welcome. ",
+                react_1.default.createElement("a", { href: "mailto:admin@promptiverse.com", className: "underline hover:no-underline" }, "Send us an email"),
+                " and we'll get back to you as soon as we can."),
+            react_1.default.createElement("h3", { className: headerClass }, "Credits"),
+            react_1.default.createElement("p", { className: textBlockClass },
+                "Powered by the ",
+                react_1.default.createElement("a", { href: "https://github.com/Stability-AI/stability-sdk", className: "underline hover:no-underline", target: "_blank" }, "Stability SDK"),
+                ", without which none of this would be possible."))));
+};
+exports["default"] = Page;
+
+
+/***/ }),
+
+/***/ "./src/components/pages/Builder.tsx":
+/*!******************************************!*\
+  !*** ./src/components/pages/Builder.tsx ***!
+  \******************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
+const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
+const Prompt_1 = __importDefault(__webpack_require__(/*! @components/Prompt */ "./src/components/Prompt.tsx"));
+const Builder_1 = __importDefault(__webpack_require__(/*! @components/pages/public/Builder */ "./src/components/pages/public/Builder.tsx"));
+const Page = () => {
+    const { user } = (0, auth0_react_1.useAuth0)();
+    return (react_1.default.createElement(Layout_1.default, { pageTitle: "Builder", windowTitle: "Builder" }, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Builder_1.default, null)));
 };
 exports["default"] = Page;
 
@@ -974,7 +1270,7 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
 const ImageList_1 = __importDefault(__webpack_require__(/*! @components/images/ImageList */ "./src/components/images/ImageList.tsx"));
 const Page = () => {
-    return (react_1.default.createElement(Layout_1.default, null,
+    return (react_1.default.createElement(Layout_1.default, { pageTitle: "Images", windowTitle: "Images" },
         react_1.default.createElement(ImageList_1.default, null)));
 };
 exports["default"] = Page;
@@ -1000,40 +1296,7 @@ const Prompt_1 = __importDefault(__webpack_require__(/*! @components/Prompt */ "
 const Index_1 = __importDefault(__webpack_require__(/*! @components/pages/public/Index */ "./src/components/pages/public/Index.tsx"));
 const Page = () => {
     const { user } = (0, auth0_react_1.useAuth0)();
-    return (react_1.default.createElement(Layout_1.default, null, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Index_1.default, null)));
-};
-exports["default"] = Page;
-
-
-/***/ }),
-
-/***/ "./src/components/pages/Profile.tsx":
-/*!******************************************!*\
-  !*** ./src/components/pages/Profile.tsx ***!
-  \******************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
-const Page = () => {
-    const { user } = (0, auth0_react_1.useAuth0)();
-    return (react_1.default.createElement(Layout_1.default, null,
-        react_1.default.createElement("ul", { className: "list-disc list-inside text-white" },
-            react_1.default.createElement("li", null,
-                "Name: ",
-                user.name),
-            react_1.default.createElement("li", null,
-                "Email: ",
-                user.email),
-            react_1.default.createElement("li", null,
-                "Nickname: ",
-                user.nickname))));
+    return (react_1.default.createElement(Layout_1.default, { page: "INDEX", pageTitle: user ? 'BUILDER' : undefined }, user ? react_1.default.createElement(Prompt_1.default, null) : react_1.default.createElement(Index_1.default, null)));
 };
 exports["default"] = Page;
 
@@ -1080,6 +1343,29 @@ exports["default"] = Page;
 
 /***/ }),
 
+/***/ "./src/components/pages/public/Builder.tsx":
+/*!*************************************************!*\
+  !*** ./src/components/pages/public/Builder.tsx ***!
+  \*************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Prompt_1 = __importDefault(__webpack_require__(/*! @components/Prompt */ "./src/components/Prompt.tsx"));
+const Page = () => {
+    return (react_1.default.createElement("div", null,
+        react_1.default.createElement("p", { className: "text-gray-500 py-2" }, "Build your own images by typing a simple prompt here:"),
+        react_1.default.createElement(Prompt_1.default, null)));
+};
+exports["default"] = Page;
+
+
+/***/ }),
+
 /***/ "./src/components/pages/public/Index.tsx":
 /*!***********************************************!*\
   !*** ./src/components/pages/public/Index.tsx ***!
@@ -1087,39 +1373,76 @@ exports["default"] = Page;
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const Button_1 = __importDefault(__webpack_require__(/*! @components/base/Button */ "./src/components/base/Button.tsx"));
+const Index = () => {
+    //   const style = {
+    //     background: 'url("/static/img/bgs/cover.png") no-repeat 0 -200px',
+    //     backgroundSize: 'cover',
+    // }
+    const images = [{
+            path: '/static/img/samples/yarniverse.png',
+            rawPrompt: 'the universe spun in multicolor yarn, trending on artstation, by Pablo Picasso',
+            subtitle: 'the universe spun in multicolor yarn, trending on artstation, by Pablo Picasso',
+        },
+        {
+            path: '/static/img/samples/rollerblading_manhattan_bridge.png',
+            rawPrompt: 'rollerblading across the manhattan bridge, by Pablo Picasso',
+            subtitle: 'rollerblading across the manhattan bridge, by Pablo Picasso',
+        },
+        {
+            path: '/static/img/samples/eiffel_picchu.png',
+            rawPrompt: 'the eiffel tower on top of machu picchu, by Paul Klee',
+            subtitle: 'the eiffel tower on top of machu picchu, by Paul Klee',
+        },
+        {
+            path: '/static/img/samples/electric.png',
+            rawPrompt: 'electricity flowing through highly detailed and complex brain synapses, trending on artstation',
+            subtitle: 'electricity flowing through highly detailed and complex brain synapses, trending on artstation',
+        },
+        {
+            path: '/static/img/samples/forest_trees.png',
+            rawPrompt: 'the forest through the trees, by Walt Disney',
+            subtitle: 'the forest through the trees, by Walt Disney',
+        },
+        {
+            path: '/static/img/samples/sloth_in_paris.png',
+            rawPrompt: 'a friendly three toed sloth, riding a bicycle through the cobblestone alleyways of Paris, by Wayne Thiebaud',
+            subtitle: 'a friendly three toed sloth, riding a bicycle through the cobblestone alleyways of Paris, by Wayne Thiebaud',
+        }];
+    return (react_1.default.createElement("div", null,
+        react_1.default.createElement("div", { className: "md:grid grid-cols-2 gap-4 mt-8" }, images.map((img, index) => {
+            return (react_1.default.createElement("div", { className: "border mt-4 md:mt-0 px-4 py-8 bg-white rounded shadow-sm", key: `${img.path}_${index}_indexImages` },
+                react_1.default.createElement("img", { src: img.path, alt: `Image showing ${img.rawPrompt}`, className: "max-h-[400px] mx-auto rounded border-gray-500" }),
+                react_1.default.createElement("p", { className: "text-center mt-6 text-sm text-gray-600 max-w-sm mx-auto" }, img.rawPrompt)));
+        }))));
+};
+exports["default"] = Index;
+
+
+/***/ }),
+
+/***/ "./src/components/pages/public/SignUp.tsx":
+/*!************************************************!*\
+  !*** ./src/components/pages/public/SignUp.tsx ***!
+  \************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
 const Page = () => {
-    const { loginWithRedirect, user } = (0, auth0_react_1.useAuth0)();
-    const handleLogin = () => __awaiter(void 0, void 0, void 0, function* () {
-        yield loginWithRedirect({
-            prompt: "login",
-            appState: {
-                returnTo: "/",
-            },
-        });
-    });
-    const style = {
-        background: 'url("/static/img/bgs/cover.png") no-repeat 0 -200px',
-        backgroundSize: 'cover',
-    };
-    return (react_1.default.createElement("div", { style: style, className: "h-screen bg-black flex align-center place-content-center pt-16" },
-        react_1.default.createElement("div", null,
-            react_1.default.createElement(Button_1.default, { className: "text-lg py-2 px-12 ring-4 ring-white/50", onClick: handleLogin }, "Sign In"))));
+    return (react_1.default.createElement(Layout_1.default, { pageTitle: "Sign Up", windowTitle: "Sign Up" },
+        react_1.default.createElement("div", { className: "text-center py-12" },
+            react_1.default.createElement("h2", { className: "text-2xl" }, "Signups are currently closed to the public."),
+            react_1.default.createElement("p", null, "Stay tuned! We'll be opening up soon."))));
 };
 exports["default"] = Page;
 
@@ -1197,7 +1520,7 @@ const Tags = ({}) => {
         setTags(newTags);
     };
     const loadTags = () => __awaiter(void 0, void 0, void 0, function* () {
-        const resp = yield api_1.default.getTags(user.access_token);
+        const resp = yield api_1.default.getTags(user === null || user === void 0 ? void 0 : user.access_token);
         if (!resp.tags || !resp.categories) {
             setError('Unable to load tags');
             return;
@@ -1215,10 +1538,10 @@ const Tags = ({}) => {
         setTags(tagCollections);
     });
     react_1.default.useEffect(() => {
-        if (user.access_token && !tags) {
+        if (!tags) {
             loadTags();
         }
-    }, [user.access_token]);
+    }, []);
     if (error) {
         return react_1.default.createElement("div", null, error);
     }
@@ -1315,19 +1638,22 @@ const fetcher = (url, options) => __awaiter(void 0, void 0, void 0, function* ()
                 'X-CSRF-Token': ((_d = options === null || options === void 0 ? void 0 : options.headers) === null || _d === void 0 ? void 0 : _d['X-CSRF-Token']) || csrfToken,
             } }, ((options === null || options === void 0 ? void 0 : options.postBody) ? { body: JSON.stringify(options.postBody) } : []));
         return fetch(url, fetchOptions)
-            .then(response => {
-            if (!response.ok) {
-                // throw new Error(response.statusText)
-                console.error(response.statusText);
-                return { error: response.statusText,
-                    status: response.status };
+            .then(resp => resp.json())
+            .then(data => {
+            if (data.error) {
+                return {
+                    status: 'error',
+                    error: data.error,
+                };
             }
-            return response.json();
-        })
-            .then(resp => resp);
+            return {
+                status: 'ok',
+                data,
+            };
+        });
     }
     catch (err) {
-        console.log(err);
+        console.error(err);
     }
 });
 exports["default"] = fetcher;

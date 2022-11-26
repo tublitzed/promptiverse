@@ -7,6 +7,8 @@ FLASK_ENV=development
 DATABASE_URL=postgres://tublitzed:tublitzed@localhost:5432/promptiverse
 
 ENABLE_SEEDER=false
+ENABLE_SIGNUP=true
+PUBLIC_GENERATION_LIMIT_BY_IP=10
 
 # https://docs.python.org/3/library/logging.html#logging-levels
 LOG_LEVEL=DEBUG
@@ -34,9 +36,15 @@ STABILITY_HOST=grpc.stability.ai:443
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
 S3_BUCKET_NAME=promptiverse-dev
+S3_BUCKET_NAME_PUBLIC=
 
 BOTO_LOG_LEVEL=DEBUG
 
 # SENTRY
 SENTRY_API_DSN=
 SENTRY_CLIENT_DSN=
+
+# SLACK
+
+SLACK_BOT_OAUTH_TOKEN=
+SLACK_NOTIFY_CHANNEL=

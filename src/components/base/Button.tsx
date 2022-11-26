@@ -4,21 +4,38 @@ import clsx from 'clsx'
 type Props = {
   children: any;
   className?: string;
-  color?: 'inherit' | 'primary' | 'secondary';
   disabled?: boolean;
   download?: string;
   href?: string;
   onClick?: () => void;
-  variant?: 'text' | 'outlined' | 'contained';
+  style?: 'primary' | 'secondary';
+  size?: 'med' | 'lg'
+  variant?: 'unfilled' | 'filled';
 };
 
-const Button = ({ children, download, href, onClick, disabled, className }: Props): JSX.Element => {
+const Button = ({
+  children,
+  download,
+  href,
+  onClick,
+  disabled,
+  className,
+  style = 'primary',
+  variant = 'filled',
+  size = 'med',
+}: Props): JSX.Element => {
   const cssClasses = clsx(
     className,
-    'py-2 px-6 border no-underline border-transparent text-sm font-medium rounded-md text-white',
-    disabled
-      ? 'bg-slate-500'
-      : 'bg-slate-700 hover:bg-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500',
+    variant === 'filled' && style === 'primary'
+      ? 'text-white bg-red-500 ring ring-offset-2 ring-transparent hover:ring-red-400 hover:bg-red-600 focus:ring-red-600 focus:bg-red-700'
+      : '',
+    variant === 'unfilled' && style === 'primary'
+      ? 'text-red-600 hover:text-red-700 ring-offset-2 hover:ring hover:ring-red-700 focus:ring-red-800 focus:text-red-800'
+      : '',
+    'font-medium rounded-lg',
+    'h-fit',
+    size === 'med' ? 'py-2 px-6' : '',
+    size === 'lg' ? 'text-lg py-2 px-10' : '',
   )
 
   if (href) {
