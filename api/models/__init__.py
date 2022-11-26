@@ -1,3 +1,4 @@
+import os
 from api.models.prompt import Prompt
 from api.models.tag import Tag, Tag_Category
 from api.models.ip_event import IP_Event
@@ -17,4 +18,6 @@ def create_tables():
         )
 
 
-# create_tables()
+# Ok it's not a migration, but... :0
+if os.environ.get("RUN_MIGRATIONS") == "true":
+    create_tables()

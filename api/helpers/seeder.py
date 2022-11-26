@@ -21,7 +21,7 @@ def seed_tag_categories():
 
 
 def get_label(row):
-    if row[0] is "":
+    if row[0] == "":
         return row[1]
     return row[0]
 

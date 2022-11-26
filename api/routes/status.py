@@ -9,6 +9,7 @@ bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
 
 @bp.route("/")
 def public():
+    print('testing print')
     logging.debug("debug log")
     logging.info("info log")
     logging.warning("warning log")
