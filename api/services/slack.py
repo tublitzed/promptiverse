@@ -10,9 +10,7 @@ def send_slack_message(message):
     token = os.environ.get("SLACK_BOT_OAUTH_TOKEN")
     channel = os.environ.get("SLACK_NOTIFY_CHANNEL")
 
-    print(channel)
     client = WebClient(token=token)
-    print(client)
     try:
         response = client.chat_postMessage(channel=channel, text=message)
         assert response["message"]["text"] == message

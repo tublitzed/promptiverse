@@ -77,8 +77,6 @@ def generate_for_user(
     user_id=string, prompt=string, prompt_raw=string, seed=None, tag_ids=[]
 ):
     img_url = generate(prompt=prompt, prompt_raw=prompt_raw, seed=seed, tag_ids=tag_ids)
-    print(img_url)
-    print("img_url^")
     saved_prompt = prompt_model.save(
         img_url=img_url,
         prompt_raw=prompt_raw,
