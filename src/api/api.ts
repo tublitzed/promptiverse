@@ -113,7 +113,7 @@ const ApiService = {
         path: '/tag',
       }).then(resp => ({
         tags: mapTagListToTypes(resp.data.tags),
-        categories: resp.data.ategories,
+        categories: resp.data.categories,
       }))
     }
 

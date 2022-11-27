@@ -550,10 +550,6 @@ video {
   border-width: 0;
 }
 
-.fixed {
-  position: fixed;
-}
-
 .absolute {
   position: absolute;
 }
@@ -597,19 +593,14 @@ video {
   margin-right: 0.5rem;
 }
 
-.my-12 {
-  margin-top: 3rem;
-  margin-bottom: 3rem;
-}
-
-.my-2 {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
 .my-4 {
   margin-top: 1rem;
   margin-bottom: 1rem;
+}
+
+.my-12 {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
 }
 
 .mt-12 {
@@ -905,11 +896,6 @@ video {
   border-color: rgb(113 113 122 / var(--tw-border-opacity));
 }
 
-.border-red-600 {
-  --tw-border-opacity: 1;
-  border-color: rgb(159 54 54 / var(--tw-border-opacity));
-}
-
 .border-b-gray-200 {
   --tw-border-opacity: 1;
   border-bottom-color: rgb(228 228 231 / var(--tw-border-opacity));
@@ -939,11 +925,6 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.bg-red-600 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(159 54 54 / var(--tw-bg-opacity));
-}
-
 .bg-red-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(191 61 61 / var(--tw-bg-opacity));
@@ -967,11 +948,6 @@ video {
 .bg-gray-800 {
   --tw-bg-opacity: 1;
   background-color: rgb(39 39 42 / var(--tw-bg-opacity));
-}
-
-.bg-red-100 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 216 216 / var(--tw-bg-opacity));
 }
 
 .p-12 {
@@ -1235,6 +1211,11 @@ video {
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
+.ring-red-200 {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(250 178 178 / var(--tw-ring-opacity));
+}
+
 .ring-transparent {
   --tw-ring-color: transparent;
 }
@@ -1252,21 +1233,6 @@ video {
 .ring-red-100 {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(255 216 216 / var(--tw-ring-opacity));
-}
-
-.ring-red-600 {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(159 54 54 / var(--tw-ring-opacity));
-}
-
-.ring-red-300 {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(240 139 139 / var(--tw-ring-opacity));
-}
-
-.ring-red-200 {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(250 178 178 / var(--tw-ring-opacity));
 }
 
 .ring-opacity-5 {

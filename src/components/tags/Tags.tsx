@@ -53,7 +53,7 @@ const tagsToSelectOptions = (tags: Tag[]):SelectOption[] => {
 }
 
 const Tags = ({}) => {
-  const { user, setTags, tags } = React.useContext(AppContext)
+  const { user, setTags, tags, isLoading } = React.useContext(AppContext)
   const [error, setError] = React.useState<string | undefined>()
 
 
@@ -96,15 +96,14 @@ const Tags = ({}) => {
   }
 
   React.useEffect(() => {
-    if (!tags) {
+    if (!tags && !isLoading) {
       loadTags()
     }
-  }, [])
+  }, [isLoading])
 
   if (error) {
     return <div>{error}</div>
-  }
-  if (!tags) {
+  } else if (!tags) {
     return null
   }
   return (

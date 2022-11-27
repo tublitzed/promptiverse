@@ -60,25 +60,29 @@ const Builder_1 = __importDefault(__webpack_require__(/*! @components/pages/Buil
 const SignUp_1 = __importDefault(__webpack_require__(/*! @components/pages/public/SignUp */ "./src/components/pages/public/SignUp.tsx"));
 const appContext_1 = __importStar(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const App = () => {
-    const { user: userViaAuth0, loginWithRedirect, isLoading: isLoadingViaAuth0, getAccessTokenSilently, } = (0, auth0_react_1.useAuth0)();
+    const { user: userViaAuth0, isLoading: isLoadingViaAuth0, getAccessTokenSilently, } = (0, auth0_react_1.useAuth0)();
     const [user, setUser] = react_1.default.useState(userViaAuth0);
     const [isLoading, setIsLoading] = react_1.default.useState(isLoadingViaAuth0);
     const [prompt, setPrompt] = react_1.default.useState(appContext_1.defaultContext.prompt);
     const [tags, setTags] = react_1.default.useState(appContext_1.defaultContext.tags);
+    const getAccessToken = () => __awaiter(void 0, void 0, void 0, function* () {
+        const token = yield getAccessTokenSilently();
+        setUser(Object.assign(Object.assign({}, userViaAuth0), { access_token: token }));
+        setIsLoading(false);
+    });
     react_1.default.useEffect(() => {
-        setIsLoading(isLoadingViaAuth0);
-    }, [isLoadingViaAuth0]);
-    react_1.default.useEffect(() => {
-        // Can also use hook
-        setUser(userViaAuth0);
-        const getAccessToken = () => __awaiter(void 0, void 0, void 0, function* () {
-            const token = yield getAccessTokenSilently();
-            setUser(Object.assign(Object.assign({}, userViaAuth0), { access_token: token }));
-        });
+        if (isLoadingViaAuth0) {
+            return;
+        }
         if (userViaAuth0) {
             getAccessToken();
+            return;
         }
-    }, [userViaAuth0]);
+        return setIsLoading(false);
+    }, [
+        userViaAuth0,
+        isLoadingViaAuth0,
+    ]);
     if (isLoading) {
         return (react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
             react_1.default.createElement("div", { className: "container mx-auto h-full" },
@@ -258,7 +262,7 @@ const ApiService = {
                 path: '/tag',
             }).then(resp => ({
                 tags: (0, mappings_1.mapTagListToTypes)(resp.data.tags),
-                categories: resp.data.ategories,
+                categories: resp.data.categories,
             }));
         }
         return ApiService.publicRequest({
@@ -1502,7 +1506,7 @@ const tagsToSelectOptions = (tags) => {
     }));
 };
 const Tags = ({}) => {
-    const { user, setTags, tags } = react_1.default.useContext(appContext_1.default);
+    const { user, setTags, tags, isLoading } = react_1.default.useContext(appContext_1.default);
     const [error, setError] = react_1.default.useState();
     const onChange = (changedTags, category) => {
         const newTags = tags.map(tagCollection => {
@@ -1538,14 +1542,14 @@ const Tags = ({}) => {
         setTags(tagCollections);
     });
     react_1.default.useEffect(() => {
-        if (!tags) {
+        if (!tags && !isLoading) {
             loadTags();
         }
-    }, []);
+    }, [isLoading]);
     if (error) {
         return react_1.default.createElement("div", null, error);
     }
-    if (!tags) {
+    else if (!tags) {
         return null;
     }
     return (react_1.default.createElement(react_1.default.Fragment, null, tags.map((tagCollection) => {
