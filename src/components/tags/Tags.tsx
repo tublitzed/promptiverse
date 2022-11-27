@@ -2,6 +2,7 @@ import React from 'react'
 import Select from 'react-select'
 import Api from '@api/api'
 import AppContext from '@src/appContext'
+import LocalStorage from '@utils/localStorage'
 
 import { Tag, TagCategory, TagCollection } from '@types'
 
@@ -60,19 +61,20 @@ const Tags = ({}) => {
   const onChange = (changedTags: SelectOption[], category: TagCategory) => {
     const newTags:TagCollection[] = tags.map(tagCollection => {
       if (tagCollection.category.id === category.id) {
+        // map back from SelectOption format to Tag
+        const changedMappedToTag = changedTags.map(tag => ({
+          id: tag.value,
+          label: tag.label,
+          tagCategory: tagCollection.category.id,
+        }))
         return {
           ...tagCollection,
-
-          // map back from SelectOption format to Tag
-          selectedTags: changedTags.map(tag => ({
-            id: tag.value,
-            label: tag.label,
-            tagCategory: tagCollection.category.id,
-          })),
+          selectedTags: changedMappedToTag,
         }
       }
       return tagCollection
     })
+
     setTags(newTags)
   }
 
@@ -85,7 +87,7 @@ const Tags = ({}) => {
 
     const tagCollections:TagCollection[] = []
     resp.categories.forEach((category: TagCategory) => {
-      const selectedTags = tags && tags.length ? tags[category.id]?.selectedTags : []
+      const selectedTags = (tags && tags.length) ? tags[category.id]?.selectedTags : []
       tagCollections.push({
         category,
         allTags: resp.tags.filter(tag => tag.tagCategory === category.id),
@@ -93,22 +95,33 @@ const Tags = ({}) => {
       })
     })
     setTags(tagCollections)
+    LocalStorage.setTags(tagCollections)
   }
 
   React.useEffect(() => {
+    // Regardless of if we have tags or not, once done loading
+    // we need to check if tags exist.
+    if (!isLoading) {
+      const needToClear = LocalStorage.needToClearTags(user?.sub !== undefined)
+      console.log('needToClear: ', needToClear)
+    }
     if (!tags && !isLoading) {
       loadTags()
     }
-  }, [isLoading])
+  }, [
+    isLoading,
+    tags,
+  ])
 
   if (error) {
     return <div>{error}</div>
-  } else if (!tags) {
+  } else if (!tags || !Array.isArray(tags)) {
     return null
   }
   return (
     <>
       {tags.map((tagCollection: TagCollection) => {
+        console.log('tagCollection: ', tagCollection)
         return (
           <div
             key={`tagCategory_${tagCollection.category.id}`}

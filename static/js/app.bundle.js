@@ -503,6 +503,7 @@ const PromptComponent = () => {
     const [promptRawError, setPromptRawError] = react_1.default.useState();
     const [isGenerating, setIsGenerating] = react_1.default.useState(false);
     const [error, setError] = react_1.default.useState();
+    // TODO: fix the state mess around loading props here:
     const submit = () => __awaiter(void 0, void 0, void 0, function* () {
         setError(undefined);
         if (!prompt || !(prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw) || prompt.promptRaw === '') {
@@ -527,9 +528,8 @@ const PromptComponent = () => {
         setPrompt(newPromptVal);
         setSeed(newPromptVal.seed);
         setIsGenerating(false);
-        localStorage_1.default.setPrompt(newPromptVal);
-        localStorage_1.default.setTags(tags);
         setError(undefined);
+        localStorage_1.default.setPrompt(newPromptVal);
     });
     const setPromptRaw = (newVal) => {
         setPrompt(Object.assign(Object.assign({}, prompt), { promptRaw: newVal }));
@@ -1478,6 +1478,7 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const react_select_1 = __importDefault(__webpack_require__(/*! react-select */ "./node_modules/react-select/dist/react-select.esm.js"));
 const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
 const selectStyles = {
     // https://react-select.com/styles#style-object
     // option: (provided:any, state:any) => {
@@ -1511,13 +1512,13 @@ const Tags = ({}) => {
     const onChange = (changedTags, category) => {
         const newTags = tags.map(tagCollection => {
             if (tagCollection.category.id === category.id) {
-                return Object.assign(Object.assign({}, tagCollection), { 
-                    // map back from SelectOption format to Tag
-                    selectedTags: changedTags.map(tag => ({
-                        id: tag.value,
-                        label: tag.label,
-                        tagCategory: tagCollection.category.id,
-                    })) });
+                // map back from SelectOption format to Tag
+                const changedMappedToTag = changedTags.map(tag => ({
+                    id: tag.value,
+                    label: tag.label,
+                    tagCategory: tagCollection.category.id,
+                }));
+                return Object.assign(Object.assign({}, tagCollection), { selectedTags: changedMappedToTag });
             }
             return tagCollection;
         });
@@ -1532,7 +1533,7 @@ const Tags = ({}) => {
         const tagCollections = [];
         resp.categories.forEach((category) => {
             var _a;
-            const selectedTags = tags && tags.length ? (_a = tags[category.id]) === null || _a === void 0 ? void 0 : _a.selectedTags : [];
+            const selectedTags = (tags && tags.length) ? (_a = tags[category.id]) === null || _a === void 0 ? void 0 : _a.selectedTags : [];
             tagCollections.push({
                 category,
                 allTags: resp.tags.filter(tag => tag.tagCategory === category.id),
@@ -1540,19 +1541,30 @@ const Tags = ({}) => {
             });
         });
         setTags(tagCollections);
+        localStorage_1.default.setTags(tagCollections);
     });
     react_1.default.useEffect(() => {
+        // Regardless of if we have tags or not, once done loading
+        // we need to check if tags exist.
+        if (!isLoading) {
+            const needToClear = localStorage_1.default.needToClearTags((user === null || user === void 0 ? void 0 : user.sub) !== undefined);
+            console.log('needToClear: ', needToClear);
+        }
         if (!tags && !isLoading) {
             loadTags();
         }
-    }, [isLoading]);
+    }, [
+        isLoading,
+        tags,
+    ]);
     if (error) {
         return react_1.default.createElement("div", null, error);
     }
-    else if (!tags) {
+    else if (!tags || !Array.isArray(tags)) {
         return null;
     }
     return (react_1.default.createElement(react_1.default.Fragment, null, tags.map((tagCollection) => {
+        console.log('tagCollection: ', tagCollection);
         return (react_1.default.createElement("div", { key: `tagCategory_${tagCollection.category.id}`, className: "mt-4 text-slate-600 text-sm" },
             react_1.default.createElement(react_select_1.default, { defaultValue: tagsToSelectOptions(tagCollection.selectedTags), placeholder: `Add ${tagCollection.category.label.toLowerCase()}`, options: tagsToSelectOptions(tagCollection.allTags), styles: selectStyles, theme: customSelectTheme, isMulti: true, onChange: (selectedValues) => {
                     onChange(selectedValues, tagCollection.category);
@@ -1694,11 +1706,31 @@ const LocalStorage = {
         }
         return JSON.parse(val);
     },
+    clearItem: (itemStr) => {
+        if (!LocalStorage.localStorageExists()) {
+            return;
+        }
+        return localStorage.removeItem(`${localStorageNamespace}.${itemStr}`);
+    },
     setPrompt: (prompt) => {
         return LocalStorage.setItem(prompt, 'prompt');
     },
     getPrompt: () => {
         return LocalStorage.getItem('prompt');
+    },
+    // Clear tags if they were saved when public and then logged in.
+    // Clear tags if they were saved when authed and then logged out.
+    needToClearTags: (isAuthed) => {
+        const existingTags = LocalStorage.getTags();
+        const tagsExistAndAreEmpty = ((Array.isArray(existingTags)) && !existingTags.length);
+        if (!existingTags || tagsExistAndAreEmpty) {
+            return false;
+        }
+        const existingTagsArePublic = existingTags[0].category.is_public;
+        if (isAuthed) {
+            return existingTagsArePublic;
+        }
+        return !existingTagsArePublic;
     },
     setTags: (tagCollections) => {
         return LocalStorage.setItem(tagCollections, 'tags');
