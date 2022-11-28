@@ -263,6 +263,7 @@ const ApiService = {
             }).then(resp => ({
                 tags: (0, mappings_1.mapTagListToTypes)(resp.data.tags),
                 categories: resp.data.categories,
+                latestTagUpdatedAt: resp.data.latest_tag_updated_at,
             }));
         }
         return ApiService.publicRequest({
@@ -270,8 +271,15 @@ const ApiService = {
         }).then(resp => ({
             tags: (0, mappings_1.mapTagListToTypes)(resp.data.tags),
             categories: resp.data.categories,
+            latestTagUpdatedAt: resp.data.latest_tag_updated_at,
         }));
     }),
+    getCacheInfo: (accessToken) => {
+        return ApiService.request({
+            accessToken,
+            path: '/tag/cache-check',
+        });
+    },
     sandboxTest: (accessToken) => {
         return ApiService.request({
             accessToken,
@@ -1479,6 +1487,7 @@ const react_select_1 = __importDefault(__webpack_require__(/*! react-select */ "
 const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
+const date_fns_1 = __webpack_require__(/*! date-fns */ "./node_modules/date-fns/esm/index.js");
 const selectStyles = {
     // https://react-select.com/styles#style-object
     // option: (provided:any, state:any) => {
@@ -1532,8 +1541,8 @@ const Tags = ({}) => {
         }
         const tagCollections = [];
         resp.categories.forEach((category) => {
-            var _a;
-            const selectedTags = (tags && tags.length) ? (_a = tags[category.id]) === null || _a === void 0 ? void 0 : _a.selectedTags : [];
+            var _a, _b;
+            const selectedTags = (_b = (_a = tags === null || tags === void 0 ? void 0 : tags.find(tag => tag.category.id === category.id)) === null || _a === void 0 ? void 0 : _a.selectedTags) !== null && _b !== void 0 ? _b : [];
             tagCollections.push({
                 category,
                 allTags: resp.tags.filter(tag => tag.tagCategory === category.id),
@@ -1541,21 +1550,39 @@ const Tags = ({}) => {
             });
         });
         setTags(tagCollections);
-        localStorage_1.default.setTags(tagCollections);
+        localStorage_1.default.setTags(tagCollections, resp.latestTagUpdatedAt);
+    });
+    // Look at local storage, compare with timestamp from latest tag.
+    // Will default to forcing a refresh if unable to compare.
+    const refreshTagsIfNeeded = () => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
+        const lastTimeUpdatedClient = localStorage_1.default.getItem('latestTagUpdatedAt');
+        if (!lastTimeUpdatedClient) {
+            return loadTags();
+        }
+        const resp = yield api_1.default.getCacheInfo(user === null || user === void 0 ? void 0 : user.access_token);
+        if (resp.status !== 'ok' || !((_a = resp.data) === null || _a === void 0 ? void 0 : _a.latest_tag_updated_at)) {
+            // bail if we have nothing to compare to.
+            return loadTags();
+        }
+        const isClientBehindServer = (0, date_fns_1.compareAsc)(new Date(resp.data.latest_tag_updated_at), new Date(lastTimeUpdatedClient)) === 1;
+        if (!isClientBehindServer) {
+            return;
+        }
+        loadTags();
     });
     react_1.default.useEffect(() => {
-        // Regardless of if we have tags or not, once done loading
-        // we need to check if tags exist.
-        if (!isLoading) {
-            const needToClear = localStorage_1.default.needToClearTags((user === null || user === void 0 ? void 0 : user.sub) !== undefined);
-            console.log('needToClear: ', needToClear);
+        if (isLoading) {
+            return;
         }
-        if (!tags && !isLoading) {
+        if (!tags) {
             loadTags();
+        }
+        else {
+            refreshTagsIfNeeded();
         }
     }, [
         isLoading,
-        tags,
     ]);
     if (error) {
         return react_1.default.createElement("div", null, error);
@@ -1564,7 +1591,6 @@ const Tags = ({}) => {
         return null;
     }
     return (react_1.default.createElement(react_1.default.Fragment, null, tags.map((tagCollection) => {
-        console.log('tagCollection: ', tagCollection);
         return (react_1.default.createElement("div", { key: `tagCategory_${tagCollection.category.id}`, className: "mt-4 text-slate-600 text-sm" },
             react_1.default.createElement(react_select_1.default, { defaultValue: tagsToSelectOptions(tagCollection.selectedTags), placeholder: `Add ${tagCollection.category.label.toLowerCase()}`, options: tagsToSelectOptions(tagCollection.allTags), styles: selectStyles, theme: customSelectTheme, isMulti: true, onChange: (selectedValues) => {
                     onChange(selectedValues, tagCollection.category);
@@ -1718,22 +1744,9 @@ const LocalStorage = {
     getPrompt: () => {
         return LocalStorage.getItem('prompt');
     },
-    // Clear tags if they were saved when public and then logged in.
-    // Clear tags if they were saved when authed and then logged out.
-    needToClearTags: (isAuthed) => {
-        const existingTags = LocalStorage.getTags();
-        const tagsExistAndAreEmpty = ((Array.isArray(existingTags)) && !existingTags.length);
-        if (!existingTags || tagsExistAndAreEmpty) {
-            return false;
-        }
-        const existingTagsArePublic = existingTags[0].category.is_public;
-        if (isAuthed) {
-            return existingTagsArePublic;
-        }
-        return !existingTagsArePublic;
-    },
-    setTags: (tagCollections) => {
-        return LocalStorage.setItem(tagCollections, 'tags');
+    setTags: (tagCollections, latestTagUpdatedAt) => {
+        LocalStorage.setItem(tagCollections, 'tags');
+        return LocalStorage.setItem(latestTagUpdatedAt, 'latestTagUpdatedAt');
     },
     getTags: () => {
         return LocalStorage.getItem('tags');

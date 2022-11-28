@@ -1,6 +1,6 @@
-import { Prompt, TagCollection } from '@types'
+import { Prompt, TagCollection, Tag } from '@types'
 const localStorageNamespace = 'promptiverse'
-type itemTypeKeys = 'tags' | 'prompt'
+type itemTypeKeys = 'tags' | 'prompt' | 'latestTagUpdatedAt'
 
 const LocalStorage = {
   localStorageExists: () => {
@@ -40,23 +40,9 @@ const LocalStorage = {
     return LocalStorage.getItem('prompt')
   },
 
-  // Clear tags if they were saved when public and then logged in.
-  // Clear tags if they were saved when authed and then logged out.
-  needToClearTags: (isAuthed: boolean) => {
-    const existingTags = LocalStorage.getTags()
-    const tagsExistAndAreEmpty = ((Array.isArray(existingTags)) && !existingTags.length)
-    if (!existingTags || tagsExistAndAreEmpty) {
-      return false
-    }
-    const existingTagsArePublic = existingTags[0].category.is_public
-    if (isAuthed) {
-      return existingTagsArePublic
-    }
-    return !existingTagsArePublic
-  },
-
-  setTags: (tagCollections?: TagCollection[]) => {
-    return LocalStorage.setItem(tagCollections, 'tags')
+  setTags: (tagCollections: TagCollection[], latestTagUpdatedAt: Date) => {
+    LocalStorage.setItem(tagCollections, 'tags')
+    return LocalStorage.setItem(latestTagUpdatedAt, 'latestTagUpdatedAt')
   },
 
   getTags: ():TagCollection[] | undefined => {

@@ -3,6 +3,7 @@ import Select from 'react-select'
 import Api from '@api/api'
 import AppContext from '@src/appContext'
 import LocalStorage from '@utils/localStorage'
+import { compareAsc } from 'date-fns'
 
 import { Tag, TagCategory, TagCollection } from '@types'
 
@@ -84,10 +85,9 @@ const Tags = ({}) => {
       setError('Unable to load tags')
       return
     }
-
     const tagCollections:TagCollection[] = []
     resp.categories.forEach((category: TagCategory) => {
-      const selectedTags = (tags && tags.length) ? tags[category.id]?.selectedTags : []
+      const selectedTags = tags?.find(tag => tag.category.id === category.id)?.selectedTags ?? []
       tagCollections.push({
         category,
         allTags: resp.tags.filter(tag => tag.tagCategory === category.id),
@@ -95,33 +95,49 @@ const Tags = ({}) => {
       })
     })
     setTags(tagCollections)
-    LocalStorage.setTags(tagCollections)
+    LocalStorage.setTags(tagCollections, resp.latestTagUpdatedAt)
+  }
+
+  // Look at local storage, compare with timestamp from latest tag.
+  // Will default to forcing a refresh if unable to compare.
+  const refreshTagsIfNeeded = async () => {
+    const lastTimeUpdatedClient = LocalStorage.getItem('latestTagUpdatedAt')
+    if (!lastTimeUpdatedClient) {
+      return loadTags()
+    }
+    const resp = await Api.getCacheInfo(user?.access_token)
+    if (resp.status !== 'ok' || !resp.data?.latest_tag_updated_at) {
+      // bail if we have nothing to compare to.
+      return loadTags()
+    }
+
+    const isClientBehindServer = compareAsc(new Date(resp.data.latest_tag_updated_at), new Date(lastTimeUpdatedClient)) === 1
+    if (!isClientBehindServer) {
+      return
+    }
+    loadTags()
   }
 
   React.useEffect(() => {
-    // Regardless of if we have tags or not, once done loading
-    // we need to check if tags exist.
-    if (!isLoading) {
-      const needToClear = LocalStorage.needToClearTags(user?.sub !== undefined)
-      console.log('needToClear: ', needToClear)
+    if (isLoading) {
+      return
     }
-    if (!tags && !isLoading) {
+    if (!tags) {
       loadTags()
+    } else {
+      refreshTagsIfNeeded()
     }
-  }, [
-    isLoading,
-    tags,
-  ])
+  }, [isLoading])
 
   if (error) {
     return <div>{error}</div>
   } else if (!tags || !Array.isArray(tags)) {
     return null
   }
+
   return (
     <>
       {tags.map((tagCollection: TagCollection) => {
-        console.log('tagCollection: ', tagCollection)
         return (
           <div
             key={`tagCategory_${tagCollection.category.id}`}
