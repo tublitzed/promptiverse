@@ -53,16 +53,6 @@ const Footer: React.FC = () => {
           href=""
           className={clsx(
             baseLinkStyle,
-            location.pathname === '/builder' ? activeLinkStyle : inactiveLinkStyle,
-          )}
-          onClick={() => goToPage('/builder')}
-        >
-        Builder
-        </a>
-        <a
-          href=""
-          className={clsx(
-            baseLinkStyle,
             location.pathname === '/about' ? activeLinkStyle : inactiveLinkStyle,
           )}
           onClick={() => goToPage('/about')}

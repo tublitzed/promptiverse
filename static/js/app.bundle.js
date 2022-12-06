@@ -102,10 +102,10 @@ const App = () => {
     return (react_1.default.createElement(appContext_1.default.Provider, { value: defaultCtx },
         react_1.default.createElement(react_router_dom_1.Switch, null,
             react_1.default.createElement(react_router_dom_1.Route, { path: "/", exact: true, component: Index_1.default }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/builder", component: Builder_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/signup", component: SignUp_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/sign-up", component: SignUp_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/about", component: About_1.default }),
+            react_1.default.createElement(ProtectedRoute_1.default, { path: "/builder", component: Builder_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/images", component: Images_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/sandbox", component: Sandbox_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/callback", component: Callback_1.default }),
@@ -404,7 +404,6 @@ const Footer = () => {
             react_1.default.createElement(Logo_1.default, { iconOnly: true, linkedToHome: false })),
         react_1.default.createElement("div", { className: "flex container mx-auto justify-center" },
             react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/') }, "Home"),
-            react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/builder' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/builder') }, "Builder"),
             react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/about' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/about') }, "About"),
             react_1.default.createElement("div", { className: "pt-1 w-10 md:w-12 md:pt-0 mx-2 md:mx-8 hidden md:block" },
                 react_1.default.createElement(Logo_1.default, { iconOnly: true, linkedToHome: false })),
@@ -1581,9 +1580,7 @@ const Tags = ({}) => {
         else {
             refreshTagsIfNeeded();
         }
-    }, [
-        isLoading,
-    ]);
+    }, [isLoading]);
     if (error) {
         return react_1.default.createElement("div", null, error);
     }

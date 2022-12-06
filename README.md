@@ -27,3 +27,6 @@
 
 ## Logs
 * `heroku logs -a promptiverse --tail`
+
+## Resources
+* https://github.com/Stability-AI/stability-sdk
