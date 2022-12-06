@@ -1498,7 +1498,6 @@ const selectStyles = {
     },
 };
 const customSelectTheme = (provided) => {
-    // console.log(provided)
     return Object.assign(Object.assign({}, provided), { colors: Object.assign({}, provided.colors) });
 };
 const getSelectedTagIds = (tagCollections) => {
@@ -1531,6 +1530,7 @@ const Tags = ({}) => {
             return tagCollection;
         });
         setTags(newTags);
+        localStorage_1.default.setTags(newTags);
     };
     const loadTags = () => __awaiter(void 0, void 0, void 0, function* () {
         const resp = yield api_1.default.getTags(user === null || user === void 0 ? void 0 : user.access_token);
@@ -1743,7 +1743,9 @@ const LocalStorage = {
     },
     setTags: (tagCollections, latestTagUpdatedAt) => {
         LocalStorage.setItem(tagCollections, 'tags');
-        return LocalStorage.setItem(latestTagUpdatedAt, 'latestTagUpdatedAt');
+        if (latestTagUpdatedAt) {
+            LocalStorage.setItem(latestTagUpdatedAt, 'latestTagUpdatedAt');
+        }
     },
     getTags: () => {
         return LocalStorage.getItem('tags');

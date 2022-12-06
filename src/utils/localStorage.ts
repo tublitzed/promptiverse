@@ -40,9 +40,11 @@ const LocalStorage = {
     return LocalStorage.getItem('prompt')
   },
 
-  setTags: (tagCollections: TagCollection[], latestTagUpdatedAt: Date) => {
+  setTags: (tagCollections: TagCollection[], latestTagUpdatedAt?: Date) => {
     LocalStorage.setItem(tagCollections, 'tags')
-    return LocalStorage.setItem(latestTagUpdatedAt, 'latestTagUpdatedAt')
+    if (latestTagUpdatedAt) {
+      LocalStorage.setItem(latestTagUpdatedAt, 'latestTagUpdatedAt')
+    }
   },
 
   getTags: ():TagCollection[] | undefined => {

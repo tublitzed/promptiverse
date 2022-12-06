@@ -22,7 +22,6 @@ const selectStyles = {
 }
 
 const customSelectTheme = (provided:any) => {
-  // console.log(provided)
   return {
     ...provided,
     colors: {
@@ -77,6 +76,7 @@ const Tags = ({}) => {
     })
 
     setTags(newTags)
+    LocalStorage.setTags(newTags)
   }
 
   const loadTags = async () => {
