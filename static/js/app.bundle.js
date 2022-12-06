@@ -60,25 +60,29 @@ const Builder_1 = __importDefault(__webpack_require__(/*! @components/pages/Buil
 const SignUp_1 = __importDefault(__webpack_require__(/*! @components/pages/public/SignUp */ "./src/components/pages/public/SignUp.tsx"));
 const appContext_1 = __importStar(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const App = () => {
-    const { user: userViaAuth0, loginWithRedirect, isLoading: isLoadingViaAuth0, getAccessTokenSilently, } = (0, auth0_react_1.useAuth0)();
+    const { user: userViaAuth0, isLoading: isLoadingViaAuth0, getAccessTokenSilently, } = (0, auth0_react_1.useAuth0)();
     const [user, setUser] = react_1.default.useState(userViaAuth0);
     const [isLoading, setIsLoading] = react_1.default.useState(isLoadingViaAuth0);
     const [prompt, setPrompt] = react_1.default.useState(appContext_1.defaultContext.prompt);
     const [tags, setTags] = react_1.default.useState(appContext_1.defaultContext.tags);
+    const getAccessToken = () => __awaiter(void 0, void 0, void 0, function* () {
+        const token = yield getAccessTokenSilently();
+        setUser(Object.assign(Object.assign({}, userViaAuth0), { access_token: token }));
+        setIsLoading(false);
+    });
     react_1.default.useEffect(() => {
-        setIsLoading(isLoadingViaAuth0);
-    }, [isLoadingViaAuth0]);
-    react_1.default.useEffect(() => {
-        // Can also use hook
-        setUser(userViaAuth0);
-        const getAccessToken = () => __awaiter(void 0, void 0, void 0, function* () {
-            const token = yield getAccessTokenSilently();
-            setUser(Object.assign(Object.assign({}, userViaAuth0), { access_token: token }));
-        });
+        if (isLoadingViaAuth0) {
+            return;
+        }
         if (userViaAuth0) {
             getAccessToken();
+            return;
         }
-    }, [userViaAuth0]);
+        return setIsLoading(false);
+    }, [
+        userViaAuth0,
+        isLoadingViaAuth0,
+    ]);
     if (isLoading) {
         return (react_1.default.createElement("main", { className: "bg-slate-600 w-full min-h-screen" },
             react_1.default.createElement("div", { className: "container mx-auto h-full" },
@@ -98,10 +102,10 @@ const App = () => {
     return (react_1.default.createElement(appContext_1.default.Provider, { value: defaultCtx },
         react_1.default.createElement(react_router_dom_1.Switch, null,
             react_1.default.createElement(react_router_dom_1.Route, { path: "/", exact: true, component: Index_1.default }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/builder", component: Builder_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/signup", component: SignUp_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/sign-up", component: SignUp_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/about", component: About_1.default }),
+            react_1.default.createElement(ProtectedRoute_1.default, { path: "/builder", component: Builder_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/images", component: Images_1.default }),
             react_1.default.createElement(ProtectedRoute_1.default, { path: "/sandbox", component: Sandbox_1.default }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/callback", component: Callback_1.default }),
@@ -258,7 +262,8 @@ const ApiService = {
                 path: '/tag',
             }).then(resp => ({
                 tags: (0, mappings_1.mapTagListToTypes)(resp.data.tags),
-                categories: resp.data.ategories,
+                categories: resp.data.categories,
+                latestTagUpdatedAt: resp.data.latest_tag_updated_at,
             }));
         }
         return ApiService.publicRequest({
@@ -266,8 +271,15 @@ const ApiService = {
         }).then(resp => ({
             tags: (0, mappings_1.mapTagListToTypes)(resp.data.tags),
             categories: resp.data.categories,
+            latestTagUpdatedAt: resp.data.latest_tag_updated_at,
         }));
     }),
+    getCacheInfo: (accessToken) => {
+        return ApiService.request({
+            accessToken,
+            path: '/tag/cache-check',
+        });
+    },
     sandboxTest: (accessToken) => {
         return ApiService.request({
             accessToken,
@@ -392,7 +404,6 @@ const Footer = () => {
             react_1.default.createElement(Logo_1.default, { iconOnly: true, linkedToHome: false })),
         react_1.default.createElement("div", { className: "flex container mx-auto justify-center" },
             react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/') }, "Home"),
-            react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/builder' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/builder') }, "Builder"),
             react_1.default.createElement("a", { href: "", className: (0, clsx_1.default)(baseLinkStyle, location.pathname === '/about' ? activeLinkStyle : inactiveLinkStyle), onClick: () => goToPage('/about') }, "About"),
             react_1.default.createElement("div", { className: "pt-1 w-10 md:w-12 md:pt-0 mx-2 md:mx-8 hidden md:block" },
                 react_1.default.createElement(Logo_1.default, { iconOnly: true, linkedToHome: false })),
@@ -499,6 +510,7 @@ const PromptComponent = () => {
     const [promptRawError, setPromptRawError] = react_1.default.useState();
     const [isGenerating, setIsGenerating] = react_1.default.useState(false);
     const [error, setError] = react_1.default.useState();
+    // TODO: fix the state mess around loading props here:
     const submit = () => __awaiter(void 0, void 0, void 0, function* () {
         setError(undefined);
         if (!prompt || !(prompt === null || prompt === void 0 ? void 0 : prompt.promptRaw) || prompt.promptRaw === '') {
@@ -523,9 +535,8 @@ const PromptComponent = () => {
         setPrompt(newPromptVal);
         setSeed(newPromptVal.seed);
         setIsGenerating(false);
-        localStorage_1.default.setPrompt(newPromptVal);
-        localStorage_1.default.setTags(tags);
         setError(undefined);
+        localStorage_1.default.setPrompt(newPromptVal);
     });
     const setPromptRaw = (newVal) => {
         setPrompt(Object.assign(Object.assign({}, prompt), { promptRaw: newVal }));
@@ -1474,6 +1485,8 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const react_select_1 = __importDefault(__webpack_require__(/*! react-select */ "./node_modules/react-select/dist/react-select.esm.js"));
 const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
+const date_fns_1 = __webpack_require__(/*! date-fns */ "./node_modules/date-fns/esm/index.js");
 const selectStyles = {
     // https://react-select.com/styles#style-object
     // option: (provided:any, state:any) => {
@@ -1485,7 +1498,6 @@ const selectStyles = {
     },
 };
 const customSelectTheme = (provided) => {
-    // console.log(provided)
     return Object.assign(Object.assign({}, provided), { colors: Object.assign({}, provided.colors) });
 };
 const getSelectedTagIds = (tagCollections) => {
@@ -1502,22 +1514,23 @@ const tagsToSelectOptions = (tags) => {
     }));
 };
 const Tags = ({}) => {
-    const { user, setTags, tags } = react_1.default.useContext(appContext_1.default);
+    const { user, setTags, tags, isLoading } = react_1.default.useContext(appContext_1.default);
     const [error, setError] = react_1.default.useState();
     const onChange = (changedTags, category) => {
         const newTags = tags.map(tagCollection => {
             if (tagCollection.category.id === category.id) {
-                return Object.assign(Object.assign({}, tagCollection), { 
-                    // map back from SelectOption format to Tag
-                    selectedTags: changedTags.map(tag => ({
-                        id: tag.value,
-                        label: tag.label,
-                        tagCategory: tagCollection.category.id,
-                    })) });
+                // map back from SelectOption format to Tag
+                const changedMappedToTag = changedTags.map(tag => ({
+                    id: tag.value,
+                    label: tag.label,
+                    tagCategory: tagCollection.category.id,
+                }));
+                return Object.assign(Object.assign({}, tagCollection), { selectedTags: changedMappedToTag });
             }
             return tagCollection;
         });
         setTags(newTags);
+        localStorage_1.default.setTags(newTags);
     };
     const loadTags = () => __awaiter(void 0, void 0, void 0, function* () {
         const resp = yield api_1.default.getTags(user === null || user === void 0 ? void 0 : user.access_token);
@@ -1527,8 +1540,8 @@ const Tags = ({}) => {
         }
         const tagCollections = [];
         resp.categories.forEach((category) => {
-            var _a;
-            const selectedTags = tags && tags.length ? (_a = tags[category.id]) === null || _a === void 0 ? void 0 : _a.selectedTags : [];
+            var _a, _b;
+            const selectedTags = (_b = (_a = tags === null || tags === void 0 ? void 0 : tags.find(tag => tag.category.id === category.id)) === null || _a === void 0 ? void 0 : _a.selectedTags) !== null && _b !== void 0 ? _b : [];
             tagCollections.push({
                 category,
                 allTags: resp.tags.filter(tag => tag.tagCategory === category.id),
@@ -1536,16 +1549,42 @@ const Tags = ({}) => {
             });
         });
         setTags(tagCollections);
+        localStorage_1.default.setTags(tagCollections, resp.latestTagUpdatedAt);
+    });
+    // Look at local storage, compare with timestamp from latest tag.
+    // Will default to forcing a refresh if unable to compare.
+    const refreshTagsIfNeeded = () => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
+        const lastTimeUpdatedClient = localStorage_1.default.getItem('latestTagUpdatedAt');
+        if (!lastTimeUpdatedClient) {
+            return loadTags();
+        }
+        const resp = yield api_1.default.getCacheInfo(user === null || user === void 0 ? void 0 : user.access_token);
+        if (resp.status !== 'ok' || !((_a = resp.data) === null || _a === void 0 ? void 0 : _a.latest_tag_updated_at)) {
+            // bail if we have nothing to compare to.
+            return loadTags();
+        }
+        const isClientBehindServer = (0, date_fns_1.compareAsc)(new Date(resp.data.latest_tag_updated_at), new Date(lastTimeUpdatedClient)) === 1;
+        if (!isClientBehindServer) {
+            return;
+        }
+        loadTags();
     });
     react_1.default.useEffect(() => {
+        if (isLoading) {
+            return;
+        }
         if (!tags) {
             loadTags();
         }
-    }, []);
+        else {
+            refreshTagsIfNeeded();
+        }
+    }, [isLoading]);
     if (error) {
         return react_1.default.createElement("div", null, error);
     }
-    if (!tags) {
+    else if (!tags || !Array.isArray(tags)) {
         return null;
     }
     return (react_1.default.createElement(react_1.default.Fragment, null, tags.map((tagCollection) => {
@@ -1690,14 +1729,23 @@ const LocalStorage = {
         }
         return JSON.parse(val);
     },
+    clearItem: (itemStr) => {
+        if (!LocalStorage.localStorageExists()) {
+            return;
+        }
+        return localStorage.removeItem(`${localStorageNamespace}.${itemStr}`);
+    },
     setPrompt: (prompt) => {
         return LocalStorage.setItem(prompt, 'prompt');
     },
     getPrompt: () => {
         return LocalStorage.getItem('prompt');
     },
-    setTags: (tagCollections) => {
-        return LocalStorage.setItem(tagCollections, 'tags');
+    setTags: (tagCollections, latestTagUpdatedAt) => {
+        LocalStorage.setItem(tagCollections, 'tags');
+        if (latestTagUpdatedAt) {
+            LocalStorage.setItem(latestTagUpdatedAt, 'latestTagUpdatedAt');
+        }
     },
     getTags: () => {
         return LocalStorage.getItem('tags');

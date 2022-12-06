@@ -16,6 +16,7 @@ const PromptComponent = () => {
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false)
   const [error, setError] = React.useState<string|undefined>()
 
+  // TODO: fix the state mess around loading props here:
   const submit = async () => {
     setError(undefined)
     if (!prompt || !prompt?.promptRaw || prompt.promptRaw === '') {
@@ -51,9 +52,8 @@ const PromptComponent = () => {
     setPrompt(newPromptVal)
     setSeed(newPromptVal.seed)
     setIsGenerating(false)
-    LocalStorage.setPrompt(newPromptVal)
-    LocalStorage.setTags(tags)
     setError(undefined)
+    LocalStorage.setPrompt(newPromptVal)
   }
 
   const setPromptRaw = (newVal:string) => {

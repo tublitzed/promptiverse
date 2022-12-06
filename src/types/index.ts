@@ -34,6 +34,7 @@ export interface Prompt extends Omit<PromptApiResponse, 'img_url' | 'prompt_raw'
 export interface TagCategory {
   id: number
   label: string
+  is_public: boolean
 }
 
 export interface TagApiResponse {

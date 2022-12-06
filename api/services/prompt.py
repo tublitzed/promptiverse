@@ -7,9 +7,6 @@ from api.models.prompt import ENGINE_SD_1
 from api.helpers.file import (
     create_img_file,
 )
-from api.helpers.aws import (
-    copy_to_s3_public,
-)
 
 # https://github.com/Stability-AI/stability-sdk
 stability_api = client.StabilityInference(
@@ -76,6 +73,9 @@ def build(prompt_raw, tags):
 def generate_for_user(
     user_id=string, prompt=string, prompt_raw=string, seed=None, tag_ids=[]
 ):
+    if seed is None:
+        seed = random.randint(1, 100000)
+
     img_url = generate(prompt=prompt, prompt_raw=prompt_raw, seed=seed, tag_ids=tag_ids)
     saved_prompt = prompt_model.save(
         img_url=img_url,
@@ -88,31 +88,7 @@ def generate_for_user(
     return saved_prompt
 
 
-def generate_public(
-    ip_address=string, prompt=string, prompt_raw=string, seed=None, tag_ids=[]
-):
-    img_url = generate(prompt=prompt, prompt_raw=prompt_raw, seed=seed, tag_ids=tag_ids)
-    prompt_id = uuid.uuid4()
-    s3_img_url = copy_to_s3_public(
-        filename=f"{prompt_id}/image.png",
-        src_filepath=img_url,
-        ip_address=ip_address,
-    )
-    return {
-        "engine": ENGINE_SD_1,
-        "id": prompt_id,
-        "imgUrl": s3_img_url,
-        "promptRaw": prompt_raw,
-        "prompt": prompt,
-        "seed": seed,
-        "tagIds": tag_ids,
-    }
-
-
 def generate(prompt=string, prompt_raw=string, seed=None, tag_ids=[]):
-    if seed is None:
-        seed = random.randint(1, 10000)
-
     answers = stability_api.generate(
         prompt=prompt,
         seed=seed,  # if provided, specifying a random seed makes results deterministic
@@ -121,6 +97,7 @@ def generate(prompt=string, prompt_raw=string, seed=None, tag_ids=[]):
         # height=512,
         # width=1600
     )
+
     for resp in answers:
         for artifact in resp.artifacts:
             if artifact.finish_reason == generation.FILTER:

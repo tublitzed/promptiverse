@@ -34,6 +34,12 @@ interface PublicApiRequest extends Partial<ApiRequest> {
 interface GenerateImageResp extends FetchResp {
   prompt: PromptApiResponse
 }
+
+interface GetTagsResp {
+  tags: Tag[],
+  categories: TagCategory[]
+  latestTagUpdatedAt: Date
+}
 const ApiService = {
   request: ({
     accessToken,
@@ -106,14 +112,15 @@ const ApiService = {
     }).then(resp => ({ prompts: mapPromptListToTypes(resp.data.prompts) }))
   },
 
-  getTags: async (accessToken?: string):Promise<{ tags: Tag[], categories: TagCategory[]}> => {
+  getTags: async (accessToken?: string):Promise<GetTagsResp> => {
     if (accessToken) {
       return ApiService.request({
         accessToken,
         path: '/tag',
       }).then(resp => ({
         tags: mapTagListToTypes(resp.data.tags),
-        categories: resp.data.ategories,
+        categories: resp.data.categories,
+        latestTagUpdatedAt: resp.data.latest_tag_updated_at,
       }))
     }
 
@@ -122,7 +129,15 @@ const ApiService = {
     }).then(resp => ({
       tags: mapTagListToTypes(resp.data.tags),
       categories: resp.data.categories,
+      latestTagUpdatedAt: resp.data.latest_tag_updated_at,
     }))
+  },
+
+  getCacheInfo: (accessToken: string) => {
+    return ApiService.request({
+      accessToken,
+      path: '/tag/cache-check',
+    })
   },
 
   sandboxTest: (accessToken: string) => {

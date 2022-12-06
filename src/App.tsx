@@ -17,7 +17,6 @@ import { Prompt, TagCollection } from '@types'
 export const App: React.FC = () => {
   const {
     user: userViaAuth0,
-    loginWithRedirect,
     isLoading: isLoadingViaAuth0,
     getAccessTokenSilently,
   } = useAuth0()
@@ -26,24 +25,28 @@ export const App: React.FC = () => {
   const [prompt, setPrompt] = React.useState<Prompt | undefined>(defaultContext.prompt)
   const [tags, setTags] = React.useState<TagCollection[] | undefined>(defaultContext.tags)
 
-  React.useEffect(() => {
-    setIsLoading(isLoadingViaAuth0)
-  }, [isLoadingViaAuth0])
+  const getAccessToken = async () => {
+    const token = await getAccessTokenSilently()
+    setUser({
+      ...userViaAuth0,
+      access_token: token,
+    })
+    setIsLoading(false)
+  }
 
   React.useEffect(() => {
-    // Can also use hook
-    setUser(userViaAuth0)
-    const getAccessToken = async () => {
-      const token = await getAccessTokenSilently()
-      setUser({
-        ...userViaAuth0,
-        access_token: token,
-      })
+    if (isLoadingViaAuth0) {
+      return
     }
     if (userViaAuth0) {
       getAccessToken()
+      return
     }
-  }, [userViaAuth0])
+    return setIsLoading(false)
+  }, [
+    userViaAuth0,
+    isLoadingViaAuth0,
+  ])
 
   if (isLoading) {
     return (
@@ -72,12 +75,12 @@ export const App: React.FC = () => {
     <AppContext.Provider value={defaultCtx}>
       <Switch>
         <Route path="/" exact component={IndexPage} />
-        <Route path="/builder" component={BuilderPage} />
         <Route path="/signup" component={SignUpPage} />
         <Route path="/sign-up" component={SignUpPage} />
         <Route path="/about" component={AboutPage} />
         {/* killed this page for now */}
         {/* <ProtectedRoute path="/profile" component={ProfilePage} /> */}
+        <ProtectedRoute path="/builder" component={BuilderPage} />
         <ProtectedRoute path="/images" component={ImagesPage} />
         <ProtectedRoute path="/sandbox" component={SandboxPage} />
         <Route path="/callback" component={CallbackPage} />

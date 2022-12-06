@@ -47,7 +47,14 @@ def get_all():
         Tag.tag_category,
         Tag.id,
         Tag.label,
-    )
+    ).order_by(Tag.label.asc())
+
+
+## This is a hack to force an update on all tags server side.
+## We store the last updated timestamp in localStorage. If this
+## is newer, we'll clear localStorage and fetch the latest list.
+def get_latest_tag_updated():
+    return Tag.select().order_by(Tag.updated_at.desc()).limit(1)
 
 
 def get_public_tags():
