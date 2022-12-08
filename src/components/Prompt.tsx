@@ -1,7 +1,8 @@
 import React from 'react'
 import Api from '@api/api'
 import Input from './base/Input'
-import Tags, { getSelectedTagIds } from './tags/Tags'
+import NumberInput from './base/NumberInput'
+import Tags, { getSelectedTagIds } from './Tags'
 import PromptImage from './PromptImage'
 import Button from './base/Button'
 import AppContext from '@src/appContext'
@@ -98,7 +99,18 @@ const PromptComponent = () => {
           disabled={prompt?.loading}
         >Generate Image</Button>
       </div>
-      <Tags />
+
+      <div className="grid gap-y-2 mt-2">
+        <Tags />
+        <div className="flex gap-x-2 items-center">
+          <label>Height:</label>
+          <NumberInput defaultValue={512} addonAfter="px" />
+        </div>
+        <div className="flex gap-x-2 items-center">
+          <label>Width:</label>
+          <NumberInput defaultValue={512} addonAfter="px" />
+        </div>
+      </div>
       <div>
         {isGenerating
           ?

@@ -497,7 +497,8 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 const Input_1 = __importDefault(__webpack_require__(/*! ./base/Input */ "./src/components/base/Input.tsx"));
-const Tags_1 = __importStar(__webpack_require__(/*! ./tags/Tags */ "./src/components/tags/Tags.tsx"));
+const NumberInput_1 = __importDefault(__webpack_require__(/*! ./base/NumberInput */ "./src/components/base/NumberInput.tsx"));
+const Tags_1 = __importStar(__webpack_require__(/*! ./Tags */ "./src/components/Tags.tsx"));
 const PromptImage_1 = __importDefault(__webpack_require__(/*! ./PromptImage */ "./src/components/PromptImage.tsx"));
 const Button_1 = __importDefault(__webpack_require__(/*! ./base/Button */ "./src/components/base/Button.tsx"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
@@ -555,7 +556,14 @@ const PromptComponent = () => {
                     setSeed(undefined);
                 }, disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading }),
             react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading }, "Generate Image")),
-        react_1.default.createElement(Tags_1.default, null),
+        react_1.default.createElement("div", { className: "grid gap-y-2 mt-2" },
+            react_1.default.createElement(Tags_1.default, null),
+            react_1.default.createElement("div", { className: "flex gap-x-2 items-center" },
+                react_1.default.createElement("label", null, "Height:"),
+                react_1.default.createElement(NumberInput_1.default, { defaultValue: 512, addonAfter: "px" })),
+            react_1.default.createElement("div", { className: "flex gap-x-2 items-center" },
+                react_1.default.createElement("label", null, "Width:"),
+                react_1.default.createElement(NumberInput_1.default, { defaultValue: 512, addonAfter: "px" }))),
         react_1.default.createElement("div", null, isGenerating
             ?
                 react_1.default.createElement("div", { className: "mt-8" },
@@ -594,6 +602,126 @@ const PromptImage = () => {
         react_1.default.createElement("img", { src: prompt === null || prompt === void 0 ? void 0 : prompt.imgUrl, title: prompt === null || prompt === void 0 ? void 0 : prompt.prompt, alt: `Image for prompt ${(prompt === null || prompt === void 0 ? void 0 : prompt.prompt) ? prompt.prompt : ''}`, width: 512, height: 512, className: "border m-auto rounded shadow p-2 bg-slate-400" })));
 };
 exports["default"] = PromptImage;
+
+
+/***/ }),
+
+/***/ "./src/components/Tags.tsx":
+/*!*********************************!*\
+  !*** ./src/components/Tags.tsx ***!
+  \*********************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getSelectedTagIds = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
+const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
+const Select_1 = __importDefault(__webpack_require__(/*! @components/base/Select */ "./src/components/base/Select.tsx"));
+const date_fns_1 = __webpack_require__(/*! date-fns */ "./node_modules/date-fns/esm/index.js");
+const getSelectedTagIds = (tagCollections) => {
+    if (!tagCollections.length) {
+        return [];
+    }
+    return tagCollections.flatMap(collection => (collection.selectedTagIds));
+};
+exports.getSelectedTagIds = getSelectedTagIds;
+const tagsToSelectOptions = (tags) => {
+    return tags.map((tag) => ({
+        value: tag.id,
+        label: tag.label,
+    }));
+};
+const Tags = ({}) => {
+    const { user, setTags, tags, isLoading } = react_1.default.useContext(appContext_1.default);
+    const [error, setError] = react_1.default.useState();
+    const onChange = (selectedTagIds, category) => {
+        const newTags = tags.map(tagCollection => {
+            if (tagCollection.category.id !== category.id) {
+                return tagCollection;
+            }
+            return Object.assign(Object.assign({}, tagCollection), { selectedTagIds });
+        });
+        setTags(newTags);
+        localStorage_1.default.setTags(newTags);
+    };
+    const loadTags = () => __awaiter(void 0, void 0, void 0, function* () {
+        const resp = yield api_1.default.getTags(user === null || user === void 0 ? void 0 : user.access_token);
+        if (!resp.tags || !resp.categories) {
+            setError('Unable to load tags');
+            return;
+        }
+        const tagCollections = [];
+        resp.categories.forEach((category) => {
+            var _a, _b;
+            const selectedTagIds = (_b = (_a = tags === null || tags === void 0 ? void 0 : tags.find(tag => tag.category.id === category.id)) === null || _a === void 0 ? void 0 : _a.selectedTagIds) !== null && _b !== void 0 ? _b : [];
+            tagCollections.push({
+                category,
+                allTags: resp.tags.filter(tag => tag.tagCategory === category.id),
+                selectedTagIds,
+            });
+        });
+        setTags(tagCollections);
+        localStorage_1.default.setTags(tagCollections, resp.latestTagUpdatedAt);
+    });
+    // Look at local storage, compare with timestamp from latest tag.
+    // Will default to forcing a refresh if unable to compare.
+    const refreshTagsIfNeeded = () => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
+        const lastTimeUpdatedClient = localStorage_1.default.getItem('latestTagUpdatedAt');
+        if (!lastTimeUpdatedClient) {
+            return loadTags();
+        }
+        const resp = yield api_1.default.getCacheInfo(user === null || user === void 0 ? void 0 : user.access_token);
+        if (resp.status !== 'ok' || !((_a = resp.data) === null || _a === void 0 ? void 0 : _a.latest_tag_updated_at)) {
+            // bail if we have nothing to compare to.
+            return loadTags();
+        }
+        const isClientBehindServer = (0, date_fns_1.compareAsc)(new Date(resp.data.latest_tag_updated_at), new Date(lastTimeUpdatedClient)) === 1;
+        if (!isClientBehindServer) {
+            return;
+        }
+        loadTags();
+    });
+    react_1.default.useEffect(() => {
+        if (isLoading) {
+            return;
+        }
+        if (!tags) {
+            loadTags();
+        }
+        else {
+            refreshTagsIfNeeded();
+        }
+    }, [isLoading]);
+    if (error) {
+        return react_1.default.createElement("div", null, error);
+    }
+    else if (!tags || !Array.isArray(tags)) {
+        return null;
+    }
+    return (react_1.default.createElement("div", { className: "grid gap-y-2" }, tags.map((tagCollection) => {
+        return (react_1.default.createElement("div", { key: `tagCategory_${tagCollection.category.id}`, className: "text-slate-600 text-sm" },
+            react_1.default.createElement(Select_1.default, { defaultValue: tagCollection.selectedTagIds, placeholder: `Add ${tagCollection.category.label.toLowerCase()}...`, options: tagsToSelectOptions(tagCollection.allTags), onChange: (selectedIds) => {
+                    onChange(selectedIds, tagCollection.category);
+                } })));
+    })));
+};
+exports["default"] = Tags;
 
 
 /***/ }),
@@ -862,6 +990,40 @@ exports["default"] = Logo;
 
 /***/ }),
 
+/***/ "./src/components/base/NumberInput.tsx":
+/*!*********************************************!*\
+  !*** ./src/components/base/NumberInput.tsx ***!
+  \*********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const antd_1 = __webpack_require__(/*! antd */ "./node_modules/antd/es/index.js");
+const NumberInput = (_a) => {
+    var { className } = _a, otherProps = __rest(_a, ["className"]);
+    return (react_1.default.createElement("div", { className: className },
+        react_1.default.createElement(antd_1.InputNumber, Object.assign({}, otherProps))));
+};
+exports["default"] = NumberInput;
+
+
+/***/ }),
+
 /***/ "./src/components/base/PageTitle.tsx":
 /*!*******************************************!*\
   !*** ./src/components/base/PageTitle.tsx ***!
@@ -880,6 +1042,39 @@ const PageTitle = ({ title, subtitle, }) => {
         subtitle && react_1.default.createElement("h3", { className: "text-lg text-gray-500" }, subtitle)));
 };
 exports["default"] = PageTitle;
+
+
+/***/ }),
+
+/***/ "./src/components/base/Select.tsx":
+/*!****************************************!*\
+  !*** ./src/components/base/Select.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const antd_1 = __webpack_require__(/*! antd */ "./node_modules/antd/es/index.js");
+const SelectComponent = (_a) => {
+    var { selectedValues, onChange, placeholder, options } = _a, otherProps = __rest(_a, ["selectedValues", "onChange", "placeholder", "options"]);
+    return (react_1.default.createElement(antd_1.Select, Object.assign({ style: { width: '100%' }, showArrow: true, defaultValue: selectedValues, options: options, mode: "multiple", onChange: onChange }, otherProps)));
+};
+exports["default"] = SelectComponent;
 
 
 /***/ }),
@@ -1455,126 +1650,6 @@ const Page = () => {
             react_1.default.createElement("p", null, "Stay tuned! We'll be opening up soon."))));
 };
 exports["default"] = Page;
-
-
-/***/ }),
-
-/***/ "./src/components/tags/Tags.tsx":
-/*!**************************************!*\
-  !*** ./src/components/tags/Tags.tsx ***!
-  \**************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getSelectedTagIds = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const antd_1 = __webpack_require__(/*! antd */ "./node_modules/antd/es/index.js");
-const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
-const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
-const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
-const date_fns_1 = __webpack_require__(/*! date-fns */ "./node_modules/date-fns/esm/index.js");
-const getSelectedTagIds = (tagCollections) => {
-    if (!tagCollections.length) {
-        return [];
-    }
-    return tagCollections.flatMap(collection => (collection.selectedTagIds));
-};
-exports.getSelectedTagIds = getSelectedTagIds;
-const tagsToSelectOptions = (tags) => {
-    return tags.map((tag) => ({
-        value: tag.id,
-        label: tag.label,
-    }));
-};
-const Tags = ({}) => {
-    const { user, setTags, tags, isLoading } = react_1.default.useContext(appContext_1.default);
-    const [error, setError] = react_1.default.useState();
-    const onChange = (selectedTagIds, category) => {
-        const newTags = tags.map(tagCollection => {
-            if (tagCollection.category.id !== category.id) {
-                return tagCollection;
-            }
-            return Object.assign(Object.assign({}, tagCollection), { selectedTagIds });
-        });
-        setTags(newTags);
-        localStorage_1.default.setTags(newTags);
-    };
-    const loadTags = () => __awaiter(void 0, void 0, void 0, function* () {
-        const resp = yield api_1.default.getTags(user === null || user === void 0 ? void 0 : user.access_token);
-        if (!resp.tags || !resp.categories) {
-            setError('Unable to load tags');
-            return;
-        }
-        const tagCollections = [];
-        resp.categories.forEach((category) => {
-            var _a, _b;
-            const selectedTagIds = (_b = (_a = tags === null || tags === void 0 ? void 0 : tags.find(tag => tag.category.id === category.id)) === null || _a === void 0 ? void 0 : _a.selectedTagIds) !== null && _b !== void 0 ? _b : [];
-            tagCollections.push({
-                category,
-                allTags: resp.tags.filter(tag => tag.tagCategory === category.id),
-                selectedTagIds,
-            });
-        });
-        setTags(tagCollections);
-        localStorage_1.default.setTags(tagCollections, resp.latestTagUpdatedAt);
-    });
-    // Look at local storage, compare with timestamp from latest tag.
-    // Will default to forcing a refresh if unable to compare.
-    const refreshTagsIfNeeded = () => __awaiter(void 0, void 0, void 0, function* () {
-        var _a;
-        const lastTimeUpdatedClient = localStorage_1.default.getItem('latestTagUpdatedAt');
-        if (!lastTimeUpdatedClient) {
-            return loadTags();
-        }
-        const resp = yield api_1.default.getCacheInfo(user === null || user === void 0 ? void 0 : user.access_token);
-        if (resp.status !== 'ok' || !((_a = resp.data) === null || _a === void 0 ? void 0 : _a.latest_tag_updated_at)) {
-            // bail if we have nothing to compare to.
-            return loadTags();
-        }
-        const isClientBehindServer = (0, date_fns_1.compareAsc)(new Date(resp.data.latest_tag_updated_at), new Date(lastTimeUpdatedClient)) === 1;
-        if (!isClientBehindServer) {
-            return;
-        }
-        loadTags();
-    });
-    react_1.default.useEffect(() => {
-        if (isLoading) {
-            return;
-        }
-        if (!tags) {
-            loadTags();
-        }
-        else {
-            refreshTagsIfNeeded();
-        }
-    }, [isLoading]);
-    if (error) {
-        return react_1.default.createElement("div", null, error);
-    }
-    else if (!tags || !Array.isArray(tags)) {
-        return null;
-    }
-    return (react_1.default.createElement(react_1.default.Fragment, null, tags.map((tagCollection) => {
-        return (react_1.default.createElement("div", { key: `tagCategory_${tagCollection.category.id}`, className: "mt-4 text-slate-600 text-sm" },
-            react_1.default.createElement(antd_1.Select, { style: { width: '100%' }, size: "large", showArrow: true, defaultValue: tagCollection.selectedTagIds, placeholder: `Add ${tagCollection.category.label.toLowerCase()}...`, options: tagsToSelectOptions(tagCollection.allTags), mode: "multiple", onChange: (selectedIds) => {
-                    onChange(selectedIds, tagCollection.category);
-                } })));
-    })));
-};
-exports["default"] = Tags;
 
 
 /***/ }),

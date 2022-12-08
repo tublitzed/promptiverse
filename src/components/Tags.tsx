@@ -1,8 +1,8 @@
 import React from 'react'
-import { Select } from 'antd'
 import Api from '@api/api'
 import AppContext from '@src/appContext'
 import LocalStorage from '@utils/localStorage'
+import Select, { SelectArgs } from '@components/base/Select'
 import { compareAsc } from 'date-fns'
 
 import { Tag, TagCategory, TagCollection } from '@types'
@@ -14,12 +14,7 @@ export const getSelectedTagIds = (tagCollections: TagCollection[]):string[] => {
   return tagCollections.flatMap(collection => (collection.selectedTagIds))
 }
 
-interface SelectOption {
-  value: string
-  label: string
-}
-
-const tagsToSelectOptions = (tags: Tag[]):SelectOption[] => {
+const tagsToSelectOptions = (tags: Tag[]):SelectArgs['options'] => {
   return tags.map((tag:Tag) => ({
     value: tag.id,
     label: tag.label,
@@ -104,20 +99,16 @@ const Tags = ({}) => {
   }
 
   return (
-    <>
+    <div className="grid gap-y-2">
       {tags.map((tagCollection: TagCollection) => {
         return (
           <div
             key={`tagCategory_${tagCollection.category.id}`}
-            className="mt-4 text-slate-600 text-sm">
+            className="text-slate-600 text-sm">
             <Select
-              style={{ width: '100%' }}
-              size="large"
-              showArrow
               defaultValue={tagCollection.selectedTagIds}
               placeholder={`Add ${tagCollection.category.label.toLowerCase()}...`}
               options={tagsToSelectOptions(tagCollection.allTags)}
-              mode="multiple"
               onChange={(selectedIds: string[]) => {
                 onChange(selectedIds, tagCollection.category)
               }}
@@ -125,7 +116,7 @@ const Tags = ({}) => {
           </div>
         )
       })}
-    </>
+    </div>
   )
 }
 
