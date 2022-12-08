@@ -587,9 +587,8 @@ const PromptImage = () => {
         return null;
     }
     if (prompt.loading) {
-        return (react_1.default.createElement("div", { className: "mt-4 text-center" },
-            react_1.default.createElement(Loader_1.default, null),
-            react_1.default.createElement("h2", { className: "text-slate-50 font-thin text-lg mt-4" }, "Loading...")));
+        return (react_1.default.createElement("div", { className: "mt-6 text-center" },
+            react_1.default.createElement(Loader_1.default, null)));
     }
     return (react_1.default.createElement("div", { className: "p-6 bg-white rounded mt-6" },
         react_1.default.createElement("img", { src: prompt === null || prompt === void 0 ? void 0 : prompt.imgUrl, title: prompt === null || prompt === void 0 ? void 0 : prompt.prompt, alt: `Image for prompt ${(prompt === null || prompt === void 0 ? void 0 : prompt.prompt) ? prompt.prompt : ''}`, width: 512, height: 512, className: "border m-auto rounded shadow p-2 bg-slate-400" })));
