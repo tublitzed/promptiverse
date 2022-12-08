@@ -50,6 +50,6 @@ export interface Tag extends Omit<TagApiResponse, 'tag_category'> {
 export interface TagCollection {
   category: TagCategory
   allTags: Tag[]
-  selectedTags: Tag[]
+  selectedTagIds: string[]
 }
 

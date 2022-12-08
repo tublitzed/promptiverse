@@ -12,3 +12,8 @@ body {
 a {
   cursor: pointer;
 }
+
+/* override ant select field remove buttons */
+.ant-select-lg .ant-select-selection-item-remove {
+  margin-top: -2px
+}

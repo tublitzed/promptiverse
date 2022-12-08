@@ -619,10 +619,6 @@ video {
   margin-top: 2rem;
 }
 
-.mt-4 {
-  margin-top: 1rem;
-}
-
 .mt-1 {
   margin-top: 0.25rem;
 }
@@ -641,6 +637,10 @@ video {
 
 .mr-4 {
   margin-right: 1rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
 }
 
 .block {
@@ -1284,6 +1284,12 @@ body {
 
 a {
   cursor: pointer;
+}
+
+/* override ant select field remove buttons */
+
+.ant-select-lg .ant-select-selection-item-remove {
+  margin-top: -2px
 }
 
 .hover\:bg-white\/20:hover {

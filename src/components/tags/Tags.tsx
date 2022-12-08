@@ -1,5 +1,5 @@
 import React from 'react'
-import Select from 'react-select'
+import { Select } from 'antd'
 import Api from '@api/api'
 import AppContext from '@src/appContext'
 import LocalStorage from '@utils/localStorage'
@@ -7,38 +7,11 @@ import { compareAsc } from 'date-fns'
 
 import { Tag, TagCategory, TagCollection } from '@types'
 
-const selectStyles = {
-  // https://react-select.com/styles#style-object
-  // option: (provided:any, state:any) => {
-  //   console.log(provided, state)
-  //   return provided
-  // },
-  control: (provided:any, state:any) => {
-    return {
-      ...provided,
-      // backgroundColor: state.isFocused ? '#FFF' : 'rgb(229 231 235 / var(--tw-bg-opacity))',
-    }
-  },
-}
-
-const customSelectTheme = (provided:any) => {
-  return {
-    ...provided,
-    colors: {
-      ...provided.colors,
-      // primary: '#3b82f6',
-      // primary25: '#dbeafe',
-      // primary50: '#93c5fd',
-      // primary75: '#60a5fa',
-    },
-  }
-}
-
 export const getSelectedTagIds = (tagCollections: TagCollection[]):string[] => {
   if (!tagCollections.length) {
     return []
   }
-  return tagCollections.flatMap(collection => (collection.selectedTags.map(tag => tag.id)))
+  return tagCollections.flatMap(collection => (collection.selectedTagIds))
 }
 
 interface SelectOption {
@@ -58,21 +31,15 @@ const Tags = ({}) => {
   const [error, setError] = React.useState<string | undefined>()
 
 
-  const onChange = (changedTags: SelectOption[], category: TagCategory) => {
+  const onChange = (selectedTagIds: string[], category: TagCategory) => {
     const newTags:TagCollection[] = tags.map(tagCollection => {
-      if (tagCollection.category.id === category.id) {
-        // map back from SelectOption format to Tag
-        const changedMappedToTag = changedTags.map(tag => ({
-          id: tag.value,
-          label: tag.label,
-          tagCategory: tagCollection.category.id,
-        }))
-        return {
-          ...tagCollection,
-          selectedTags: changedMappedToTag,
-        }
+      if (tagCollection.category.id !== category.id) {
+        return tagCollection
       }
-      return tagCollection
+      return {
+        ...tagCollection,
+        selectedTagIds,
+      }
     })
 
     setTags(newTags)
@@ -87,13 +54,14 @@ const Tags = ({}) => {
     }
     const tagCollections:TagCollection[] = []
     resp.categories.forEach((category: TagCategory) => {
-      const selectedTags = tags?.find(tag => tag.category.id === category.id)?.selectedTags ?? []
+      const selectedTagIds = tags?.find(tag => tag.category.id === category.id)?.selectedTagIds ?? []
       tagCollections.push({
         category,
         allTags: resp.tags.filter(tag => tag.tagCategory === category.id),
-        selectedTags,
+        selectedTagIds,
       })
     })
+
     setTags(tagCollections)
     LocalStorage.setTags(tagCollections, resp.latestTagUpdatedAt)
   }
@@ -143,14 +111,15 @@ const Tags = ({}) => {
             key={`tagCategory_${tagCollection.category.id}`}
             className="mt-4 text-slate-600 text-sm">
             <Select
-              defaultValue={tagsToSelectOptions(tagCollection.selectedTags)}
-              placeholder={`Add ${tagCollection.category.label.toLowerCase()}`}
+              style={{ width: '100%' }}
+              size="large"
+              showArrow
+              defaultValue={tagCollection.selectedTagIds}
+              placeholder={`Add ${tagCollection.category.label.toLowerCase()}...`}
               options={tagsToSelectOptions(tagCollection.allTags)}
-              styles={selectStyles}
-              theme={customSelectTheme}
-              isMulti
-              onChange={(selectedValues:SelectOption[]) => {
-                onChange(selectedValues, tagCollection.category)
+              mode="multiple"
+              onChange={(selectedIds: string[]) => {
+                onChange(selectedIds, tagCollection.category)
               }}
             />
           </div>

@@ -1481,29 +1481,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getSelectedTagIds = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_select_1 = __importDefault(__webpack_require__(/*! react-select */ "./node_modules/react-select/dist/react-select.esm.js"));
+const antd_1 = __webpack_require__(/*! antd */ "./node_modules/antd/es/index.js");
 const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
 const date_fns_1 = __webpack_require__(/*! date-fns */ "./node_modules/date-fns/esm/index.js");
-const selectStyles = {
-    // https://react-select.com/styles#style-object
-    // option: (provided:any, state:any) => {
-    //   console.log(provided, state)
-    //   return provided
-    // },
-    control: (provided, state) => {
-        return Object.assign({}, provided);
-    },
-};
-const customSelectTheme = (provided) => {
-    return Object.assign(Object.assign({}, provided), { colors: Object.assign({}, provided.colors) });
-};
 const getSelectedTagIds = (tagCollections) => {
     if (!tagCollections.length) {
         return [];
     }
-    return tagCollections.flatMap(collection => (collection.selectedTags.map(tag => tag.id)));
+    return tagCollections.flatMap(collection => (collection.selectedTagIds));
 };
 exports.getSelectedTagIds = getSelectedTagIds;
 const tagsToSelectOptions = (tags) => {
@@ -1515,18 +1502,12 @@ const tagsToSelectOptions = (tags) => {
 const Tags = ({}) => {
     const { user, setTags, tags, isLoading } = react_1.default.useContext(appContext_1.default);
     const [error, setError] = react_1.default.useState();
-    const onChange = (changedTags, category) => {
+    const onChange = (selectedTagIds, category) => {
         const newTags = tags.map(tagCollection => {
-            if (tagCollection.category.id === category.id) {
-                // map back from SelectOption format to Tag
-                const changedMappedToTag = changedTags.map(tag => ({
-                    id: tag.value,
-                    label: tag.label,
-                    tagCategory: tagCollection.category.id,
-                }));
-                return Object.assign(Object.assign({}, tagCollection), { selectedTags: changedMappedToTag });
+            if (tagCollection.category.id !== category.id) {
+                return tagCollection;
             }
-            return tagCollection;
+            return Object.assign(Object.assign({}, tagCollection), { selectedTagIds });
         });
         setTags(newTags);
         localStorage_1.default.setTags(newTags);
@@ -1540,11 +1521,11 @@ const Tags = ({}) => {
         const tagCollections = [];
         resp.categories.forEach((category) => {
             var _a, _b;
-            const selectedTags = (_b = (_a = tags === null || tags === void 0 ? void 0 : tags.find(tag => tag.category.id === category.id)) === null || _a === void 0 ? void 0 : _a.selectedTags) !== null && _b !== void 0 ? _b : [];
+            const selectedTagIds = (_b = (_a = tags === null || tags === void 0 ? void 0 : tags.find(tag => tag.category.id === category.id)) === null || _a === void 0 ? void 0 : _a.selectedTagIds) !== null && _b !== void 0 ? _b : [];
             tagCollections.push({
                 category,
                 allTags: resp.tags.filter(tag => tag.tagCategory === category.id),
-                selectedTags,
+                selectedTagIds,
             });
         });
         setTags(tagCollections);
@@ -1588,8 +1569,8 @@ const Tags = ({}) => {
     }
     return (react_1.default.createElement(react_1.default.Fragment, null, tags.map((tagCollection) => {
         return (react_1.default.createElement("div", { key: `tagCategory_${tagCollection.category.id}`, className: "mt-4 text-slate-600 text-sm" },
-            react_1.default.createElement(react_select_1.default, { defaultValue: tagsToSelectOptions(tagCollection.selectedTags), placeholder: `Add ${tagCollection.category.label.toLowerCase()}`, options: tagsToSelectOptions(tagCollection.allTags), styles: selectStyles, theme: customSelectTheme, isMulti: true, onChange: (selectedValues) => {
-                    onChange(selectedValues, tagCollection.category);
+            react_1.default.createElement(antd_1.Select, { style: { width: '100%' }, size: "large", showArrow: true, defaultValue: tagCollection.selectedTagIds, placeholder: `Add ${tagCollection.category.label.toLowerCase()}...`, options: tagsToSelectOptions(tagCollection.allTags), mode: "multiple", onChange: (selectedIds) => {
+                    onChange(selectedIds, tagCollection.category);
                 } })));
     })));
 };
@@ -1914,6 +1895,15 @@ exports["default"] = LocalStorage;
 /******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
 /******/ 			}
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/node module decorator */
+/******/ 	(() => {
+/******/ 		__webpack_require__.nmd = (module) => {
+/******/ 			module.paths = [];
+/******/ 			if (!module.children) module.children = [];
+/******/ 			return module;
 /******/ 		};
 /******/ 	})();
 /******/ 	
