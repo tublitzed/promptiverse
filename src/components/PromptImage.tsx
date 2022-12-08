@@ -10,9 +10,8 @@ const PromptImage = () => {
 
   if (prompt.loading) {
     return (
-      <div className="mt-4 text-center">
+      <div className="mt-6 text-center">
         <Loader />
-        <h2 className="text-slate-50 font-thin text-lg mt-4">Loading...</h2>
       </div>
     )
   }
