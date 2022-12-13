@@ -5,12 +5,14 @@ from flask import (
     jsonify,
     request,
 )
-import random, os
+import random, os, requests, io
 from api.services.auth0 import requires_auth
 from api.services.slack import send_slack_message
 from api.helpers import app
+from api.helpers.file import create_img_file
 from api.helpers.seeder import seed_tag_categories, seed_tags
 from peewee import *
+from PIL import Image
 
 bp_name = "base"
 bp_url_prefix = "/"
@@ -49,6 +51,16 @@ def index():
 def sandbox():
     if app.is_dev() is False:
         return make_response("error", 400)
+    img_url = "https://tublitzed.com/img/photography/src/takeoff.jpg"
+    img = open('static/img/generated/tmp.jpg', 'wb')
+    img.write(requests.get(img_url).content)
+    img.close()
+    with io.BytesIO() as output:
+        with Image.open('static/img/generated/tmp.jpg') as img:
+            img.convert('RGB').save(output, 'BMP')
+            print(img)
+        data = output.getvalue()[14:]
+    # pil_im = Image.fromarray(img_url)
     return jsonify({"just a test": "ok"})
 
 

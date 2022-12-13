@@ -6,6 +6,9 @@ start_fe:
 		@echo "starting npm..."
 		npm i && npm run dev
 
+clear_image_cache:
+		@echo "clearing images..."
+		rm -rf static/img/generated/**
 # docker_build:
 # 	docker-compose up -d --build
 

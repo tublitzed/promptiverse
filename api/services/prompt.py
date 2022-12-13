@@ -1,8 +1,9 @@
-import string, os, warnings, random, uuid
+import string, os, warnings, random, uuid, io
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 from api.models import prompt as prompt_model
 from api.models.prompt import ENGINE_SD_1
+from PIL import Image
 
 from api.helpers.file import (
     create_img_file,
@@ -76,7 +77,8 @@ def generate_for_user(
     if seed is None:
         seed = random.randint(1, 100000)
 
-    img_url = generate(prompt=prompt, prompt_raw=prompt_raw, seed=seed, tag_ids=tag_ids)
+    fake_prompt = "cat"
+    img_url = generate(prompt=fake_prompt, seed=seed)
     saved_prompt = prompt_model.save(
         img_url=img_url,
         prompt_raw=prompt_raw,
@@ -88,9 +90,17 @@ def generate_for_user(
     return saved_prompt
 
 
-def generate(prompt=string, prompt_raw=string, seed=None, tag_ids=[]):
+def generate(prompt=string, seed=None):
+    # https://github.com/Stability-AI/stability-sdk/blob/main/src/stability_sdk/client.py#L161
+    # https://github.com/Stability-AI/api-interfaces/blob/main/src/proto/generation.proto
+    with io.BytesIO() as output:
+        with Image.open('static/img/generated/tmp.jpg') as img:
+            init_image = img.convert('RGB').save(output, 'BMP')
+        #     print(img)
+        # data = output.getvalue()[14:]
     answers = stability_api.generate(
         prompt=prompt,
+        init_image=init_image,
         seed=seed,  # if provided, specifying a random seed makes results deterministic
         # steps=30, # defaults to 50 if not specified
         # height and width must be in multiples of 64
