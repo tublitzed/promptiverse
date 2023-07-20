@@ -2,7 +2,7 @@ import string, os, warnings, random, uuid
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 from api.models import prompt as prompt_model
-from api.models.prompt import ENGINE_SD_1
+from api.models.prompt import DEFAULT_ENGINE
 
 from api.helpers.file import (
     create_img_file,
@@ -13,8 +13,20 @@ stability_api = client.StabilityInference(
     key=os.environ["STABILITY_KEY"],
     verbose=True,
     wait_for_ready=True,
-    engine=ENGINE_SD_1,
+    engine=DEFAULT_ENGINE,
 )
+
+# https://platform.stability.ai/sandbox/text-to-image
+STYLE_PRESETS = {
+    "enhance": "enhance",
+    "anime": "anime",
+    "photographic": "photographic",
+    "digital_art": "digital-art",
+    "comic_book": "comic-book",
+    "fantasty_art": "fantasy-art",
+    "line_art": "line-art",
+    # There's more...
+}
 
 
 def add_to_suffix(tag_suffix=str, prepend=str, items=[], has_started_tag_list=bool):
@@ -71,12 +83,23 @@ def build(prompt_raw, tags):
 
 
 def generate_for_user(
-    user_id=string, prompt=string, prompt_raw=string, seed=None, tag_ids=[]
+    user_id=string,
+    prompt=string,
+    prompt_raw=string,
+    seed=None,
+    tag_ids=[],
+    style_preset=None
 ):
     if seed is None:
         seed = random.randint(1, 100000)
 
-    img_url = generate(prompt=prompt, prompt_raw=prompt_raw, seed=seed, tag_ids=tag_ids)
+    img_url = generate(
+        prompt_raw=prompt_raw,
+        prompt=prompt,
+        seed=seed,
+        style_preset=style_preset,
+        tag_ids=tag_ids
+    )
     saved_prompt = prompt_model.save(
         img_url=img_url,
         prompt_raw=prompt_raw,
@@ -84,12 +107,16 @@ def generate_for_user(
         seed=seed,
         tag_ids=tag_ids,
         user_id=user_id,
+        style_preset=style_preset
     )
     return saved_prompt
 
 
-def generate(prompt=string, prompt_raw=string, seed=None, tag_ids=[]):
+def generate(prompt=string, prompt_raw=string, seed=None, tag_ids=[], style_preset=None):
+    # See https://platform.stability.ai/docs/features/text-to-image#initial-generation-parameters
+    # and https://platform.stability.ai/docs/api-reference#tag/v1generation/operation/textToImage
     answers = stability_api.generate(
+        style_preset=style_preset,
         prompt=prompt,
         seed=seed,  # if provided, specifying a random seed makes results deterministic
         # steps=30, # defaults to 50 if not specified

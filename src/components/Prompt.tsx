@@ -2,6 +2,7 @@ import React from 'react'
 import Api from '@api/api'
 import Input from './base/Input'
 import Tags, { getSelectedTagIds } from './tags/Tags'
+import StylePresets from './StylePresets'
 import PromptImage from './PromptImage'
 import Button from './base/Button'
 import AppContext from '@src/appContext'
@@ -10,7 +11,7 @@ import Loader from './base/Loader'
 import Alert from '@components/base/Alert'
 
 const PromptComponent = () => {
-  const { setPrompt, prompt, user, tags } = React.useContext(AppContext)
+  const { setPrompt, prompt, user, tags, stylePreset } = React.useContext(AppContext)
   const [seed, setSeed] = React.useState<number | undefined>(prompt?.seed)
   const [promptRawError, setPromptRawError] = React.useState<string>()
   const [isGenerating, setIsGenerating] = React.useState<boolean>(false)
@@ -32,6 +33,7 @@ const PromptComponent = () => {
       accessToken: user?.access_token,
       seed,
       tagIds: getSelectedTagIds(tags),
+      stylePreset,
     })
 
     if (response.status === 'error' || !response.data.prompt) {
@@ -99,6 +101,9 @@ const PromptComponent = () => {
         >Generate Image</Button>
       </div>
       <Tags />
+      <div className="mt-4">
+        <StylePresets />
+      </div>
       <div>
         {isGenerating
           ?

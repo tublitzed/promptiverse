@@ -1,5 +1,5 @@
 import fetcher, { FetchResp } from '@utils/fetch'
-import { Tag, TagCategory, PromptApiResponse, Prompt, TagApiResponse } from '@types'
+import { Tag, TagCategory, PromptApiResponse, Prompt, TagApiResponse, StylePreset } from '@types'
 
 import { mapPromptListToTypes, mapTagListToTypes } from './mappings'
 
@@ -16,6 +16,7 @@ interface GenerateImageArgs {
   accessToken?: string
   seed?: number
   tagIds?: string[]
+  stylePreset?: StylePreset
 }
 
 interface ApiRequest {
@@ -81,6 +82,7 @@ const ApiService = {
     promptRaw,
     seed,
     tagIds = [],
+    stylePreset,
   }:GenerateImageArgs):Promise<GenerateImageResp | FetchResp> => {
     if (accessToken) {
       return ApiService.request({
@@ -90,6 +92,7 @@ const ApiService = {
         postBody: {
           prompt_raw: promptRaw,
           seed,
+          style_preset: stylePreset,
           tag_ids: tagIds,
         },
       })
@@ -101,6 +104,7 @@ const ApiService = {
         prompt_raw: promptRaw,
         seed,
         tag_ids: tagIds,
+        style_preset: stylePreset,
       },
     })
   },

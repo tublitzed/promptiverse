@@ -31,12 +31,14 @@ def post():
         seed = None
 
     prompt_raw = request_data["prompt_raw"]
+    style_preset = request_data["style_preset"] if "style_preset" in request_data else None
     saved_prompt = generate_for_user(
         prompt=build(prompt_raw=prompt_raw, tags=tags),
         prompt_raw=prompt_raw,
         user_id=user.get_user_id(user_info=user.get_user_info()),
         seed=seed,
         tag_ids=tag_ids,
+        style_preset=style_preset
     )
     prompt_response = jsonify(
         {
@@ -48,6 +50,7 @@ def post():
                 "prompt": saved_prompt.prompt,
                 "seed": saved_prompt.seed,
                 "tagIds": saved_prompt.tag_ids,
+                "stylePreset": saved_prompt.style_preset,
             }
         }
     )

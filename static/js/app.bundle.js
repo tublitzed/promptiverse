@@ -65,6 +65,7 @@ const App = () => {
     const [isLoading, setIsLoading] = react_1.default.useState(isLoadingViaAuth0);
     const [prompt, setPrompt] = react_1.default.useState(appContext_1.defaultContext.prompt);
     const [tags, setTags] = react_1.default.useState(appContext_1.defaultContext.tags);
+    const [stylePreset, setStylePreset] = react_1.default.useState(appContext_1.defaultContext.stylePreset);
     const getAccessToken = () => __awaiter(void 0, void 0, void 0, function* () {
         const token = yield getAccessTokenSilently();
         setUser(Object.assign(Object.assign({}, userViaAuth0), { access_token: token }));
@@ -94,8 +95,10 @@ const App = () => {
         prompt,
         setIsLoading,
         setPrompt,
+        setStylePreset,
         setTags,
         setUser,
+        stylePreset,
         tags,
         user,
     };
@@ -159,17 +162,20 @@ const Sentry = __importStar(__webpack_require__(/*! @sentry/react */ "./node_mod
 const tracing_1 = __webpack_require__(/*! @sentry/tracing */ "./node_modules/@sentry/tracing/esm/index.js");
 const api_1 = __importDefault(__webpack_require__(/*! ./api/api */ "./src/api/api.ts"));
 const logrocket_1 = __importDefault(__webpack_require__(/*! logrocket */ "./node_modules/logrocket/dist/build.umd.js"));
-logrocket_1.default.init('wivfcj/promptiverse');
 const sentryDsn = api_1.default.getVar('SENTRY_CLIENT_DSN');
-if (sentryDsn) {
-    Sentry.init({
-        dsn: sentryDsn,
-        integrations: [new tracing_1.BrowserTracing()],
-        // Set tracesSampleRate to 1.0 to capture 100%
-        // of transactions for performance monitoring.
-        // We recommend adjusting this value in production
-        tracesSampleRate: 1.0,
-    });
+const env = api_1.default.getVar('ENV');
+if (env === 'production') {
+    logrocket_1.default.init('wivfcj/promptiverse');
+    if (sentryDsn) {
+        Sentry.init({
+            dsn: sentryDsn,
+            integrations: [new tracing_1.BrowserTracing()],
+            // Set tracesSampleRate to 1.0 to capture 100%
+            // of transactions for performance monitoring.
+            // We recommend adjusting this value in production
+            tracesSampleRate: 1.0,
+        });
+    }
 }
 react_dom_1.default.render(react_1.default.createElement(react_1.default.StrictMode, null,
     react_1.default.createElement(react_router_dom_1.BrowserRouter, null,
@@ -226,7 +232,7 @@ const ApiService = {
         }
         return window.promptiverse.vars[name];
     },
-    generateImage: ({ accessToken, promptRaw, seed, tagIds = [], }) => {
+    generateImage: ({ accessToken, promptRaw, seed, tagIds = [], stylePreset, }) => {
         if (accessToken) {
             return ApiService.request({
                 accessToken,
@@ -235,6 +241,7 @@ const ApiService = {
                 postBody: {
                     prompt_raw: promptRaw,
                     seed,
+                    style_preset: stylePreset,
                     tag_ids: tagIds,
                 },
             });
@@ -246,6 +253,7 @@ const ApiService = {
                 prompt_raw: promptRaw,
                 seed,
                 tag_ids: tagIds,
+                style_preset: stylePreset,
             },
         });
     },
@@ -342,8 +350,10 @@ exports.defaultContext = {
     prompt: localStorage_1.default.getPrompt(),
     setIsLoading: () => { },
     setPrompt: (prompt) => { },
+    setStylePreset: (stylePreset) => { },
     setTags: (tags) => { },
     setUser: (user) => { },
+    stylePreset: undefined,
     tags: localStorage_1.default.getTags(),
     user: undefined,
 };
@@ -498,6 +508,7 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 const Input_1 = __importDefault(__webpack_require__(/*! ./base/Input */ "./src/components/base/Input.tsx"));
 const Tags_1 = __importStar(__webpack_require__(/*! ./tags/Tags */ "./src/components/tags/Tags.tsx"));
+const StylePresets_1 = __importDefault(__webpack_require__(/*! ./StylePresets */ "./src/components/StylePresets.tsx"));
 const PromptImage_1 = __importDefault(__webpack_require__(/*! ./PromptImage */ "./src/components/PromptImage.tsx"));
 const Button_1 = __importDefault(__webpack_require__(/*! ./base/Button */ "./src/components/base/Button.tsx"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
@@ -505,7 +516,7 @@ const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStora
 const Loader_1 = __importDefault(__webpack_require__(/*! ./base/Loader */ "./src/components/base/Loader.tsx"));
 const Alert_1 = __importDefault(__webpack_require__(/*! @components/base/Alert */ "./src/components/base/Alert.tsx"));
 const PromptComponent = () => {
-    const { setPrompt, prompt, user, tags } = react_1.default.useContext(appContext_1.default);
+    const { setPrompt, prompt, user, tags, stylePreset } = react_1.default.useContext(appContext_1.default);
     const [seed, setSeed] = react_1.default.useState(prompt === null || prompt === void 0 ? void 0 : prompt.seed);
     const [promptRawError, setPromptRawError] = react_1.default.useState();
     const [isGenerating, setIsGenerating] = react_1.default.useState(false);
@@ -523,6 +534,7 @@ const PromptComponent = () => {
             accessToken: user === null || user === void 0 ? void 0 : user.access_token,
             seed,
             tagIds: (0, Tags_1.getSelectedTagIds)(tags),
+            stylePreset,
         });
         if (response.status === 'error' || !response.data.prompt) {
             console.error(`Unable to generate prompt`, response);
@@ -556,6 +568,8 @@ const PromptComponent = () => {
                 }, disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading }),
             react_1.default.createElement(Button_1.default, { onClick: submit, disabled: prompt === null || prompt === void 0 ? void 0 : prompt.loading }, "Generate Image")),
         react_1.default.createElement(Tags_1.default, null),
+        react_1.default.createElement("div", { className: "mt-4" },
+            react_1.default.createElement(StylePresets_1.default, null)),
         react_1.default.createElement("div", null, isGenerating
             ?
                 react_1.default.createElement("div", { className: "mt-8" },
@@ -598,6 +612,43 @@ exports["default"] = PromptImage;
 
 /***/ }),
 
+/***/ "./src/components/StylePresets.tsx":
+/*!*****************************************!*\
+  !*** ./src/components/StylePresets.tsx ***!
+  \*****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
+const Select_1 = __importDefault(__webpack_require__(/*! ./base/Select */ "./src/components/base/Select.tsx"));
+const _types_1 = __webpack_require__(/*! @types */ "./src/types/index.ts");
+const StylePresets = () => {
+    const { stylePreset, setStylePreset } = react_1.default.useContext(appContext_1.default);
+    return (react_1.default.createElement("div", null,
+        react_1.default.createElement(Select_1.default, { placeholder: "Select a style preset", defaultValue: stylePreset
+                ? [
+                    {
+                        label: _types_1.stylePresetLabels[stylePreset],
+                        value: stylePreset,
+                    },
+                ]
+                : undefined, options: Object.entries(_types_1.stylePresetLabels).map(([value, label]) => ({
+                value,
+                label,
+            })), onChange: ((selected) => {
+                setStylePreset(selected.value);
+            }) })));
+};
+exports["default"] = StylePresets;
+
+
+/***/ }),
+
 /***/ "./src/components/auth/Auth0ProviderWithHistory.tsx":
 /*!**********************************************************!*\
   !*** ./src/components/auth/Auth0ProviderWithHistory.tsx ***!
@@ -624,6 +675,7 @@ const Auth0ProviderWithHistory = ({ children, }) => {
         history.push((appState === null || appState === void 0 ? void 0 : appState.returnTo) || window.location.pathname);
     };
     if (!(domain && clientId && audience)) {
+        console.error('Auth0ProviderWithHistory: Missing configuration');
         return null;
     }
     return (react_1.default.createElement(auth0_react_1.Auth0Provider, { domain: domain, clientId: clientId, audience: audience, redirectUri: redirectUri, onRedirectCallback: onRedirectCallback }, children));
@@ -880,6 +932,42 @@ const PageTitle = ({ title, subtitle, }) => {
         subtitle && react_1.default.createElement("h3", { className: "text-lg text-gray-500" }, subtitle)));
 };
 exports["default"] = PageTitle;
+
+
+/***/ }),
+
+/***/ "./src/components/base/Select.tsx":
+/*!****************************************!*\
+  !*** ./src/components/base/Select.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+// https://react-select.com/typescript#select-generics
+const react_select_1 = __importDefault(__webpack_require__(/*! react-select */ "./node_modules/react-select/dist/react-select.esm.js"));
+const selectStyles = {
+    // https://react-select.com/styles#style-object
+    // option: (provided:any, state:any) => {
+    //   console.log(provided, state)
+    //   return provided
+    // },
+    control: (provided, state) => {
+        return Object.assign({}, provided);
+    },
+};
+const customSelectTheme = (provided) => {
+    return Object.assign(Object.assign({}, provided), { colors: Object.assign({}, provided.colors) });
+};
+const Select = ({ defaultValue, isMulti = false, onChange, options, placeholder, }) => {
+    return (react_1.default.createElement("div", { className: "text-slate-600 text-sm" },
+        react_1.default.createElement(react_select_1.default, { defaultValue: defaultValue, isMulti: isMulti, onChange: onChange, options: options, placeholder: placeholder, styles: selectStyles, theme: customSelectTheme })));
+};
+exports["default"] = Select;
 
 
 /***/ }),
@@ -1481,24 +1569,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getSelectedTagIds = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_select_1 = __importDefault(__webpack_require__(/*! react-select */ "./node_modules/react-select/dist/react-select.esm.js"));
+const Select_1 = __importDefault(__webpack_require__(/*! @components/base/Select */ "./src/components/base/Select.tsx"));
 const api_1 = __importDefault(__webpack_require__(/*! @api/api */ "./src/api/api.ts"));
 const appContext_1 = __importDefault(__webpack_require__(/*! @src/appContext */ "./src/appContext.ts"));
 const localStorage_1 = __importDefault(__webpack_require__(/*! @utils/localStorage */ "./src/utils/localStorage.ts"));
 const date_fns_1 = __webpack_require__(/*! date-fns */ "./node_modules/date-fns/esm/index.js");
-const selectStyles = {
-    // https://react-select.com/styles#style-object
-    // option: (provided:any, state:any) => {
-    //   console.log(provided, state)
-    //   return provided
-    // },
-    control: (provided, state) => {
-        return Object.assign({}, provided);
-    },
-};
-const customSelectTheme = (provided) => {
-    return Object.assign(Object.assign({}, provided), { colors: Object.assign({}, provided.colors) });
-};
 const getSelectedTagIds = (tagCollections) => {
     if (!tagCollections.length) {
         return [];
@@ -1587,8 +1662,8 @@ const Tags = ({}) => {
         return null;
     }
     return (react_1.default.createElement(react_1.default.Fragment, null, tags.map((tagCollection) => {
-        return (react_1.default.createElement("div", { key: `tagCategory_${tagCollection.category.id}`, className: "mt-4 text-slate-600 text-sm" },
-            react_1.default.createElement(react_select_1.default, { defaultValue: tagsToSelectOptions(tagCollection.selectedTags), placeholder: `Add ${tagCollection.category.label.toLowerCase()}`, options: tagsToSelectOptions(tagCollection.allTags), styles: selectStyles, theme: customSelectTheme, isMulti: true, onChange: (selectedValues) => {
+        return (react_1.default.createElement("div", { key: `tagCategory_${tagCollection.category.id}`, className: "mt-4" },
+            react_1.default.createElement(Select_1.default, { defaultValue: tagsToSelectOptions(tagCollection.selectedTags), isMulti: true, options: tagsToSelectOptions(tagCollection.allTags), placeholder: `Add ${tagCollection.category.label.toLowerCase()}`, onChange: (selectedValues) => {
                     onChange(selectedValues, tagCollection.category);
                 } })));
     })));
@@ -1640,6 +1715,39 @@ const getAccessToken = () => {
     return accessToken;
 };
 exports["default"] = getAccessToken;
+
+
+/***/ }),
+
+/***/ "./src/types/index.ts":
+/*!****************************!*\
+  !*** ./src/types/index.ts ***!
+  \****************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.stylePresets = exports.stylePresetLabels = void 0;
+exports.stylePresetLabels = {
+    '3d-model': '3D Model',
+    'analog-film': 'Analog Film',
+    'anime': 'Anime',
+    'cinematic': 'Cinematic',
+    'comic-book': 'Comic Book',
+    'digital-art': 'Digital Art',
+    'enhance': 'Enhance',
+    'fantasy-art': 'Fantasy Art',
+    'isometric': 'Isometric',
+    'line-art': 'Line Art',
+    'low-poly': 'Low Poly',
+    'modeling-compound': 'Modeling Compound',
+    'neon-punk': 'Neon Punk',
+    'origami': 'Origami',
+    'photographic': 'Photographic',
+    'pixel-art': 'Pixel Art',
+    'tile-texture': 'Tile Texture',
+};
+exports.stylePresets = Object.keys(exports.stylePresetLabels);
 
 
 /***/ }),
