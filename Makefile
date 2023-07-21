@@ -6,11 +6,11 @@ start_fe:
 		@echo "starting npm..."
 		npm i && npm run dev
 
-# docker_build:
-# 	docker-compose up -d --build
+docker_build:
+	docker-compose up -d --build
 
-# docker_run:
-# 	docker-compose up -d
+docker_run:
+	docker-compose up -d
 
 # # https://dashboard.heroku.com/apps/tds-neverland-api/deploy/heroku-container
 # deploy:

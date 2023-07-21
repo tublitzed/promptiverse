@@ -12,7 +12,7 @@ import ImagesPage from '@components/pages/Images'
 import BuilderPage from '@components/pages/Builder'
 import SignUpPage from '@components/pages/public/SignUp'
 import AppContext, { defaultContext } from '@src/appContext'
-import { Prompt, TagCollection } from '@types'
+import { Prompt, TagCollection, StylePreset } from '@types'
 
 export const App: React.FC = () => {
   const {
@@ -24,6 +24,7 @@ export const App: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(isLoadingViaAuth0)
   const [prompt, setPrompt] = React.useState<Prompt | undefined>(defaultContext.prompt)
   const [tags, setTags] = React.useState<TagCollection[] | undefined>(defaultContext.tags)
+  const [stylePreset, setStylePreset] = React.useState<StylePreset | undefined>(defaultContext.stylePreset)
 
   const getAccessToken = async () => {
     const token = await getAccessTokenSilently()
@@ -65,8 +66,10 @@ export const App: React.FC = () => {
     prompt,
     setIsLoading,
     setPrompt,
+    setStylePreset,
     setTags,
     setUser,
+    stylePreset,
     tags,
     user,
   }

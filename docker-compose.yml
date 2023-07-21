@@ -12,9 +12,29 @@ services:
     volumes:
       - ./:/app
     ports:
-      - "3002:3001" # map flask port 3001 to localhost port - ie visit http://0.0.0.0:3002
+      - "3002:3001" # map flask port 3001 to localhost port - ie visit http://localhost:3002
     restart: always
     networks:
       - prompt_network
     env_file:
       - .flaskenv
+    environment:
+      # Note db_image instead of localhost or 127.0.0.1
+      DATABASE_URL: postgres://tublitzed:tublitzed@db_image:5432/promptiverse
+    depends_on:
+      - db_image
+
+  db_image:
+    image: postgres:13
+    restart: always
+    networks:
+      - prompt_network
+    environment:
+      POSTGRES_DB: promptiverse
+      POSTGRES_USER: tublitzed
+      POSTGRES_PASSWORD: tublitzed
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:

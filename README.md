@@ -23,7 +23,7 @@
 
 ## Auth
 
-* Via Auth0
+* Via Auth0. Try using localhost vs 127.0.0.1 if getting callback errors when logging in.
 
 ## Logs
 * `heroku logs -a promptiverse --tail`

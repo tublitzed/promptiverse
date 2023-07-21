@@ -7,19 +7,24 @@ import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
 import ApiService from './api/api'
 import LogRocket from 'logrocket'
-LogRocket.init('wivfcj/promptiverse')
+
 
 const sentryDsn = ApiService.getVar('SENTRY_CLIENT_DSN')
-if (sentryDsn) {
-  Sentry.init({
-    dsn: sentryDsn,
-    integrations: [new BrowserTracing()],
+const env = ApiService.getVar('ENV')
 
-    // Set tracesSampleRate to 1.0 to capture 100%
-    // of transactions for performance monitoring.
-    // We recommend adjusting this value in production
-    tracesSampleRate: 1.0,
-  })
+if (env === 'production') {
+  LogRocket.init('wivfcj/promptiverse')
+  if (sentryDsn) {
+    Sentry.init({
+      dsn: sentryDsn,
+      integrations: [new BrowserTracing()],
+
+      // Set tracesSampleRate to 1.0 to capture 100%
+      // of transactions for performance monitoring.
+      // We recommend adjusting this value in production
+      tracesSampleRate: 1.0,
+    })
+  }
 }
 
 ReactDOM.render(

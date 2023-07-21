@@ -53,3 +53,25 @@ export interface TagCollection {
   selectedTags: Tag[]
 }
 
+export const stylePresetLabels = {
+  '3d-model': '3D Model',
+  'analog-film': 'Analog Film',
+  'anime': 'Anime',
+  'cinematic': 'Cinematic',
+  'comic-book': 'Comic Book',
+  'digital-art': 'Digital Art',
+  'enhance': 'Enhance',
+  'fantasy-art': 'Fantasy Art',
+  'isometric': 'Isometric',
+  'line-art': 'Line Art',
+  'low-poly': 'Low Poly',
+  'modeling-compound': 'Modeling Compound',
+  'neon-punk': 'Neon Punk',
+  'origami': 'Origami',
+  'photographic': 'Photographic',
+  'pixel-art': 'Pixel Art',
+  'tile-texture': 'Tile Texture',
+} as const
+
+export type StylePreset = keyof typeof stylePresetLabels
+export const stylePresets = Object.keys(stylePresetLabels) as StylePreset[]

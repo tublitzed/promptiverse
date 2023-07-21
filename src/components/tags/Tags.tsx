@@ -1,38 +1,11 @@
 import React from 'react'
-import Select from 'react-select'
+import Select from '@components/base/Select'
 import Api from '@api/api'
 import AppContext from '@src/appContext'
 import LocalStorage from '@utils/localStorage'
 import { compareAsc } from 'date-fns'
 
 import { Tag, TagCategory, TagCollection } from '@types'
-
-const selectStyles = {
-  // https://react-select.com/styles#style-object
-  // option: (provided:any, state:any) => {
-  //   console.log(provided, state)
-  //   return provided
-  // },
-  control: (provided:any, state:any) => {
-    return {
-      ...provided,
-      // backgroundColor: state.isFocused ? '#FFF' : 'rgb(229 231 235 / var(--tw-bg-opacity))',
-    }
-  },
-}
-
-const customSelectTheme = (provided:any) => {
-  return {
-    ...provided,
-    colors: {
-      ...provided.colors,
-      // primary: '#3b82f6',
-      // primary25: '#dbeafe',
-      // primary50: '#93c5fd',
-      // primary75: '#60a5fa',
-    },
-  }
-}
 
 export const getSelectedTagIds = (tagCollections: TagCollection[]):string[] => {
   if (!tagCollections.length) {
@@ -141,14 +114,12 @@ const Tags = ({}) => {
         return (
           <div
             key={`tagCategory_${tagCollection.category.id}`}
-            className="mt-4 text-slate-600 text-sm">
+            className="mt-4">
             <Select
               defaultValue={tagsToSelectOptions(tagCollection.selectedTags)}
-              placeholder={`Add ${tagCollection.category.label.toLowerCase()}`}
-              options={tagsToSelectOptions(tagCollection.allTags)}
-              styles={selectStyles}
-              theme={customSelectTheme}
               isMulti
+              options={tagsToSelectOptions(tagCollection.allTags)}
+              placeholder={`Add ${tagCollection.category.label.toLowerCase()}`}
               onChange={(selectedValues:SelectOption[]) => {
                 onChange(selectedValues, tagCollection.category)
               }}

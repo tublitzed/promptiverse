@@ -22,6 +22,7 @@ export const Auth0ProviderWithHistory = ({
   }
 
   if (!(domain && clientId && audience)) {
+    console.error('Auth0ProviderWithHistory: Missing configuration')
     return null
   }
 
