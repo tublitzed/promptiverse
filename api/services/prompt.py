@@ -16,18 +16,6 @@ stability_api = client.StabilityInference(
     engine=DEFAULT_ENGINE,
 )
 
-# https://platform.stability.ai/sandbox/text-to-image
-STYLE_PRESETS = {
-    "enhance": "enhance",
-    "anime": "anime",
-    "photographic": "photographic",
-    "digital_art": "digital-art",
-    "comic_book": "comic-book",
-    "fantasty_art": "fantasy-art",
-    "line_art": "line-art",
-    # There's more...
-}
-
 
 def add_to_suffix(tag_suffix=str, prepend=str, items=[], has_started_tag_list=bool):
 
@@ -88,7 +76,7 @@ def generate_for_user(
     prompt_raw=string,
     seed=None,
     tag_ids=[],
-    style_preset=None
+    style_preset=None,
 ):
     if seed is None:
         seed = random.randint(1, 100000)
@@ -98,7 +86,7 @@ def generate_for_user(
         prompt=prompt,
         seed=seed,
         style_preset=style_preset,
-        tag_ids=tag_ids
+        tag_ids=tag_ids,
     )
     saved_prompt = prompt_model.save(
         img_url=img_url,
@@ -107,12 +95,14 @@ def generate_for_user(
         seed=seed,
         tag_ids=tag_ids,
         user_id=user_id,
-        style_preset=style_preset
+        style_preset=style_preset,
     )
     return saved_prompt
 
 
-def generate(prompt=string, prompt_raw=string, seed=None, tag_ids=[], style_preset=None):
+def generate(
+    prompt=string, prompt_raw=string, seed=None, tag_ids=[], style_preset=None
+):
     # See https://platform.stability.ai/docs/features/text-to-image#initial-generation-parameters
     # and https://platform.stability.ai/docs/api-reference#tag/v1generation/operation/textToImage
     answers = stability_api.generate(

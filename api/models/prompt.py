@@ -15,6 +15,7 @@ ENGINE_SD_2 = "stable-diffusion-512-v2-1"
 ENGINE_SDXL_09 = "stable-diffusion-xl-1024-v0-9"
 DEFAULT_ENGINE = ENGINE_SDXL_09
 
+
 class Prompt(BaseModel):
     db_table = "Prompt"
     created_at = DateTimeField(default=datetime.datetime.now)
