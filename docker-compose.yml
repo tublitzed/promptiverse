@@ -18,3 +18,20 @@ services:
       - prompt_network
     env_file:
       - .flaskenv
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    restart: always
+    networks:
+      - prompt_network
+    environment:
+      POSTGRES_DB: promptiverse
+      POSTGRES_USER: tublitzed
+      POSTGRES_PASSWORD: tublitzed
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:

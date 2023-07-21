@@ -30,7 +30,7 @@ peewee-migrate==1.6.3
 Pillow==9.3.0
 platformdirs==2.5.2
 protobuf==4.21.12
-psycopg2==2.9.4
+psycopg2-binary==2.9.4
 pyasn1==0.4.8
 pycparser==2.21
 PyJWT==2.5.0
