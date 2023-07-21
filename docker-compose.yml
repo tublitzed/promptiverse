@@ -12,7 +12,7 @@ services:
     volumes:
       - ./:/app
     ports:
-      - "3002:3001" # map flask port 3001 to localhost port - ie visit http://0.0.0.0:3002
+      - "3002:3001" # map flask port 3001 to localhost port - ie visit http://localhost:3002
     restart: always
     networks:
       - prompt_network
