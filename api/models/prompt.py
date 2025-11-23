@@ -12,8 +12,8 @@ from api.helpers.aws import (
 # See https://platform.stability.ai/pricing
 ENGINE_SD_1 = "stable-diffusion-v1-5"
 ENGINE_SD_2 = "stable-diffusion-512-v2-1"
-ENGINE_SDXL_09 = "stable-diffusion-xl-1024-v0-9"
-DEFAULT_ENGINE = ENGINE_SDXL_09
+ENGINE_SDXL_10 = "stable-diffusion-xl-1024-v1-0"
+DEFAULT_ENGINE = ENGINE_SDXL_10
 
 
 class Prompt(BaseModel):

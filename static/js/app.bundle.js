@@ -177,10 +177,9 @@ if (env === 'production') {
         });
     }
 }
-react_dom_1.default.render(react_1.default.createElement(react_1.default.StrictMode, null,
-    react_1.default.createElement(react_router_dom_1.BrowserRouter, null,
-        react_1.default.createElement(Auth0ProviderWithHistory_1.Auth0ProviderWithHistory, null,
-            react_1.default.createElement(App_1.App, null)))), document.getElementById('root'));
+react_dom_1.default.render(react_1.default.createElement(react_router_dom_1.BrowserRouter, null,
+    react_1.default.createElement(Auth0ProviderWithHistory_1.Auth0ProviderWithHistory, null,
+        react_1.default.createElement(App_1.App, null))), document.getElementById('root'));
 
 
 /***/ }),
@@ -672,13 +671,15 @@ const Auth0ProviderWithHistory = ({ children, }) => {
     const audience = api_1.default.getVar('CLIENT_APP_AUTH0_AUDIENCE');
     const redirectUri = api_1.default.getVar('CLIENT_APP_AUTH0_CALLBACK_URL');
     const onRedirectCallback = (appState) => {
-        history.push((appState === null || appState === void 0 ? void 0 : appState.returnTo) || window.location.pathname);
+        // Navigate to the return path or default to home
+        const returnTo = (appState === null || appState === void 0 ? void 0 : appState.returnTo) || '/';
+        history.push(returnTo);
     };
     if (!(domain && clientId && audience)) {
         console.error('Auth0ProviderWithHistory: Missing configuration');
         return null;
     }
-    return (react_1.default.createElement(auth0_react_1.Auth0Provider, { domain: domain, clientId: clientId, audience: audience, redirectUri: redirectUri, onRedirectCallback: onRedirectCallback }, children));
+    return (react_1.default.createElement(auth0_react_1.Auth0Provider, { domain: domain, clientId: clientId, audience: audience, redirectUri: redirectUri, onRedirectCallback: onRedirectCallback, useRefreshTokens: true, cacheLocation: "localstorage" }, children));
 };
 exports.Auth0ProviderWithHistory = Auth0ProviderWithHistory;
 
@@ -1332,21 +1333,57 @@ exports["default"] = Page;
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const auth0_react_1 = __webpack_require__(/*! @auth0/auth0-react */ "./node_modules/@auth0/auth0-react/dist/auth0-react.esm.js");
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Layout_1 = __importDefault(__webpack_require__(/*! @components/layouts/Layout */ "./src/components/layouts/Layout.tsx"));
 const ErrorLayout_1 = __importDefault(__webpack_require__(/*! @components/layouts/ErrorLayout */ "./src/components/layouts/ErrorLayout.tsx"));
 const Page = () => {
-    const { error } = (0, auth0_react_1.useAuth0)();
-    console.error(error);
+    const { error, isLoading } = (0, auth0_react_1.useAuth0)();
+    (0, react_1.useEffect)(() => {
+        if (error) {
+            console.error('Auth0 callback error:', error);
+        }
+    }, [error]);
     if (error) {
-        return (react_1.default.createElement(ErrorLayout_1.default, { errorMessage: "Unable to login." }));
+        return (react_1.default.createElement(ErrorLayout_1.default, { errorMessage: "Unable to login. Please try again." }));
     }
-    return (react_1.default.createElement(Layout_1.default, null));
+    if (isLoading) {
+        return (react_1.default.createElement(Layout_1.default, null,
+            react_1.default.createElement("div", { className: "flex items-center justify-center min-h-screen" },
+                react_1.default.createElement("div", { className: "text-center" },
+                    react_1.default.createElement("div", { className: "text-xl font-thin" }, "Logging in...")))));
+    }
+    return (react_1.default.createElement(Layout_1.default, null,
+        react_1.default.createElement("div", { className: "flex items-center justify-center min-h-screen" },
+            react_1.default.createElement("div", { className: "text-center" },
+                react_1.default.createElement("div", { className: "text-xl font-thin" }, "Redirecting...")))));
 };
 exports["default"] = Page;
 

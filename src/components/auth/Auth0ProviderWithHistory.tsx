@@ -18,7 +18,9 @@ export const Auth0ProviderWithHistory = ({
   const redirectUri = Api.getVar('CLIENT_APP_AUTH0_CALLBACK_URL')
 
   const onRedirectCallback = (appState?: AppState) => {
-    history.push(appState?.returnTo || window.location.pathname)
+    // Navigate to the return path or default to home
+    const returnTo = appState?.returnTo || '/'
+    history.push(returnTo)
   }
 
   if (!(domain && clientId && audience)) {
@@ -33,6 +35,8 @@ export const Auth0ProviderWithHistory = ({
       audience={audience}
       redirectUri={redirectUri}
       onRedirectCallback={onRedirectCallback}
+      useRefreshTokens={true}
+      cacheLocation="localstorage"
     >
       {children}
     </Auth0Provider>
