@@ -1,4 +1,4 @@
-name: Node, Python, Docker Builds
+name: Build
 
 on:
   push:
@@ -7,13 +7,13 @@ on:
     branches: [ "main" ]
 
 jobs:
-  docker-build:
+  docker:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag promptiverse:$(date +%s)
-  python-build:
+  python:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -33,11 +33,11 @@ jobs:
       run: |
         python -c "import flask; print(f'Flask version: {flask.__version__}')"
         python -c "import boto3; print(f'Boto3 version: {boto3.__version__}')"
-  node-build:
+  node:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
     - uses: actions/checkout@v4
