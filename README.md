@@ -1,6 +1,6 @@
 # promptiverse
 
-[![Node.js CI](https://github.com/tublitzed/promptiverse/actions/workflows/node-build.yml/badge.svg)](https://github.com/tublitzed/promptiverse/actions/workflows/node-build.yml)
+[![Builds](https://github.com/tublitzed/promptiverse/actions/workflows/build.yml/badge.svg)](https://github.com/tublitzed/promptiverse/actions/workflows/build.yml)
 
 ## Local setup
 1. cp .flaskenv.example .flaskenv << Replace secrets with real values.
