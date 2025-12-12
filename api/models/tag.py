@@ -1,4 +1,4 @@
-import datetime, uuid
+import datetime, uuid, logging
 
 # https://docs.peewee-orm.com/en/latest/peewee/models.html?highlight=table%20generation#field-types-table
 from peewee import (
@@ -7,6 +7,7 @@ from peewee import (
     ForeignKeyField,
     UUIDField,
     IntegrityError,
+    DatabaseError,
 )
 
 from api.models.base import BaseModel, psql_db
@@ -61,9 +62,44 @@ def get_public_tags():
     return Tag.select().join(Tag_Category).where(Tag_Category.is_public == True)
 
 
-def get_by_ids(tag_ids):
-    return Tag.select().where(Tag.id.in_(tag_ids))
+def get_by_ids(tag_ids, validate_count=False):
+    """
+    Get tags by their IDs with tag_category joined.
+    Wraps the operation in a transaction to handle errors properly.
+    Returns a list of Tag objects with tag_category preloaded.
+    Raises DatabaseError if a database error occurs.
+    
+    Args:
+        tag_ids: List of tag IDs to fetch
+        validate_count: If True, raises ValueError if not all tags are found
+    """
+    try:
+        with psql_db.atomic():
+            # Load tags with tag_category joined to avoid lazy loading issues
+            tags_query = Tag.select(Tag, Tag_Category).join(Tag_Category).where(Tag.id.in_(tag_ids))
+            # Convert to list to ensure query executes within transaction
+            tags = list(tags_query)
+            
+            # Validate that all requested tags were found
+            if validate_count and len(tags) != len(tag_ids):
+                raise ValueError(f"Expected {len(tag_ids)} tags but found {len(tags)}")
+            
+            return tags
+    except DatabaseError as e:
+        # Rollback is automatic with atomic(), but log the error
+        logging.error(f"Database error in get_by_ids: {e}")
+        raise
 
 
 def valid_tag_ids(tag_ids):
-    return get_by_ids(tag_ids).count() == len(tag_ids)
+    """
+    Validate that all tag_ids exist in the database.
+    Returns True if all tags exist, False otherwise.
+    """
+    try:
+        with psql_db.atomic():
+            count = Tag.select().where(Tag.id.in_(tag_ids)).count()
+            return count == len(tag_ids)
+    except DatabaseError as e:
+        logging.error(f"Database error in valid_tag_ids: {e}")
+        raise

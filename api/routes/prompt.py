@@ -1,9 +1,10 @@
 import os, logging
 from flask import Blueprint, jsonify, request
+from peewee import DatabaseError
 
 from api.services.auth0 import requires_auth
 from api.services.prompt import generate_for_user, build
-from api.models.tag import get_by_ids
+from api.models.tag import get_by_ids, valid_tag_ids
 from api.models.prompt import get_by_user
 from api.helpers import user
 from api.services.slack import send_slack_message
@@ -21,9 +22,16 @@ def post():
         if value not in request_data:
             return jsonify(error=f"Missing required request param: {value}"), 400
     tag_ids = request_data["tag_ids"]
-    tags = get_by_ids(tag_ids)
-    if len(tag_ids) != tags.count():
+    
+    # Load tags (transaction handling and validation is in get_by_ids)
+    try:
+        tags = get_by_ids(tag_ids, validate_count=True)
+    except ValueError:
+        # Not all tags were found
         return jsonify(error="Invalid tags"), 400
+    except DatabaseError as e:
+        logging.error(f"Database error loading tags: {e}")
+        return jsonify(error="Database error occurred"), 500
 
     if "seed" in request_data:
         seed = request_data["seed"]
