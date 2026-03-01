@@ -1,5 +1,7 @@
 # promptiverse
 
+Toy app exploring Stable Diffusion.
+
 [![Builds](https://github.com/tublitzed/promptiverse/actions/workflows/build.yml/badge.svg)](https://github.com/tublitzed/promptiverse/actions/workflows/build.yml)
 
 ## Local setup
@@ -13,13 +15,13 @@
 
 ## Deployments
 
-1. Heroku, via UI for the limited time being
-1. `heroku ps:exec bash -a promptiverse` run a bash shell in the main web dyno
+1. Heroku, via UI
+2. `heroku ps:exec bash -a promptiverse` run a bash shell in the main web dyno
 
 ## Envs
 
 * http://127.0.0.1:3000
-* https://promptiverse.com
+* https://promptiverse.3blitz.com (had the domain but let it expire in 2025, so moved the site)
 
 ## Auth
 
