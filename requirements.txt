@@ -17,7 +17,7 @@ grpcio-tools==1.53.0
 gunicorn==20.1.0
 idna==3.4
 importlib-metadata==4.12.0
-itsdangerous==2.1.2
+itsdangerous==2.2.0
 Jinja2==3.1.2
 jmespath==1.0.1
 jose==1.0.0
